@@ -472,7 +472,7 @@
     </div>
 
     <script>
-   
+    
         const apiKey = 'sk-646a5b86d1de4ee186dfac833541452b'; 
 
         // DOM Elements
@@ -507,7 +507,7 @@
             if (role === 'user') {
                 messageInfo.innerHTML = '<i class="fas fa-user"></i> Tú';
             } else {
-                messageInfo.innerHTML = '<i class="fas fa-robot"></i> DeepSeek Bot';
+                messageInfo.innerHTML = '<i class="fas fa-robot"></i> Mar-IA'; // Changed bot name
             }
 
             messageDiv.appendChild(messageInfo);
@@ -696,7 +696,7 @@
             loadTheme();
             userInput.focus();
             // Initialize chat history with the initial bot message
-            chatHistory.push({ role: "assistant", content: "¡Hola! ¿En qué puedo ayudarte hoy?" });
+            chatHistory.push({ role: "assistant", content: "¡Hola!, Soy una IA creada por Mario Vazquez. <br> ¿En qué puedo ayudarte hoy?" }); // Updated initial message
         };
     </script>
 </body>
