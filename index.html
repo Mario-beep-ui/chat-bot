@@ -9,7 +9,7 @@
     <style>
         /* Root variables for theme colors */
         :root {
-            /* DeepSeek Dark Theme */
+            /* DeepSeek Dark Theme (Gemini-like input/buttons) */
             --bg-color: #1A1A1A; /* Very dark background */
             --container-bg: #2C2C2C; /* Slightly lighter dark for container */
             --header-bg: #222222; /* Darker header */
@@ -25,26 +25,29 @@
             --bot-bubble-border: rgba(255, 255, 255, 0.1); /* Subtle white border */
             --input-container-bg: #222222; /* Dark input container */
             --input-border-top: rgba(255, 255, 255, 0.05); /* Very subtle border */
+
+            /* Gemini-like Input & Button Styles for Dark Theme */
             --input-bg: #3A3A3A; /* Dark grey input field */
             --input-text: #FFFFFF; /* White input text */
             --input-placeholder: #A0A0A0; /* Medium grey placeholder */
-            --input-focus-shadow: 0 0 10px rgba(70, 130, 180, 0.5); /* Steel Blue shadow */
+            --input-focus-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3); /* Blue ring on focus */
             --send-button-bg: #007BFF; /* Bright blue send button */
             --send-button-text: white;
-            --send-button-hover-shadow: 0 0 15px rgba(0, 123, 255, 0.7);
+            --send-button-hover-shadow: 0 4px 8px rgba(0, 123, 255, 0.4); /* Soft shadow on hover */
             --send-button-disabled-bg: rgba(0, 123, 255, 0.3);
+            --feature-button-bg: #6A0DAD; /* Dark purple for feature buttons */
+            --feature-button-text: white;
+            --feature-button-hover-shadow: 0 4px 8px rgba(106, 13, 173, 0.4); /* Soft shadow on hover */
+            --feature-button-disabled-bg: rgba(106, 13, 173, 0.3);
+
             --typing-indicator-bg: #3A3A3A;
             --typing-indicator-dot: #E0E0E0;
             --timestamp-color: #A0A0A0;
             --theme-toggle-color: #FFFFFF;
             --theme-toggle-hover-color: #007BFF; /* Blue on hover */
-            --feature-button-bg: #6A0DAD; /* Dark purple for feature buttons */
-            --feature-button-text: white;
-            --feature-button-hover-shadow: 0 0 15px rgba(106, 13, 173, 0.7);
-            --feature-button-disabled-bg: rgba(106, 13, 173, 0.3);
         }
 
-        /* Light Theme Overrides (White, Blue, Black) - Kept from previous iteration */
+        /* Light Theme Overrides (White, Blue, Black) - Gemini-like input/buttons */
         body.light-theme {
             --bg-color: #E0F2F7; /* Light Blue Background */
             --container-bg: #FFFFFF; /* White Container */
@@ -61,23 +64,26 @@
             --bot-bubble-border: #ADD8E6; /* Light Blue Border */
             --input-container-bg: #F8F8F8; /* Light Grey Input Container */
             --input-border-top: #CCCCCC; /* Light Grey Border */
-            --input-bg: #E9F5F9; /* Very Light Blue Input Field */
+
+            /* Gemini-like Input & Button Styles for Light Theme */
+            --input-bg: #FFFFFF; /* White input field */
             --input-text: #333333; /* Dark Grey/Black Input Text */
             --input-placeholder: #666666; /* Grey Placeholder */
-            --input-focus-shadow: 0 0 10px rgba(0, 123, 255, 0.2); /* Blue Shadow */
+            --input-focus-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3); /* Blue ring on focus */
             --send-button-bg: #007BFF; /* Blue Send Button */
             --send-button-text: #FFFFFF; /* White Send Button Text */
-            --send-button-hover-shadow: 0 0 15px rgba(0, 123, 255, 0.4); /* Blue Shadow */
+            --send-button-hover-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Soft shadow on hover */
             --send-button-disabled-bg: #B0C4DE; /* Light Blue Disabled */
-            --typing-indicator-bg: #F0F8FF; /* Very Light Blue Typing Indicator */
-            --typing-indicator-dot: #007BFF; /* Blue Dots */
-            --timestamp-color: #666666; /* Grey Timestamp */
-            --theme-toggle-color: #FFFFFF; /* White Toggle Icon */
-            --theme-toggle-hover-color: #0056b3; /* Darker Blue on Hover */
             --feature-button-bg: #0056b3; /* Darker Blue for Feature Buttons */
             --feature-button-text: #FFFFFF; /* White Feature Button Text */
-            --feature-button-hover-shadow: 0 0 15px rgba(0, 86, 179, 0.4); /* Darker Blue Shadow */
+            --feature-button-hover-shadow: 0 4px 8px rgba(0, 86, 179, 0.2); /* Soft shadow on hover */
             --feature-button-disabled-bg: #B0C4DE; /* Light Blue Disabled */
+
+            --typing-indicator-bg: #F0F8FF;
+            --typing-indicator-dot: #007BFF;
+            --timestamp-color: #666666;
+            --theme-toggle-color: #FFFFFF;
+            --theme-toggle-hover-color: #0056b3;
         }
 
         /* Base Styles */
@@ -212,30 +218,30 @@
         }
 
         .input-container {
-            display: flex;
-            flex-wrap: wrap;
+            display: flex; /* Use flexbox for horizontal alignment */
+            flex-direction: row; /* Arrange items in a row */
             padding: 15px;
             background: var(--input-container-bg);
             border-top: 1px solid var(--input-border-top);
-            gap: 10px;
-            align-items: center;
+            gap: 10px; /* Space between input and button */
+            align-items: center; /* Vertically align items in the middle */
         }
 
         #user-input {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 25px; /* Slightly less rounded */
+            flex: 1; /* Allow input to take up available space */
+            padding: 15px 20px; /* More horizontal padding for Gemini feel */
+            border: 1px solid transparent; /* Subtle border */
+            border-radius: 28px; /* More rounded */
             background: var(--input-bg);
             color: var(--input-text);
             font-size: 16px;
             outline: none;
-            transition: all 0.3s;
+            transition: all 0.3s ease; /* Smooth transition for focus */
             min-width: 150px;
         }
 
         #user-input:focus {
-            background: var(--input-bg); /* Keep background consistent */
+            border-color: #007BFF; /* Blue border on focus */
             box-shadow: var(--input-focus-shadow);
         }
 
@@ -243,46 +249,36 @@
             color: var(--input-placeholder);
         }
 
-        #send-button, .feature-button {
+        #send-button { /* Only send-button style here */
             background: var(--send-button-bg);
             color: var(--send-button-text);
             border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            width: 56px; /* Slightly larger for better tap target */
+            height: 56px; /* Slightly larger */
+            border-radius: 50%; /* Fully round */
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px; /* Larger icon */
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: all 0.3s;
+            transition: all 0.2s ease-in-out; /* Faster, smoother transition */
             flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Initial subtle shadow */
         }
 
-        #send-button:hover, .feature-button:hover {
-            transform: scale(1.05);
+        #send-button:hover {
+            transform: translateY(-2px); /* Lift effect */
             box-shadow: var(--send-button-hover-shadow);
         }
 
-        #send-button:disabled, .feature-button:disabled {
+        #send-button:disabled {
             background: var(--send-button-disabled-bg);
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
-        .feature-button {
-            background: var(--feature-button-bg);
-            font-size: 14px;
-            border-radius: 25px;
-            padding: 0 15px;
-            width: auto;
-            height: 45px;
-        }
-
-        .feature-button:hover {
-            box-shadow: var(--feature-button-hover-shadow);
-        }
+        /* Removed .feature-button styles as they are no longer needed */
 
         .typing-indicator {
             display: none;
@@ -355,21 +351,20 @@
                 font-size: 22px;
             }
             #user-input {
-                padding: 12px;
+                padding: 12px 16px;
                 font-size: 14px;
+                border-radius: 24px;
             }
             #send-button {
-                width: 45px;
-                height: 45px;
-                font-size: 16px;
-            }
-            .feature-button {
-                height: 40px;
-                font-size: 13px;
-                padding: 0 12px;
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
             }
             .input-container {
                 padding: 10px;
+                /* Ensure it remains a row on smaller screens */
+                flex-direction: row; 
+                align-items: center;
             }
         }
 
@@ -400,31 +395,20 @@
                 font-size: 10px;
             }
             #user-input {
-                padding: 10px;
+                padding: 10px 14px;
                 font-size: 13px;
+                border-radius: 20px;
             }
             #send-button {
-                width: 40px;
-                height: 40px;
-                font-size: 14px;
-            }
-            .feature-button {
-                height: 35px;
-                font-size: 12px;
-                padding: 0 10px;
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
             }
             .input-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .input-container #user-input,
-            .input-container #send-button,
-            .input-container .feature-button {
-                width: 100%;
-                margin-left: 0;
-            }
-            .input-container #send-button {
-                margin-top: 10px;
+                padding: 10px;
+                /* Keep it as a row on very small screens too */
+                flex-direction: row;
+                align-items: center;
             }
         }
     </style>
@@ -458,13 +442,7 @@
         </div>
 
         <div class="input-container">
-            <input type="text" id="user-input" placeholder="Escribe tu mensaje..." autocomplete="off">
-            <button id="summarize-button" class="feature-button">
-                Summarize Chat ✨
-            </button>
-            <button id="creative-button" class="feature-button">
-                Creative Response ✨
-            </button>
+            <input type="text" id="user-input" placeholder="Pregúntale a Mar-IA" autocomplete="off">
             <button id="send-button">
                 <i class="fas fa-paper-plane"></i>
             </button>
@@ -479,8 +457,7 @@
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
-        const summarizeButton = document.getElementById('summarize-button');
-        const creativeButton = document.getElementById('creative-button');
+        // Removed summarizeButton and creativeButton as they are no longer in HTML
         const typingIndicator = document.getElementById('typing-indicator');
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
@@ -507,7 +484,7 @@
             if (role === 'user') {
                 messageInfo.innerHTML = '<i class="fas fa-user"></i> Tú';
             } else {
-                messageInfo.innerHTML = '<i class="fas fa-robot"></i> Mar-IA'; // Changed bot name
+                messageInfo.innerHTML = '<i class="fas fa-robot"></i> Mar-IA';
             }
 
             messageDiv.appendChild(messageInfo);
@@ -582,8 +559,7 @@
         function disableInputAndButtons(disabled) {
             userInput.disabled = disabled;
             sendButton.disabled = disabled;
-            summarizeButton.disabled = disabled;
-            creativeButton.disabled = disabled;
+            // Removed summarizeButton.disabled and creativeButton.disabled
         }
 
         // Handle message submission
@@ -591,76 +567,30 @@
             const message = userInput.value.trim();
             if (!message) return;
 
-            userInput.value = ''; // Clear input immediately
-            addMessage('user', message); // Add user message to display
+            userInput.value = '';
+            addMessage('user', message);
 
-            // DeepSeek API expects messages in a specific format for history
             chatHistory.push({ role: "user", content: message });
 
-            // Get bot response and add to display
             const botResponse = await sendMessageToAPI(chatHistory);
             addMessage('bot', botResponse);
 
-            // Add bot response to chat history
-            chatHistory.push({ role: "assistant", content: botResponse }); // DeepSeek uses 'assistant' for bot role
+            chatHistory.push({ role: "assistant", content: botResponse });
 
             userInput.focus();
         }
 
-        // Handle summarize chat feature
-        async function handleSummarizeChat() {
-            if (chatHistory.length === 0) {
-                addMessage('bot', "No hay conversación para resumir aún.");
-                return;
-            }
-
-            // Create a prompt for summarization using the current chat history
-            const summarizePrompt = [
-                { role: "user", content: "Por favor, resume la siguiente conversación de manera concisa y clara:" },
-                ...chatHistory
-            ];
-
-            const summary = await sendMessageToAPI(summarizePrompt, 0.4, 500); // Lower temperature for more factual summary
-            addMessage('bot', `**Resumen de la conversación:**\n\n${summary}`);
-        }
-
-        // Handle creative response feature
-        async function handleCreativeResponse() {
-            let creativeInput = userInput.value.trim();
-            if (!creativeInput && chatHistory.length > 0) {
-                // If input is empty, use the last user message from history
-                const lastUserMessage = chatHistory.slice().reverse().find(msg => msg.role === 'user');
-                if (lastUserMessage) {
-                    creativeInput = lastUserMessage.content; // DeepSeek uses 'content'
-                }
-            }
-
-            if (!creativeInput) {
-                addMessage('bot', "Por favor, escribe algo en el cuadro de texto o ten al menos un mensaje en el historial para generar una respuesta creativa.");
-                return;
-            }
-
-            // Clear input if it was used
-            userInput.value = '';
-
-            const creativePrompt = [
-                { role: "user", content: `Basado en el siguiente texto, genera una respuesta creativa (ej. una historia corta, un poema, una reflexión, etc.): "${creativeInput}"` }
-            ];
-
-            const creativeResponse = await sendMessageToAPI(creativePrompt, 0.9, 800); // Higher temperature for more creativity
-            addMessage('bot', `**Respuesta Creativa:**\n\n${creativeResponse}`);
-        }
-
+        // Removed handleSummarizeChat and handleCreativeResponse functions
 
         // Theme toggle logic
         function toggleTheme() {
             if (body.classList.contains('light-theme')) {
                 body.classList.remove('light-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>'; // Sun icon for dark mode (to switch to light)
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
                 localStorage.setItem('theme', 'dark');
             } else {
                 body.classList.add('light-theme');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>'; // Moon icon for light mode (to switch to dark)
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
                 localStorage.setItem('theme', 'light');
             }
         }
@@ -672,7 +602,6 @@
                 body.classList.add('light-theme');
                 themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
             } else {
-                // Default to dark theme if no preference or 'dark' saved
                 body.classList.remove('light-theme');
                 themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             }
@@ -680,8 +609,7 @@
 
         // Event Listeners
         sendButton.addEventListener('click', handleSendMessage);
-        summarizeButton.addEventListener('click', handleSummarizeChat);
-        creativeButton.addEventListener('click', handleCreativeResponse);
+        // Removed event listeners for summarizeButton and creativeButton
 
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !sendButton.disabled) {
@@ -695,8 +623,7 @@
         window.onload = () => {
             loadTheme();
             userInput.focus();
-            // Initialize chat history with the initial bot message
-            chatHistory.push({ role: "assistant", content: "¡Hola!, Soy una IA creada por Mario Vazquez. <br> ¿En qué puedo ayudarte hoy?" }); // Updated initial message
+            chatHistory.push({ role: "assistant", content: "¡Hola!, Soy una IA creada por Mario Vazquez. <br> ¿En qué puedo ayudarte hoy?" });
         };
     </script>
 </body>
