@@ -103,7 +103,6 @@
             overflow: hidden;
             position: relative;
         }
-        /* --- NUEVOS ESTILOS DE CABECERA --- */
         .cabecera { 
             flex-shrink: 0;
             padding: 1.5rem 2rem; 
@@ -127,8 +126,6 @@
             100% { transform: translateY(0px); }
         }
         .cabecera .titulo h1 { font-size: 2.2rem; font-weight: 700; margin: 0; cursor: pointer; transition: all 0.3s; position: relative; color: var(--color-destacado); }
-        /* --- FIN NUEVOS ESTILOS DE CABECERA --- */
-        
         .contenedor-chat { 
             flex-grow: 1;
             overflow-y: auto; 
@@ -170,8 +167,6 @@
         }
         .burbuja-usuario { background: var(--fondo-burbuja-usuario); color: var(--texto-burbuja-usuario); border-bottom-right-radius: 0.6rem; }
         .burbuja-bot { background: var(--fondo-burbuja-bot); color: var(--texto-burbuja-bot); border: 1px solid var(--borde-burbuja-bot); border-bottom-left-radius: 0.6rem; }
-        
-        /* Estilos para la burbuja de búsqueda */
         .mensaje-busqueda {
             align-self: flex-start;
             animation: fadeIn 0.4s ease-out;
@@ -195,7 +190,6 @@
             50% { transform: scale(1.2); color: white; }
             100% { transform: scale(1); color: var(--color-destacado); }
         }
-
         .pensamiento-container { 
             background: var(--fondo-pensamiento); 
             border: 1px solid var(--borde-pensamiento); 
@@ -244,8 +238,6 @@
         .timestamp { font-size: 1.2rem; color: var(--color-timestamp); }
         .boton-accion-mensaje { background: none; border: none; width: 3.2rem; height: 3.2rem; border-radius: 50%; cursor: pointer; font-size: 1.5rem; display: flex; justify-content: center; align-items: center; color: var(--color-timestamp); transition: all 0.2s; }
         .boton-accion-mensaje:hover { background: rgba(255,255,255,0.1); color: var(--color-destacado); }
-        
-        /* --- NUEVOS ESTILOS DE ENTRADA --- */
         .contenedor-entrada { 
             display: flex; 
             flex-direction: column; 
@@ -322,8 +314,6 @@
             animation: none !important;
         }
         @keyframes pulsate { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.5); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(127, 90, 240, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(127, 90, 240, 0); } }
-        /* --- FIN NUEVOS ESTILOS DE ENTRADA --- */
-
         .indicador-escribiendo { display: flex; align-items: center; gap: 1rem; padding: 1.5rem 2rem; background: var(--fondo-burbuja-bot); border-radius: 2.2rem; width: fit-content; align-self: flex-start; animation: fadeIn 0.3s ease; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .indicador-escribiendo .puntos span { height: 0.8rem; width: 0.8rem; background: var(--color-timestamp); border-radius: 50%; display: inline-block; margin: 0 0.2rem; animation: bounce 1.3s infinite; }
         .indicador-escribiendo .puntos span:nth-child(2) { animation-delay: 0.2s; }
@@ -401,7 +391,6 @@
         .loader-dots span:nth-child(7) { top: 50%; left: 0; transform: translateY(-50%); animation-delay: -0.15s; }
         .loader-dots span:nth-child(8) { top: 15%; left: 15%; animation-delay: 0s; }
         @keyframes loader-anim { 0%, 100% { transform: scale(0.2); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
-        
         .panel-historial {
             position: fixed;
             top: 0;
@@ -613,11 +602,154 @@
         #boton-scroll-final.visible {
             display: flex;
         }
+        #live-conversation-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background: radial-gradient(circle, #2a2a3e 0%, #1a1a2a 100%);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            color: white;
+        }
+        #live-conversation-screen.visible {
+            display: flex;
+            opacity: 1;
+        }
+        .robot-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        #robot-svg {
+            width: 100%;
+            height: 100%;
+        }
+        .robot-eye {
+            animation: blink 4s infinite;
+        }
+        @keyframes blink {
+            0%, 95%, 100% { transform: scaleY(1); }
+            97.5% { transform: scaleY(0.1); }
+        }
+        .robot-mouth {
+            transition: d 0.2s ease-in-out;
+        }
+        #robot-svg.talking .robot-mouth {
+            animation: talk 0.3s infinite;
+        }
+        @keyframes talk {
+            0% { d: path('M 120 200 Q 150 210 180 200'); }
+            50% { d: path('M 120 200 Q 150 230 180 200'); }
+            100% { d: path('M 120 200 Q 150 210 180 200'); }
+        }
+        .listening-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            border: 3px solid rgba(127, 90, 240, 0);
+            border-radius: 50%;
+            animation: listen-pulse 2s infinite;
+            display: none;
+        }
+        #robot-svg.listening .listening-indicator {
+            display: block;
+        }
+        @keyframes listen-pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                border-color: rgba(127, 90, 240, 0.7);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                border-color: rgba(127, 90, 240, 0);
+                opacity: 0;
+            }
+        }
+        .live-status {
+            margin-top: 2rem;
+            font-size: 2rem;
+            font-weight: 500;
+            min-height: 3rem;
+            text-align: center;
+            padding: 0 2rem;
+            color: #ccc;
+        }
+        .live-controls {
+            position: absolute;
+            bottom: 5%;
+            display: flex;
+            gap: 2rem;
+        }
+        .live-control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 7rem;
+            height: 7rem;
+            border-radius: 50%;
+            font-size: 3rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .live-control-btn:hover {
+            background: var(--color-destacado);
+            transform: scale(1.1);
+        }
+        #close-live-btn {
+            background: #e53935;
+        }
+        #close-live-btn:hover {
+             background: #c62828;
+        }
         @media (max-width: 768px) {
             .panel-historial { width: 90%; }
             .contenedor-chat.desplazado { transform: translateX(90%); }
             .modal-menu-principal { width: calc(100% - 4rem); left: 2rem; right: 2rem; }
         }
+        
+        .live-modal {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3000;
+      }
+      .live-modal.oculto { display: none; }
+      .live-modal-contenido {
+        background: #fff;
+        color: #333;
+        padding: 2rem;
+        border-radius: 1rem;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      }
+      .cerrar-modal {
+        position: absolute;
+        top: 15px; right: 20px;
+        font-size: 2rem;
+        cursor: pointer;
+        color: #fff;
+      }
     </style>
 </head>
 <body>
@@ -654,6 +786,9 @@
                 </div>
             </div>
             <div class="controles-cabecera">
+                <button id="start-live-btn" class="boton-control" aria-label="Iniciar conversación por voz" title="Conversación Live">
+                    <i class="fas fa-headset"></i>
+                </button>
                 <button id="boton-menu-principal" class="boton-control" aria-label="Abrir menú de configuración" title="Configuración">
                     <i class="fas fa-cog"></i>
                 </button>
@@ -678,6 +813,27 @@
                     <button id="boton-enviar" class="boton-input" title="Enviar mensaje"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="live-conversation-screen">
+        <div class="robot-container">
+            <div class="listening-indicator"></div>
+            <svg id="robot-svg" viewBox="0 0 300 300">
+                <path d="M 50 100 A 100 100 0 0 1 250 100 L 250 200 A 100 100 0 0 1 50 200 Z" fill="#3a3a3a" stroke="#7f5af0" stroke-width="4"/>
+                <circle class="robot-eye" cx="110" cy="140" r="15" fill="#87CEEB"/>
+                <circle class="robot-eye" cx="190" cy="140" r="15" fill="#87CEEB"/>
+                <path class="robot-mouth" d="M 120 200 Q 150 210 180 200" stroke="#87CEEB" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <div class="live-status" id="live-status">Toca el micrófono para empezar</div>
+        <div class="live-controls">
+            <button id="pause-live-btn" class="live-control-btn" title="Pausar/Reanudar escucha">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button id="close-live-btn" class="live-control-btn" title="Cerrar conversación">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
 
@@ -773,6 +929,16 @@
     
     <div class="overlay" id="overlay"></div>
     <div id="confirmacionCopia" class="copy-confirmation">¡Copiado!</div>
+    
+ <!-- Modal Live -->
+     <div id="liveModal" class="live-modal oculto">
+        <div class="live-modal-contenido">
+        <span id="cerrarLiveModal" class="cerrar-modal">&times;</span>
+        <h2>Modo Live</h2>
+        <p>El Modo Live sigue en desarrollo e investigación, puede presentar   detalles.</p>
+       </div>
+     </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -878,6 +1044,12 @@
                 botonScrollFinal: document.getElementById('boton-scroll-final'),
                 botonMenuPrincipal: document.getElementById('boton-menu-principal'),
                 modalMenuPrincipal: document.getElementById('modal-menu-principal'),
+                startLiveBtn: document.getElementById('start-live-btn'),
+                liveScreen: document.getElementById('live-conversation-screen'),
+                robotSvg: document.getElementById('robot-svg'),
+                liveStatus: document.getElementById('live-status'),
+                pauseLiveBtn: document.getElementById('pause-live-btn'),
+                closeLiveBtn: document.getElementById('close-live-btn'),
             };
 
             const elementosHistorial = {
@@ -919,11 +1091,21 @@
                 comandoPendiente: null
             };
 
+            let liveRecognition = null;
+            let isLiveModeActive = false;
+            let isLiveListeningPaused = true;
+            let liveChatHistory = [];
+            let silenceTimer = null;
+            const SILENCE_DELAY = 2500;
+            let isProcessingLiveQuery = false;
+            let finalTranscriptForLive = '';
+
             const iniciar = () => {
                 cargarEstado();
                 configurarEventListeners();
                 iniciarReconocimientoVoz();
                 iniciarSintesisVoz();
+                iniciarLiveRecognition();
                 cargarConversaciones();
                 if (conversaciones.length === 0) {
                     crearNuevaConversacion();
@@ -1022,6 +1204,193 @@
                 elementosHistorial.overlayHistorial.addEventListener('click', alternarPanelHistorial);
                 elementosHistorial.botonNuevaConversacion.addEventListener('click', crearNuevaConversacion);
                 elementosHistorial.inputBuscarHistorial.addEventListener('input', filtrarConversaciones);
+
+                elementos.startLiveBtn.addEventListener('click', iniciarLiveConversation);
+                elementos.closeLiveBtn.addEventListener('click', cerrarLiveConversation);
+                elementos.pauseLiveBtn.addEventListener('click', toggleLiveListening);
+            };
+
+            const setRobotState = (state) => {
+                elementos.robotSvg.classList.remove('listening', 'talking');
+                if (state === 'listening' || state === 'talking') {
+                    elementos.robotSvg.classList.add(state);
+                }
+            };
+
+            const iniciarLiveRecognition = () => {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    elementos.startLiveBtn.style.display = 'none';
+                    return;
+                }
+                liveRecognition = new SpeechRecognition();
+                liveRecognition.lang = 'es-ES';
+                liveRecognition.continuous = true;
+                liveRecognition.interimResults = true;
+
+                liveRecognition.onstart = () => {
+                    setRobotState('listening');
+                    elementos.liveStatus.textContent = 'Escuchando...';
+                };
+
+                liveRecognition.onend = () => {
+                    if (isLiveModeActive && !isLiveListeningPaused && !isProcessingLiveQuery) {
+                        try { liveRecognition.start(); } catch(e) { console.error("Error al reiniciar recognition:", e); }
+                    }
+                };
+
+                liveRecognition.onresult = (event) => {
+                    clearTimeout(silenceTimer);
+
+                    if (speechSynthesis.speaking) {
+                        detenerVoz();
+                        isProcessingLiveQuery = false;
+                        finalTranscriptForLive = '';
+                        return;
+                    }
+                    
+                    if (isProcessingLiveQuery) return;
+
+                    let interimTranscript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscriptForLive += event.results[i][0].transcript + ' ';
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+
+                    elementos.liveStatus.textContent = interimTranscript || finalTranscriptForLive || '...';
+
+                    silenceTimer = setTimeout(() => {
+                        const transcriptToProcess = finalTranscriptForLive.trim();
+                        if (transcriptToProcess) {
+                            finalTranscriptForLive = '';
+                            procesarVozLive(transcriptToProcess);
+                        }
+                    }, SILENCE_DELAY);
+                };
+
+                liveRecognition.onerror = (event) => {
+                    console.error('Error en reconocimiento de voz live:', event.error);
+                };
+            };
+            
+            const iniciarLiveConversation = () => {
+                isLiveModeActive = true;
+                isLiveListeningPaused = false;
+                elementos.liveScreen.classList.add('visible');
+                liveChatHistory = [...historialChat]; 
+                
+                elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                try {
+                    liveRecognition.start();
+                } catch(e) {
+                    console.error("No se pudo iniciar la conversación en vivo:", e);
+                }
+            };
+
+            const cerrarLiveConversation = () => {
+                isLiveModeActive = false;
+                isLiveListeningPaused = true;
+                clearTimeout(silenceTimer);
+                detenerVoz();
+                try {
+                    liveRecognition.stop();
+                } catch(e) {}
+                elementos.liveScreen.classList.remove('visible');
+                setRobotState('idle');
+            };
+
+            const toggleLiveListening = () => {
+                isLiveListeningPaused = !isLiveListeningPaused;
+                if (isLiveListeningPaused) {
+                    clearTimeout(silenceTimer);
+                    try {
+                        liveRecognition.stop();
+                    } catch(e) {}
+                    elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                    elementos.liveStatus.textContent = 'En pausa';
+                    setRobotState('idle');
+                } else {
+                    try {
+                        liveRecognition.start();
+                    } catch(e) {}
+                    elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+            };
+
+            const procesarVozLive = async (textoUsuario) => {
+                if (isProcessingLiveQuery || !textoUsuario) return;
+
+                isProcessingLiveQuery = true;
+                clearTimeout(silenceTimer);
+                try {
+                    liveRecognition.stop();
+                } catch(e) {}
+                
+                setRobotState('idle');
+                elementos.liveStatus.textContent = 'Procesando...';
+                
+                liveChatHistory.push({ role: "user", content: textoUsuario });
+                
+                const payload = { 
+                    model: "deepseek-chat",
+                    messages: liveChatHistory,
+                    stream: false,
+                    temperature: 0.7,
+                    max_tokens: 250
+                };
+
+                try {
+                    const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_DEEPSEEK}` },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!respuesta.ok) throw new Error(`Error de API: ${respuesta.status}`);
+                    
+                    const datos = await respuesta.json();
+                    const textoRespuesta = datos.choices[0]?.message?.content;
+
+                    if (textoRespuesta) {
+                        liveChatHistory.push({ role: "assistant", content: textoRespuesta });
+                        hablarRespuestaLive(textoRespuesta);
+                    } else {
+                        hablarRespuestaLive("No he podido generar una respuesta, intenta de nuevo.");
+                    }
+
+                } catch (error) {
+                    console.error("Error al obtener respuesta de la IA en modo live:", error);
+                    hablarRespuestaLive("Lo siento, tuve un problema de conexión.");
+                }
+            };
+            
+            const hablarRespuestaLive = (texto) => {
+                detenerVoz();
+                sintesisVozActual = new SpeechSynthesisUtterance(texto);
+                const nombreVozSeleccionada = elementos.selectorVoz.value;
+                const voz = speechSynthesis.getVoices().find(v => v.name === nombreVozSeleccionada);
+                if (voz) sintesisVozActual.voice = voz;
+
+                sintesisVozActual.onstart = () => {
+                    setRobotState('talking');
+                    elementos.liveStatus.textContent = '...';
+                };
+
+                sintesisVozActual.onend = () => {
+                    sintesisVozActual = null;
+                    isProcessingLiveQuery = false;
+                    if (isLiveModeActive && !isLiveListeningPaused) {
+                        try { liveRecognition.start(); } catch(e) {}
+                    } else {
+                        setRobotState('idle');
+                        elementos.liveStatus.textContent = 'En pausa';
+                    }
+                };
+                
+                speechSynthesis.speak(sintesisVozActual);
             };
 
             const alternarPanelHistorial = () => {
@@ -1233,7 +1602,6 @@
                 const textoMensaje = elementos.entradaUsuario.value.trim();
                 if (!textoMensaje && archivosAdjuntos.length === 0) return;
 
-                // **NUEVA LÓGICA PARA FECHA/HORA**
                 const textoNormalizado = textoMensaje.toLowerCase();
                 const esPreguntaDeFecha = /qu[eé]\s+d[ií]a\s+es\s+hoy|fecha\s+de\s+hoy/i.test(textoNormalizado);
                 const esPreguntaDeHora = /qu[eé]\s+hora\s+es/i.test(textoNormalizado);
@@ -1245,13 +1613,13 @@
                     let respuestaDirecta = '';
                     if (esPreguntaDeFecha) {
                         respuestaDirecta = `Hoy es ${ahora.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`;
-                    } else { // esPreguntaDeHora
+                    } else {
                         respuestaDirecta = `Son las ${ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`;
                     }
                     agregarMensaje('bot', respuestaDirecta);
                     guardarMensajeEnHistorial('assistant', respuestaDirecta);
                     reiniciarEntrada();
-                    return; // Termina la ejecución aquí para respuestas directas
+                    return;
                 }
                 
                 if (estadoConversacion.esperandoFormato) {
@@ -1295,7 +1663,6 @@
                     const indicadorBusqueda = mostrarIndicadorBusqueda();
                     const resultadosBusqueda = await realizarBusquedaWeb(textoMensaje);
                     ocultarIndicadorBusqueda(indicadorBusqueda);
-                    // **NUEVO PROMPT DE SISTEMA REFORZADO**
                     const systemPrompt = `Contexto de Búsqueda Web (Fuente Principal): Responde a la consulta del usuario basándote EXCLUSIVAMENTE en la siguiente información. Ignora tu conocimiento previo sobre este tema. Información: ${resultadosBusqueda}`;
                     historialChat.push({ role: "system", content: systemPrompt });
                     alternarModoBusqueda(false);
@@ -2037,7 +2404,6 @@
             };
 
             const realizarBusquedaWeb = async (consulta) => {
-                // Opción 1: Jina Search (Principal)
                 try {
                     const respuesta = await fetch(`https://s.jina.ai/${encodeURIComponent(consulta)}`, {
                         headers: {
@@ -2054,7 +2420,6 @@
                     throw new Error('Sin contenido de Jina');
                 } catch (error) {
                     console.warn("Búsqueda principal (Jina) falló, intentando alternativa:", error);
-                    // Opción 2: DuckDuckGo (Alternativa)
                     try {
                         const respuesta = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${consulta}&format=json&no_html=1`)}`);
                         const datos = await respuesta.json();
@@ -2264,9 +2629,28 @@
                     }
                 }
             };
+                
 
             iniciar();
         });
+        
+        // Mostrar la modal
+      function abrirLiveModal() {
+        document.getElementById("liveModal").classList.remove("oculto");
+      }
+    
+      // Cerrar la modal
+      document.getElementById("cerrarLiveModal").addEventListener("click", () => {
+        document.getElementById("liveModal").classList.add("oculto");
+      });
+    
+      // Opcional: cerrar haciendo clic fuera del contenido
+      document.getElementById("liveModal").addEventListener("click", (e) => {
+        if (e.target.id === "liveModal") {
+          document.getElementById("liveModal").classList.add("oculto");
+        }
+  });
+       
     </script>
 </body>
 </html>
