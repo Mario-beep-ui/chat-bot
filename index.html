@@ -170,6 +170,32 @@
         }
         .burbuja-usuario { background: var(--fondo-burbuja-usuario); color: var(--texto-burbuja-usuario); border-bottom-right-radius: 0.6rem; }
         .burbuja-bot { background: var(--fondo-burbuja-bot); color: var(--texto-burbuja-bot); border: 1px solid var(--borde-burbuja-bot); border-bottom-left-radius: 0.6rem; }
+        
+        /* Estilos para la burbuja de búsqueda */
+        .mensaje-busqueda {
+            align-self: flex-start;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .burbuja-busqueda {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1.5rem 2rem;
+            background: var(--fondo-burbuja-bot);
+            color: var(--texto-burbuja-bot);
+            border: 1px solid var(--borde-burbuja-bot);
+            border-radius: 2.2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .burbuja-busqueda .fa-search {
+            animation: pulse-search 1.5s infinite;
+        }
+        @keyframes pulse-search {
+            0% { transform: scale(1); color: var(--color-destacado); }
+            50% { transform: scale(1.2); color: white; }
+            100% { transform: scale(1); color: var(--color-destacado); }
+        }
+
         .pensamiento-container { 
             background: var(--fondo-pensamiento); 
             border: 1px solid var(--borde-pensamiento); 
@@ -739,7 +765,7 @@
                 <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-language"></i></div><div class="contenido-ayuda"><div class="titulo-item">Seleccionar voz</div><div class="descripcion-item">Cambia la voz que utiliza Mar-IA para leer las respuestas en voz alta.</div></div></div>
                 <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-sun"></i></div><div class="contenido-ayuda"><div class="titulo-item">Alternar tema</div><div class="descripcion-item">Cambia entre modo claro y modo oscuro.</div></div></div>
                 <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-paint-brush"></i></div><div class="contenido-ayuda"><div class="titulo-item">Modo Picasso</div><div class="descripcion-item">Activa la generación de imágenes. Las solicitudes se convertirán en imágenes visuales.</div></div></div>
-                <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-history"></i></div><div class="contenido-ayuda"><div class="titulo-item">Historial de conversaciones</div><div class="descripcion-item">Accede a todas tus conversaciones anteriores, crea nuevas o elimina las existentes.</div></div></div>
+                <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-history"></i></div><div class="contenido-ayuda"><div class>Historial de conversaciones</div><div class="descripcion-item">Accede a todas tus conversaciones anteriores, crea nuevas o elimina las existentes.</div></div></div>
             </div>
             <button class="boton-ayuda" id="cerrar-modal-ayuda-btn"><i class="fas fa-check"></i> Entendido</button>
         </div>
@@ -750,8 +776,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const CLAVE_API_DEEPSEEK = 'sk-646a5b86d1de4ee186dfac833541452b';
-            const CLAVE_API_OCR = 'K82439722788957'; 
+            const CLAVE_API_DEEPSEEK = 'sk-646a5b86d1de4ee186dfac833541452b'; 
+            const CLAVE_API_OCR = 'K82439722788957';
             
             const ESTILOS_DOCUMENTO = {
                 'moderno': { 
@@ -1203,8 +1229,30 @@
                     pausarGeneracion();
                     return;
                 }
-                
+
                 const textoMensaje = elementos.entradaUsuario.value.trim();
+                if (!textoMensaje && archivosAdjuntos.length === 0) return;
+
+                // **NUEVA LÓGICA PARA FECHA/HORA**
+                const textoNormalizado = textoMensaje.toLowerCase();
+                const esPreguntaDeFecha = /qu[eé]\s+d[ií]a\s+es\s+hoy|fecha\s+de\s+hoy/i.test(textoNormalizado);
+                const esPreguntaDeHora = /qu[eé]\s+hora\s+es/i.test(textoNormalizado);
+
+                if (esPreguntaDeFecha || esPreguntaDeHora) {
+                    agregarMensaje('usuario', textoMensaje);
+                    guardarMensajeEnHistorial('user', textoMensaje);
+                    const ahora = new Date();
+                    let respuestaDirecta = '';
+                    if (esPreguntaDeFecha) {
+                        respuestaDirecta = `Hoy es ${ahora.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`;
+                    } else { // esPreguntaDeHora
+                        respuestaDirecta = `Son las ${ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`;
+                    }
+                    agregarMensaje('bot', respuestaDirecta);
+                    guardarMensajeEnHistorial('assistant', respuestaDirecta);
+                    reiniciarEntrada();
+                    return; // Termina la ejecución aquí para respuestas directas
+                }
                 
                 if (estadoConversacion.esperandoFormato) {
                     agregarMensaje('usuario', textoMensaje);
@@ -1239,23 +1287,27 @@
                     return;
                 }
                 
-                if (!textoMensaje && archivosAdjuntos.length === 0) return;
-                
                 cancelarProcesoCompleto = false;
-                mostrarBotonCargando();
                 
                 let contenidoMensajeUsuario = textoMensaje;
                 
                 if (modoBusqueda) {
-                    mostrarIndicador('Buscando en internet...');
+                    const indicadorBusqueda = mostrarIndicadorBusqueda();
                     const resultadosBusqueda = await realizarBusquedaWeb(textoMensaje);
-                    historialChat.push({ role: "system", content: `Contexto de Búsqueda:\n${resultadosBusqueda}` });
+                    ocultarIndicadorBusqueda(indicadorBusqueda);
+                    // **NUEVO PROMPT DE SISTEMA REFORZADO**
+                    const systemPrompt = `Contexto de Búsqueda Web (Fuente Principal): Responde a la consulta del usuario basándote EXCLUSIVAMENTE en la siguiente información. Ignora tu conocimiento previo sobre este tema. Información: ${resultadosBusqueda}`;
+                    historialChat.push({ role: "system", content: systemPrompt });
                     alternarModoBusqueda(false);
                 }
+
+                mostrarBotonCargando();
+
                 if (archivosAdjuntos.length > 0) {
                     mostrarIndicador('Procesando archivos...');
                     const contenidoAdjuntos = await procesarArchivosAdjuntos();
                     contenidoMensajeUsuario += `\n\n--- Archivos Adjuntos ---\n${contenidoAdjuntos}`;
+                    ocultarIndicador();
                 }
 
                 if(contenidoMensajeUsuario) {
@@ -1263,7 +1315,6 @@
                     guardarMensajeEnHistorial('user', contenidoMensajeUsuario);
                 }
 
-                ocultarIndicador();
                 historialChat.push({ role: "user", content: contenidoMensajeUsuario });
                 
                 const historialConsultaActual = [...historialChat];
@@ -1963,27 +2014,67 @@
                 if (indicador) indicador.remove(); 
             };
             
-            const realizarBusquedaWeb = async (consulta) => { 
-                try { 
-                    const respuesta = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${consulta}&format=json&no_html=1`)}`);
-                    const datos = await respuesta.json();
-                    const resultados = JSON.parse(datos.contents);
-                    return formatearResultadosBusqueda(resultados);
-                } catch (error) { 
-                    return "No se pudo realizar la búsqueda en internet debido a un error."; 
-                } 
-            };
-            
-            const formatearResultadosBusqueda = (resultados) => { 
-                if (!resultados || !resultados.AbstractText) return "No se encontraron resultados de búsqueda relevantes."; 
-                let formato = `**Fuente: ${resultados.AbstractSource}**\n${resultados.AbstractText}\n\n`; 
-                if (resultados.RelatedTopics?.length > 0) { 
-                    formato += "**Tópicos Relacionados:**\n"; 
-                    resultados.RelatedTopics.slice(0, 4).forEach(topico => { if (topico.Text) formato += `• ${topico.Text}\n`; }); 
-                } 
-                return formato; 
+            const mostrarIndicadorBusqueda = () => {
+                const divMensaje = document.createElement('div');
+                divMensaje.id = 'indicador-busqueda';
+                divMensaje.className = 'mensaje mensaje-busqueda';
+                divMensaje.innerHTML = `
+                    <div class="burbuja-busqueda">
+                        <i class="fas fa-search"></i>
+                        <span>Buscando en la web...</span>
+                    </div>`;
+                elementos.contenedorChat.appendChild(divMensaje);
+                irAlFinal();
+                return divMensaje;
             };
 
+            const ocultarIndicadorBusqueda = (indicador) => {
+                if (indicador) {
+                    indicador.style.transition = 'opacity 0.3s ease';
+                    indicador.style.opacity = '0';
+                    setTimeout(() => indicador.remove(), 300);
+                }
+            };
+
+            const realizarBusquedaWeb = async (consulta) => {
+                // Opción 1: Jina Search (Principal)
+                try {
+                    const respuesta = await fetch(`https://s.jina.ai/${encodeURIComponent(consulta)}`, {
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    });
+                    if (!respuesta.ok) throw new Error('Jina API falló');
+                    const textoResultados = await respuesta.text();
+                    const primerResultado = textoResultados.split('\n')[0];
+                    const datos = JSON.parse(primerResultado);
+                    if (datos && datos.data && datos.data.content) {
+                         return `**Fuente: ${datos.data.title}**\n${datos.data.content}`;
+                    }
+                    throw new Error('Sin contenido de Jina');
+                } catch (error) {
+                    console.warn("Búsqueda principal (Jina) falló, intentando alternativa:", error);
+                    // Opción 2: DuckDuckGo (Alternativa)
+                    try {
+                        const respuesta = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${consulta}&format=json&no_html=1`)}`);
+                        const datos = await respuesta.json();
+                        const resultados = JSON.parse(datos.contents);
+                        if (!resultados || !resultados.AbstractText) return "No se encontraron resultados relevantes.";
+                        let formato = `**Fuente: ${resultados.AbstractSource}**\n${resultados.AbstractText}\n\n`;
+                        if (resultados.RelatedTopics?.length > 0) {
+                            formato += "**Tópicos Relacionados:**\n";
+                            resultados.RelatedTopics.slice(0, 3).forEach(topico => {
+                                if (topico.Text) formato += `• ${topico.Text}\n`;
+                            });
+                        }
+                        return formato;
+                    } catch (errorAlternativo) {
+                        console.error("La búsqueda alternativa (DuckDuckGo) también falló:", errorAlternativo);
+                        return "Lo siento, no pude realizar la búsqueda en internet en este momento.";
+                    }
+                }
+            };
+            
             const mostrarBotonCargando = () => {
                 elementos.botonEnviar.classList.add('cargando');
                 elementos.botonEnviar.disabled = true;
@@ -2016,85 +2107,115 @@
                 restaurarBotonEnviar();
             };
 
-            const obtenerRespuestaBot = async (historialActual, debeHablar) => {
+             const obtenerRespuestaBot = async (historialActual, debeHablar) => {
                 const payload = { 
-                    model: "deepseek-chat", 
+                    model: "deepseek-chat",
                     messages: historialActual, 
                     stream: true,
                     temperature: 0.7,
                     top_p: 0.9,
-                    presence_penalty: 0.5 
+                    max_tokens: 2000
                 };
                 await streamContent(payload, debeHablar, 'Mar-IA está escribiendo...', 'dots');
             };
 
             const obtenerRespuestaMini = async (mensajes, debeHablar) => {
                 const payload = { 
-                    model: "deepseek-chat", 
+                    model: "deepseek-chat",
                     messages: mensajes, 
                     stream: true, 
-                    max_tokens: 1024,
-                    temperature: 0.7,
-                    top_p: 0.9,
-                    presence_penalty: 0.5 
+                    max_tokens: 800,
+                    temperature: 0.8,
+                    top_p: 0.95
                 };
                 await streamContent(payload, debeHablar, 'Mar-IA mini está escribiendo...', 'bolt');
             };
 
             const ejecutarFlujoSuperIA = async (historialActual, debeHablar) => {
                 const { contenidoPensamiento } = crearContenedorPensamiento();
+                
+                const historialRazonamiento = [...historialActual];
+                historialRazonamiento[historialRazonamiento.length - 1].content = 
+                    `Piensa paso a paso y razona en profundidad sobre: "${historialRazonamiento[historialRazonamiento.length - 1].content}". Genera una respuesta completa.`;
+
                 const payloadRazonamiento = { 
-                    model: "deepseek-reasoner", 
-                    messages: historialActual, 
+                    model: "deepseek-reasoner",
+                    messages: historialRazonamiento, 
                     stream: true,
-                    temperature: 0.7,
-                    top_p: 0.9,
-                    presence_penalty: 0.5
+                    temperature: 0.3,
+                    max_tokens: 4000
                 };
-                const razonamientoCompleto = await streamContent(payloadRazonamiento, false, 'SUPER MAR-IA está razonando...', 'brain', contenidoPensamiento);
-                if (cancelarProcesoCompleto || !razonamientoCompleto) { restaurarBotonEnviar(); return; }
-                guardarMensajeEnHistorial('assistant', razonamientoCompleto);
-                const historialFinal = [ ...historialActual, { role: "assistant", content: razonamientoCompleto }, { role: "user", content: "Basándote en tu razonamiento anterior, genera una respuesta final estructurada, concisa y profesional para el usuario." } ];
+                
+                const payloadRespuestaRapida = {
+                    model: "deepseek-chat",
+                    messages: [{role: "user", content: "Responde brevemente que estás procesando la solicitud con tu modo de razonamiento avanzado. Máximo 10 palabras."}],
+                    stream: true,
+                    max_tokens: 50
+                };
+                
+                await streamContent(payloadRespuestaRapida, false, 'SUPER MAR-IA está razonando...', 'brain');
+                
+                const razonamientoCompleto = await streamContent(payloadRazonamiento, false, '', '', contenidoPensamiento, true);
+                
+                if (cancelarProcesoCompleto || !razonamientoCompleto) { 
+                    restaurarBotonEnviar(); 
+                    return; 
+                }
+
+                const historialFinal = [
+                    ...historialActual, 
+                    { role: "assistant", content: razonamientoCompleto }, 
+                    { role: "user", content: "Basándote en tu razonamiento, genera una respuesta final clara, concisa y bien estructurada para el usuario." } 
+                ];
+
                 const payloadFinal = { 
-                    model: "deepseek-reasoner", 
+                    model: "deepseek-reasoner",
                     messages: historialFinal, 
                     stream: true,
-                    max_tokens: 4096,
-                    temperature: 0.7,
-                    top_p: 0.9,
-                    presence_penalty: 0.5
+                    max_tokens: 2000,
+                    temperature: 0.7
                 };
-                await streamContent(payloadFinal, debeHablar, 'SUPER MAR-IA está generando la respuesta final...', 'brain');
+
+                await streamContent(payloadFinal, debeHablar, 'Finalizando respuesta...', 'brain');
             };
 
-            const streamContent = async (payload, debeHablar, textoIndicador, iconoIndicador, elementoTarget = null) => {
+            const streamContent = async (payload, debeHablar, textoIndicador, iconoIndicador, elementoTarget = null, esPensamiento = false) => {
                 cambiarBotonAPausa();
-                mostrarIndicador(textoIndicador, iconoIndicador);
+                if (textoIndicador) mostrarIndicador(textoIndicador, iconoIndicador);
+                
                 let respuestaCompleta = "";
                 let elementoMensaje;
+
                 if (elementoTarget) {
                     elementoMensaje = elementoTarget;
                 } else {
                     const mensajeContenedor = agregarMensaje('bot', '', true);
                     elementoMensaje = mensajeContenedor.querySelector('.burbuja-mensaje');
                 }
+                
                 ocultarIndicador();
+
                 try {
                     const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_DEEPSEEK}` },
                         body: JSON.stringify(payload)
                     });
+
                     if (!respuesta.ok) throw new Error(`Error de API: ${respuesta.status}`);
+                    
                     const lector = respuesta.body.getReader();
                     const decodificador = new TextDecoder();
                     let aborted = false;
                     cancelarStreaming = () => { lector.cancel(); aborted = true; };
+
                     while (true) {
                         const { value, done } = await lector.read();
                         if (done || aborted) break;
+                        
                         const chunk = decodificador.decode(value, { stream: true });
                         const lineas = chunk.split('\n');
+
                         for (const linea of lineas) {
                             if (linea.startsWith('data: ')) {
                                 const datos = linea.substring(6);
@@ -2107,12 +2228,14 @@
                                         elementoMensaje.innerHTML = marked.parse(respuestaCompleta);
                                         irAlFinal();
                                     }
-                                } catch (e) { }
+                                } catch (e) { /* Ignorar errores de parseo de JSON en chunks incompletos */ }
                             }
                         }
                     }
+
                     formatearBloquesCodigo(elementoMensaje.parentElement);
-                    if (!aborted && !elementoTarget) {
+
+                    if (!aborted && !esPensamiento) {
                         if (respuestaCompleta.includes('[Imagen generada]')) {
                             const descImagen = respuestaCompleta.match(/\[Imagen generada\] (.*)/)[1];
                             elementoMensaje.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imagenGeneradaActual}" alt="${descImagen}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`;
@@ -2120,18 +2243,23 @@
                         historialChat.push({ role: "assistant", content: respuestaCompleta });
                         guardarMensajeEnHistorial('assistant', respuestaCompleta);
                     }
+
                     if (debeHablar && !aborted) {
                         leerTexto(elementoMensaje.innerText, elementoMensaje.closest('.mensaje')?.querySelector('.boton-voz'));
                     }
+
                     return respuestaCompleta;
+
                 } catch (error) {
                     if (error.name !== 'AbortError') {
                         elementoMensaje.innerHTML = "Lo siento, ocurrió un error al conectar con el servidor.";
-                        guardarMensajeEnHistorial('assistant', "Lo siento, ocurrió un error al conectar con el servidor.");
+                         if (!esPensamiento) {
+                            guardarMensajeEnHistorial('assistant', "Lo siento, ocurrió un error al conectar con el servidor.");
+                         }
                     }
                     return null;
                 } finally {
-                    if (!elementoTarget) {
+                    if (!esPensamiento) {
                         restaurarBotonEnviar();
                     }
                 }
