@@ -944,6 +944,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const CLAVE_API_DEEPSEEK = 'sk-646a5b86d1de4ee186dfac833541452b'; 
             const CLAVE_API_OCR = 'K82439722788957';
+            const CLAVE_API_GROQ = "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";
+
             
             const ESTILOS_DOCUMENTO = {
                 'moderno': { 
@@ -1335,7 +1337,7 @@
                 liveChatHistory.push({ role: "user", content: textoUsuario });
                 
                 const payload = { 
-                    model: "deepseek-chat",
+                    model: "llama3-8b-8192",
                     messages: liveChatHistory,
                     stream: false,
                     temperature: 0.7,
@@ -1343,9 +1345,9 @@
                 };
 
                 try {
-                    const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                    const respuesta = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_DEEPSEEK}` },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_GROQ}` },
                         body: JSON.stringify(payload)
                     });
 
@@ -2472,7 +2474,7 @@
                 restaurarBotonEnviar();
             };
 
-             const obtenerRespuestaBot = async (historialActual, debeHablar) => {
+            const obtenerRespuestaBot = async (historialActual, debeHablar) => {
                 const payload = { 
                     model: "deepseek-chat",
                     messages: historialActual, 
@@ -2481,23 +2483,26 @@
                     top_p: 0.9,
                     max_tokens: 2000
                 };
-                await streamContent(payload, debeHablar, 'Mar-IA está escribiendo...', 'dots');
+                const apiConfig = { url: 'https://api.deepseek.com/v1/chat/completions', key: CLAVE_API_DEEPSEEK };
+                await streamContent(payload, apiConfig, debeHablar, 'Mar-IA está escribiendo...', 'dots');
             };
 
             const obtenerRespuestaMini = async (mensajes, debeHablar) => {
                 const payload = { 
-                    model: "deepseek-chat",
+                    model: "llama3-8b-8192",
                     messages: mensajes, 
                     stream: true, 
                     max_tokens: 800,
                     temperature: 0.8,
                     top_p: 0.95
                 };
-                await streamContent(payload, debeHablar, 'Mar-IA mini está escribiendo...', 'bolt');
+                const apiConfig = { url: 'https://api.groq.com/openai/v1/chat/completions', key: CLAVE_API_GROQ };
+                await streamContent(payload, apiConfig, debeHablar, 'Mar-IA mini está escribiendo...', 'bolt');
             };
 
             const ejecutarFlujoSuperIA = async (historialActual, debeHablar) => {
                 const { contenidoPensamiento } = crearContenedorPensamiento();
+                const apiConfigDeepSeek = { url: 'https://api.deepseek.com/v1/chat/completions', key: CLAVE_API_DEEPSEEK };
                 
                 const historialRazonamiento = [...historialActual];
                 historialRazonamiento[historialRazonamiento.length - 1].content = 
@@ -2518,9 +2523,9 @@
                     max_tokens: 50
                 };
                 
-                await streamContent(payloadRespuestaRapida, false, 'SUPER MAR-IA está razonando...', 'brain');
+                await streamContent(payloadRespuestaRapida, apiConfigDeepSeek, false, 'SUPER MAR-IA está razonando...', 'brain');
                 
-                const razonamientoCompleto = await streamContent(payloadRazonamiento, false, '', '', contenidoPensamiento, true);
+                const razonamientoCompleto = await streamContent(payloadRazonamiento, apiConfigDeepSeek, false, '', '', contenidoPensamiento, true);
                 
                 if (cancelarProcesoCompleto || !razonamientoCompleto) { 
                     restaurarBotonEnviar(); 
@@ -2541,10 +2546,10 @@
                     temperature: 0.7
                 };
 
-                await streamContent(payloadFinal, debeHablar, 'Finalizando respuesta...', 'brain');
+                await streamContent(payloadFinal, apiConfigDeepSeek, debeHablar, 'Finalizando respuesta...', 'brain');
             };
 
-            const streamContent = async (payload, debeHablar, textoIndicador, iconoIndicador, elementoTarget = null, esPensamiento = false) => {
+            const streamContent = async (payload, apiConfig, debeHablar, textoIndicador, iconoIndicador, elementoTarget = null, esPensamiento = false) => {
                 cambiarBotonAPausa();
                 if (textoIndicador) mostrarIndicador(textoIndicador, iconoIndicador);
                 
@@ -2561,9 +2566,9 @@
                 ocultarIndicador();
 
                 try {
-                    const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                    const respuesta = await fetch(apiConfig.url, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_DEEPSEEK}` },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiConfig.key}` },
                         body: JSON.stringify(payload)
                     });
 
