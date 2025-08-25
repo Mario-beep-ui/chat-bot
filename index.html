@@ -632,22 +632,22 @@
             height: 100%;
         }
         .robot-eye {
-            animation: blink 4s infinite;
+            animation: blink 4s infinite ease-in-out;
+            transform-origin: center;
         }
         @keyframes blink {
             0%, 95%, 100% { transform: scaleY(1); }
-            97.5% { transform: scaleY(0.1); }
+            97.5% { transform: scaleY(0.05); }
         }
         .robot-mouth {
             transition: d 0.2s ease-in-out;
         }
         #robot-svg.talking .robot-mouth {
-            animation: talk 0.3s infinite;
+            animation: talk 0.4s infinite ease-in-out;
         }
         @keyframes talk {
-            0% { d: path('M 120 200 Q 150 210 180 200'); }
-            50% { d: path('M 120 200 Q 150 230 180 200'); }
-            100% { d: path('M 120 200 Q 150 210 180 200'); }
+            0%, 100% { d: path('M 120 200 Q 150 210 180 200'); }
+            50% { d: path('M 125 205 Q 150 230 175 205'); }
         }
         .listening-indicator {
             position: absolute;
