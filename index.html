@@ -15,40 +15,40 @@
     <style>
         :root {
             font-size: 62.5%;
-            --color-fondo: #1a1a1a;
-            --color-contenedor: #242424;
-            --color-texto: #f0f0f0;
-            --fondo-burbuja-usuario: linear-gradient(135deg, #7f5af0, #5623c4);
+            --color-fondo: #120A1F;
+            --color-contenedor: #1A1128;
+            --color-texto: #E8E6F0;
+            --fondo-burbuja-usuario: linear-gradient(135deg, #9D4EDD, #7B2CBF);
             --texto-burbuja-usuario: #ffffff;
-            --fondo-burbuja-bot: #3a3a3a;
-            --texto-burbuja-bot: #f0f0f0;
-            --borde-burbuja-bot: rgba(255, 255, 255, 0.1);
-            --fondo-entrada: #242424;
-            --borde-superior-entrada: rgba(255, 255, 255, 0.1);
-            --fondo-campo-entrada: #3a3a3a;
+            --fondo-burbuja-bot: #2D233E;
+            --texto-burbuja-bot: #E8E6F0;
+            --borde-burbuja-bot: #4A3B69;
+            --fondo-entrada: #1A1128;
+            --borde-superior-entrada: #4A3B69;
+            --fondo-campo-entrada: #241A35;
             --texto-entrada: #ffffff;
-            --texto-placeholder: #a0a0a0;
-            --fondo-boton-enviar: #7f5af0;
+            --texto-placeholder: #9CA3AF;
+            --fondo-boton-enviar: #9D4EDD;
             --texto-boton-enviar: white;
-            --fondo-boton-accion: #3a3a3a;
-            --texto-boton-accion: #f0f0f0;
-            --fondo-boton-grabando: #e53935;
-            --color-timestamp: #a0a0a0;
-            --fondo-boton-control: #3a3a3a;
-            --fondo-adjunto: #3a3a3a;
-            --borde-adjunto: #555;
-            --fondo-codigo: rgba(0,0,0,0.5);
-            --borde-codigo: rgba(255,255,255,0.1);
-            --fondo-boton-buscar-activo: #2dce89;
-            --fondo-pensamiento: #3c2a54; /* Púrpura más profundo para el pensamiento */
-            --borde-pensamiento: #5a4a7a;
-            --fondo-pensamiento-hover: #4a3a6a;
-            --color-destacado: #7f5af0;
-            --resaltado-pensamiento: rgba(199, 146, 234, 0.1); /* Resaltado púrpura claro */
-            --fondo-modal-imagen: rgba(0,0,0,0.95);
+            --fondo-boton-accion: #2D233E;
+            --texto-boton-accion: #E8E6F0;
+            --fondo-boton-grabando: #EF4444;
+            --color-timestamp: #B8B0D0;
+            --fondo-boton-control: #2D233E;
+            --fondo-adjunto: #2D233E;
+            --borde-adjunto: #4A3B69;
+            --fondo-codigo: #160B2E;
+            --borde-codigo: #4A3B69;
+            --fondo-boton-buscar-activo: #10B981;
+            --fondo-pensamiento: #251838;
+            --borde-pensamiento: #4A3B69;
+            --fondo-pensamiento-hover: #2E1F45;
+            --color-destacado: #C77DFF;
+            --resaltado-pensamiento: rgba(157, 78, 221, 0.1);
+            --fondo-modal-imagen: rgba(18, 10, 31, 0.95);
             --color-mini: #ff9800;
-            --fondo-generando-imagen: #7f5af0;
-            --sombra: 0 10px 20px rgba(0,0,0,0.2), 0 6px 6px rgba(0,0,0,0.23);
+            --fondo-generando-imagen: #9D4EDD;
+            --sombra: 0 10px 20px rgba(0,0,0,0.4), 0 6px 6px rgba(0,0,0,0.3);
         }
         body.tema-claro {
             --color-fondo: #f4f7f9;
@@ -145,7 +145,7 @@
             background: transparent;
             z-index: 10;
         }
-        .super-ia-gradient { background: linear-gradient(90deg, #7f5af0, #ff8c42, #87CEEB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; -webkit-text-fill-color: transparent; animation: gradient-animation 5s ease-infinite; background-size: 200% 200%; }
+        .super-ia-gradient { background: linear-gradient(90deg, #9D4EDD, #ff8c42, #87CEEB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; -webkit-text-fill-color: transparent; animation: gradient-animation 5s ease-infinite; background-size: 200% 200%; }
         .mini-ia-gradient { background: linear-gradient(90deg, #ff9800, #ffeb3b, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; -webkit-text-fill-color: transparent; animation: gradient-animation 3s ease-infinite; background-size: 200% 200%; }
         @keyframes gradient-animation { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .cabecera .subtitle { font-size: 1.3rem; opacity: 0.8; color: #aaa; margin-top: 0.2rem; }
@@ -224,7 +224,7 @@
         .pensamiento-cabecera-clickable { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; cursor: pointer; transition: background-color 0.2s; }
         .pensamiento-cabecera-clickable:hover { background-color: var(--fondo-pensamiento-hover); }
         .pensamiento-titulo { font-weight: 600; color: var(--color-texto); display: flex; align-items: center; gap: 1rem; font-size: 1.6rem; }
-        .pensamiento-titulo i { color: #c792ea; } 
+        .pensamiento-titulo i { color: #C77DFF; } 
         .pensamiento-controles-cabecera { display: flex; align-items: center; gap: 1.5rem; }
         .tiempo-pensamiento { font-size: 1.2rem; color: var(--color-timestamp); }
         .toggle-icon { font-size: 2rem; color: var(--color-timestamp); transition: transform 0.3s ease; }
@@ -270,7 +270,7 @@
             transition: all 0.3s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        .contenedor-entrada:focus-within { border-color: var(--color-destacado); box-shadow: 0 0 0 3px rgba(127, 90, 240, 0.3); }
+        .contenedor-entrada:focus-within { border-color: var(--color-destacado); box-shadow: 0 0 0 3px rgba(157, 78, 221, 0.3); }
         .contenedor-adjuntos { display: none; overflow-x: auto; overflow-y: hidden; white-space: nowrap; padding-bottom: 1rem; scrollbar-width: thin; border-bottom: 1px solid var(--borde-adjunto); margin-bottom: 0.5rem;}
         .adjunto-item { display: inline-flex; align-items: center; gap: 1rem; background: var(--fondo-adjunto); border: 1px solid var(--borde-adjunto); border-radius: 1.5rem; padding: 1rem 1.5rem; max-width: 25rem; margin-right: 1.2rem; }
         .icono-adjunto { font-size: 2.2rem; color: var(--color-destacado); }
@@ -333,7 +333,7 @@
             color: white !important;
             animation: none !important;
         }
-        @keyframes pulsate { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.5); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(127, 90, 240, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(127, 90, 240, 0); } }
+        @keyframes pulsate { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(157, 78, 221, 0.5); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(157, 78, 221, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(157, 78, 221, 0); } }
         .indicador-escribiendo { display: flex; align-items: center; gap: 1rem; padding: 1.5rem 2rem; background: var(--fondo-burbuja-bot); border-radius: 2.2rem; width: fit-content; align-self: flex-start; animation: fadeIn 0.3s ease; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .indicador-escribiendo .puntos span { height: 0.8rem; width: 0.8rem; background: var(--color-timestamp); border-radius: 50%; display: inline-block; margin: 0 0.2rem; animation: bounce 1.3s infinite; }
         .indicador-escribiendo .puntos span:nth-child(2) { animation-delay: 0.2s; }
@@ -628,7 +628,7 @@
             left: 0;
             width: 100%;
             height: 100dvh;
-            background: radial-gradient(circle, #2a2a3e 0%, #1a1a2a 100%);
+            background: radial-gradient(circle, #2D233E 0%, #120A1F 100%);
             z-index: 9999;
             display: none;
             flex-direction: column;
@@ -962,14 +962,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- NEW: API Key for NewsAPI ---
-            // IMPORTANT: Replace 'TU_API_KEY' with your actual key from newsapi.org
-            const CLAVE_API_NEWS = '4e3d9a0bd89e4253a16fd90f8a196089'; 
+            
+            const API_KEYS = {
+                GEMINI: 'AIzaSyCJ_JioAHSxLvyZG7XcGeWYyUJWR5_wj60',
+                DEEPSEEK: 'sk-646a5b86d1de4ee186dfac833541452b',
+                META: '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', 
+                NEWS: '4e3d9a0bd89e4253a16fd90f8a196089',
+                OCR: 'K82439722788957'
+            };
 
-            const CLAVE_API_DEEPSEEK = 'sk-646a5b86d1de4ee186dfac833541452b'; 
-            const CLAVE_API_OCR = 'K82439722788957';
-            const CLAVE_API_GROQ = "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";
-
+            const CLAVE_API_NEWS = API_KEYS.NEWS; 
+            const CLAVE_API_DEEPSEEK = API_KEYS.DEEPSEEK; 
+            const CLAVE_API_OCR = API_KEYS.OCR;
             
             const ESTILOS_DOCUMENTO = {
                 'moderno': { 
@@ -1117,21 +1121,18 @@
                 comandoPendiente: null
             };
 
+            // Variables para Live Mode con Web Speech
             let liveRecognition = null;
             let isLiveModeActive = false;
             let isLiveListeningPaused = true;
             let liveChatHistory = [];
-            let silenceTimer = null;
-            const SILENCE_DELAY = 2500;
             let isProcessingLiveQuery = false;
-            let finalTranscriptForLive = '';
 
             const iniciar = () => {
                 cargarEstado();
                 configurarEventListeners();
                 iniciarReconocimientoVoz();
                 iniciarSintesisVoz();
-                iniciarLiveRecognition();
                 cargarConversaciones();
                 if (conversaciones.length === 0) {
                     crearNuevaConversacion();
@@ -1243,87 +1244,88 @@
                 }
             };
 
-            const iniciarLiveRecognition = () => {
+            const iniciarLiveConversation = () => {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (!SpeechRecognition) {
-                    elementos.startLiveBtn.style.display = 'none';
+                    alert("Tu navegador no soporta Web Speech API.");
                     return;
                 }
+
+                isLiveModeActive = true;
+                isLiveListeningPaused = false;
+                elementos.liveScreen.classList.add('visible');
+                liveChatHistory = [...historialChat]; 
+                elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
                 liveRecognition = new SpeechRecognition();
                 liveRecognition.lang = 'es-ES';
                 liveRecognition.continuous = true;
                 liveRecognition.interimResults = true;
 
                 liveRecognition.onstart = () => {
-                    setRobotState('listening');
-                    elementos.liveStatus.textContent = 'Escuchando...';
-                };
-
-                liveRecognition.onend = () => {
-                    if (isLiveModeActive && !isLiveListeningPaused && !isProcessingLiveQuery) {
-                        try { liveRecognition.start(); } catch(e) { console.error("Error al reiniciar recognition:", e); }
+                    if (!isProcessingLiveQuery && !sintesisVozActual) {
+                        setRobotState('listening');
+                        elementos.liveStatus.textContent = 'Escuchando...';
                     }
                 };
 
-                liveRecognition.onresult = (event) => {
-                    clearTimeout(silenceTimer);
+                liveRecognition.onresult = async (event) => {
+                    if (isProcessingLiveQuery || (sintesisVozActual && speechSynthesis.speaking)) return;
 
-                    if (speechSynthesis.speaking) {
-                        detenerVoz();
-                        isProcessingLiveQuery = false;
-                        finalTranscriptForLive = '';
-                        return;
-                    }
-                    
-                    if (isProcessingLiveQuery) return;
-
+                    let finalTranscript = '';
                     let interimTranscript = '';
+
                     for (let i = event.resultIndex; i < event.results.length; ++i) {
                         if (event.results[i].isFinal) {
-                            finalTranscriptForLive += event.results[i][0].transcript + ' ';
+                            finalTranscript += event.results[i][0].transcript;
                         } else {
                             interimTranscript += event.results[i][0].transcript;
                         }
                     }
 
-                    elementos.liveStatus.textContent = interimTranscript || finalTranscriptForLive || '...';
+                    if (interimTranscript) {
+                        elementos.liveStatus.textContent = interimTranscript;
+                        setRobotState('listening');
+                    }
 
-                    silenceTimer = setTimeout(() => {
-                        const transcriptToProcess = finalTranscriptForLive.trim();
-                        if (transcriptToProcess) {
-                            finalTranscriptForLive = '';
-                            procesarVozLive(transcriptToProcess);
-                        }
-                    }, SILENCE_DELAY);
+                    if (finalTranscript) {
+                        elementos.liveStatus.textContent = finalTranscript;
+                        isProcessingLiveQuery = true;
+                        setRobotState('thinking'); 
+                        try { liveRecognition.stop(); } catch(e) {} // Stop temporarily
+                        await procesarVozLive(finalTranscript);
+                    }
                 };
 
                 liveRecognition.onerror = (event) => {
-                    console.error('Error en reconocimiento de voz live:', event.error);
+                    console.log('Error Speech:', event.error);
                 };
-            };
-            
-            const iniciarLiveConversation = () => {
-                isLiveModeActive = true;
-                isLiveListeningPaused = false;
-                elementos.liveScreen.classList.add('visible');
-                liveChatHistory = [...historialChat]; 
-                
-                elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+                liveRecognition.onend = () => {
+                    if (isLiveModeActive && !isLiveListeningPaused && !isProcessingLiveQuery) {
+                        try {
+                            liveRecognition.start();
+                        } catch(e) { }
+                    }
+                };
+
                 try {
                     liveRecognition.start();
                 } catch(e) {
-                    console.error("No se pudo iniciar la conversación en vivo:", e);
+                    console.error("Error al iniciar reconocimiento:", e);
                 }
             };
 
             const cerrarLiveConversation = () => {
                 isLiveModeActive = false;
                 isLiveListeningPaused = true;
-                clearTimeout(silenceTimer);
                 detenerVoz();
-                try {
-                    liveRecognition.stop();
-                } catch(e) {}
+                
+                if (liveRecognition) {
+                    try { liveRecognition.stop(); } catch(e) {}
+                    liveRecognition = null;
+                }
+                
                 elementos.liveScreen.classList.remove('visible');
                 setRobotState('idle');
             };
@@ -1331,51 +1333,38 @@
             const toggleLiveListening = () => {
                 isLiveListeningPaused = !isLiveListeningPaused;
                 if (isLiveListeningPaused) {
-                    clearTimeout(silenceTimer);
-                    try {
-                        liveRecognition.stop();
-                    } catch(e) {}
+                    if (liveRecognition) try { liveRecognition.stop(); } catch(e) {}
                     elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-microphone"></i>';
                     elementos.liveStatus.textContent = 'En pausa';
                     setRobotState('idle');
                 } else {
-                    try {
-                        liveRecognition.start();
-                    } catch(e) {}
                     elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    elementos.liveStatus.textContent = 'Escuchando...';
+                    try { liveRecognition.start(); } catch(e) {}
                 }
             };
 
             const procesarVozLive = async (textoUsuario) => {
-                if (isProcessingLiveQuery || !textoUsuario) return;
+                if (!textoUsuario) return;
 
-                isProcessingLiveQuery = true;
-                clearTimeout(silenceTimer);
-                try {
-                    liveRecognition.stop();
-                } catch(e) {}
-                
-                setRobotState('idle');
-                elementos.liveStatus.textContent = 'Procesando...';
-                
                 liveChatHistory.push({ role: "user", content: textoUsuario });
                 
                 const payload = { 
-                    model: "llama3-8b-8192",
+                    model: "deepseek-chat", 
                     messages: liveChatHistory,
                     stream: false,
-                    temperature: 0.7,
-                    max_tokens: 250
+                    temperature: 0.6,
+                    max_tokens: 300
                 };
 
                 try {
-                    const respuesta = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_GROQ}` },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
                         body: JSON.stringify(payload)
                     });
 
-                    if (!respuesta.ok) throw new Error(`Error de API: ${respuesta.status}`);
+                    if (!respuesta.ok) throw new Error(`Error de API DeepSeek`);
                     
                     const datos = await respuesta.json();
                     const textoRespuesta = datos.choices[0]?.message?.content;
@@ -1384,11 +1373,11 @@
                         liveChatHistory.push({ role: "assistant", content: textoRespuesta });
                         hablarRespuestaLive(textoRespuesta);
                     } else {
-                        hablarRespuestaLive("No he podido generar una respuesta, intenta de nuevo.");
+                        hablarRespuestaLive("No he podido generar una respuesta.");
                     }
 
                 } catch (error) {
-                    console.error("Error al obtener respuesta de la IA en modo live:", error);
+                    console.error("Error DeepSeek Live:", error);
                     hablarRespuestaLive("Lo siento, tuve un problema de conexión.");
                 }
             };
@@ -1409,6 +1398,8 @@
                     sintesisVozActual = null;
                     isProcessingLiveQuery = false;
                     if (isLiveModeActive && !isLiveListeningPaused) {
+                        setRobotState('idle');
+                        elementos.liveStatus.textContent = 'Escuchando...';
                         try { liveRecognition.start(); } catch(e) {}
                     } else {
                         setRobotState('idle');
@@ -1630,7 +1621,6 @@
                 const textoMensaje = elementos.entradaUsuario.value.trim();
                 if (!textoMensaje && archivosAdjuntos.length === 0) return;
 
-                // --- START: MODIFIED/INTEGRATED LOGIC ---
                 agregarMensaje('usuario', textoMensaje);
                 guardarMensajeEnHistorial('user', textoMensaje);
                 
@@ -1652,7 +1642,6 @@
                     }
                     alternarModoBusqueda(false);
                 }
-                // --- END: MODIFIED/INTEGRATED LOGIC ---
 
                 const textoNormalizado = textoMensaje.toLowerCase();
                 const esPreguntaDeFecha = /qu[eé]\s+d[ií]a\s+es\s+hoy|fecha\s+de\s+hoy/i.test(textoNormalizado);
@@ -1714,8 +1703,7 @@
                     ocultarIndicador();
                 }
 
-                if(contenidoMensajeUsuario && !modoBusqueda) { // Avoid adding the user message twice if search was used
-                    // The user message is now added before the search logic
+                if(contenidoMensajeUsuario && !modoBusqueda) { 
                 }
 
                 historialChat.push({ role: "user", content: contenidoMensajeUsuario });
@@ -1815,7 +1803,7 @@
 
                         const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_DEEPSEEK}` },
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
                             body: JSON.stringify(payload)
                         });
 
@@ -1868,7 +1856,7 @@
 
                     const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_DEEPSEEK}` },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
                         body: JSON.stringify(payload)
                     });
 
@@ -2005,7 +1993,7 @@
                 try {
                     const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CLAVE_API_DEEPSEEK}` },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
                         body: JSON.stringify(payload)
                     });
                     if (!respuesta.ok) return prompt;
@@ -2124,7 +2112,6 @@
                 return divMensaje;
             };
 
-            // --- NEW: Function to add the search source message ---
             const agregarMensajeFuente = (fuente) => {
                 const divMensaje = document.createElement('div');
                 divMensaje.className = 'mensaje-fuente';
@@ -2453,14 +2440,9 @@
                 }
             };
 
-            // ===================================================================
-            // NEW/MODIFIED FUNCTION: realizarBusquedaEnTiempoReal
-            // This function implements the requested 3-step search logic.
-            // ===================================================================
             const realizarBusquedaEnTiempoReal = async (consulta) => {
                 // 1. DuckDuckGo
                 try {
-                    // Using a CORS proxy to avoid browser blocks on the DuckDuckGo API
                     const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${consulta}&format=json&no_html=1`)}`;
                     const response = await fetch(url);
                     if (!response.ok) throw new Error('DuckDuckGo proxy response not OK');
@@ -2473,7 +2455,7 @@
                     console.error('Error en DuckDuckGo:', error);
                 }
 
-                // 2. Wikipedia (if DuckDuckGo fails)
+                // 2. Wikipedia
                 try {
                     const url = `https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(consulta)}`;
                     const response = await fetch(url, { headers: {'Api-User-Agent': 'Mar-IA_Assistant/1.0'} });
@@ -2487,7 +2469,7 @@
                     console.error('Error en Wikipedia:', error);
                 }
 
-                // 3. NewsAPI (if Wikipedia fails)
+                // 3. NewsAPI
                 if (CLAVE_API_NEWS && CLAVE_API_NEWS !== 'TU_API_KEY') {
                     try {
                         const url = `https://newsapi.org/v2/top-headlines?q=${encodeURIComponent(consulta)}&language=es&pageSize=1&apiKey=${CLAVE_API_NEWS}`;
@@ -2503,7 +2485,7 @@
                     console.warn('NewsAPI key not provided. Skipping news search.');
                 }
 
-                return null; // No results from any source
+                return null;
             };
             
             const mostrarBotonCargando = () => {
@@ -2547,26 +2529,77 @@
                     top_p: 0.9,
                     max_tokens: 2000
                 };
-                const apiConfig = { url: 'https://api.deepseek.com/v1/chat/completions', key: CLAVE_API_DEEPSEEK };
+                const apiConfig = { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK };
                 await streamContent(payload, apiConfig, debeHablar, 'Mar-IA está escribiendo...', 'dots');
             };
 
+            // Implementación MAR-IA MINI (Gemini Flash con Meta Fallback)
             const obtenerRespuestaMini = async (mensajes, debeHablar) => {
+                cambiarBotonAPausa();
+                mostrarIndicador('Mar-IA mini está escribiendo...', 'bolt');
+                
+                const ultimoMensaje = mensajes[mensajes.length - 1].content;
+                const systemInstruction = "Eres Mar-IA mini. Responde de forma ultra rápida y breve (máximo 2 oraciones).";
+
+                const payload = {
+                    contents: [{
+                        parts: [{ text: systemInstruction + "\n\nConsulta: " + ultimoMensaje }]
+                    }]
+                };
+
+                try {
+                    const controller = new AbortController();
+                    // Timeout de 2000ms para asegurar brevedad y fallo rápido
+                    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+
+                    if (!response.ok) throw new Error(response.statusText);
+                    
+                    const data = await response.json();
+                    const texto = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    
+                    if (!texto) throw new Error("Respuesta vacía de Gemini");
+
+                    historialChat.push({ role: "assistant", content: texto });
+                    guardarMensajeEnHistorial('assistant', texto);
+                    
+                    ocultarIndicador();
+                    const mensajeContenedor = agregarMensaje('bot', texto); 
+                    if (debeHablar) leerTexto(texto, mensajeContenedor.querySelector('.boton-voz'));
+                    
+                } catch (error) {
+                    console.warn("Gemini falló o excedió tiempo, activando Meta Fallback...", error);
+                    await obtenerRespuestaMetaFallback(mensajes, debeHablar);
+                } finally {
+                    restaurarBotonEnviar();
+                }
+            };
+            
+            // Función Fallback usando Meta (vía Groq/Llama)
+            const obtenerRespuestaMetaFallback = async (mensajes, debeHablar) => {
                 const payload = { 
-                    model: "llama3-8b-8192",
+                    model: "llama3-8b-8192", // Meta Model via Groq
                     messages: mensajes, 
                     stream: true, 
-                    max_tokens: 800,
+                    max_tokens: 200,
                     temperature: 0.8,
                     top_p: 0.95
                 };
-                const apiConfig = { url: 'https://api.groq.com/openai/v1/chat/completions', key: CLAVE_API_GROQ };
-                await streamContent(payload, apiConfig, debeHablar, 'Mar-IA mini está escribiendo...', 'bolt', null, false, 10);
+                const apiConfig = { url: 'https://api.groq.com/openai/v1/chat/completions', key: API_KEYS.META };
+                await streamContent(payload, apiConfig, debeHablar, 'Mar-IA mini (Meta) escribiendo...', 'bolt', null, false, 10);
             };
 
             const ejecutarFlujoSuperIA = async (historialActual, debeHablar) => {
                 const { contenidoPensamiento, wrapper } = crearContenedorPensamiento();
-                const apiConfigDeepSeek = { url: 'https://api.deepseek.com/v1/chat/completions', key: CLAVE_API_DEEPSEEK };
+                const apiConfigDeepSeek = { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK };
                 
                 const historialRazonamiento = [...historialActual];
                 const ultimaPregunta = historialRazonamiento[historialRazonamiento.length - 1].content;
