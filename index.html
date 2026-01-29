@@ -84,67 +84,16 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         html { height: 100%; }
-        body { 
-            height: 100dvh;
-            background: var(--color-fondo); 
-            color: var(--color-texto); 
-            font-size: 1.6rem; 
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .contenedor {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            background: var(--color-contenedor);
-            flex: 1;
-            min-height: 0;
-            overflow: hidden;
-            position: relative;
-        }
-        .cabecera { 
-            flex-shrink: 0;
-            padding: 1.5rem 2rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            z-index: 10;
-            background: var(--color-contenedor);
-            border-bottom: 1px solid var(--borde-superior-entrada);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+        body { height: 100dvh; background: var(--color-fondo); color: var(--color-texto); font-size: 1.6rem; display: flex; flex-direction: column; overflow: hidden; }
+        .contenedor { display: flex; flex-direction: column; width: 100%; background: var(--color-contenedor); flex: 1; min-height: 0; overflow: hidden; position: relative; }
+        .cabecera { flex-shrink: 0; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; z-index: 10; background: var(--color-contenedor); border-bottom: 1px solid var(--borde-superior-entrada); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .cabecera .titulo { display: flex; align-items: center; gap: 1.2rem; }
-        .cabecera .titulo .fa-robot {
-            font-size: 3rem;
-            color: var(--color-destacado);
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-4px); }
-            100% { transform: translateY(0px); }
-        }
+        .cabecera .titulo .fa-robot { font-size: 3rem; color: var(--color-destacado); animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0px); } }
         .cabecera .titulo h1 { font-size: 2.2rem; font-weight: 700; margin: 0; cursor: pointer; transition: all 0.3s; position: relative; color: var(--color-destacado); }
-        .contenedor-chat { 
-            flex-grow: 1;
-            overflow-y: auto; 
-            padding: 2rem; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 2.5rem; 
-            scroll-behavior: smooth; 
-            transition: transform 0.3s ease-in-out;
-        }
-        .contenedor-chat.desplazado {
-            transform: translateX(320px);
-        }
-        .contenedor-entrada-wrapper { 
-            flex-shrink: 0;
-            padding: 1.5rem 2rem; 
-            background: transparent;
-            z-index: 10;
-        }
+        .contenedor-chat { flex-grow: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 2.5rem; scroll-behavior: smooth; transition: transform 0.3s ease-in-out; }
+        .contenedor-chat.desplazado { transform: translateX(320px); }
+        .contenedor-entrada-wrapper { flex-shrink: 0; padding: 1.5rem 2rem; background: transparent; z-index: 10; }
         .super-ia-gradient { background: linear-gradient(90deg, #9D4EDD, #ff8c42, #87CEEB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; -webkit-text-fill-color: transparent; animation: gradient-animation 5s ease-infinite; background-size: 200% 200%; }
         .mini-ia-gradient { background: linear-gradient(90deg, #ff9800, #ffeb3b, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; -webkit-text-fill-color: transparent; animation: gradient-animation 3s ease-infinite; background-size: 200% 200%; }
         @keyframes gradient-animation { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
@@ -156,70 +105,16 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(1.5rem); } to { opacity: 1; transform: translateY(0); } }
         .mensaje-usuario { align-self: flex-end; align-items: flex-end; }
         .mensaje-bot { align-self: flex-start; align-items: flex-start; }
-        .burbuja-mensaje { 
-            padding: 1.5rem 2rem; 
-            border-radius: 2.2rem; 
-            line-height: 1.7; 
-            word-wrap: break-word; 
-            max-width: 100%; 
-            height: auto;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+        .burbuja-mensaje { padding: 1.5rem 2rem; border-radius: 2.2rem; line-height: 1.7; word-wrap: break-word; max-width: 100%; height: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .burbuja-usuario { background: var(--fondo-burbuja-usuario); color: var(--texto-burbuja-usuario); border-bottom-right-radius: 0.6rem; }
         .burbuja-bot { background: var(--fondo-burbuja-bot); color: var(--texto-burbuja-bot); border: 1px solid var(--borde-burbuja-bot); border-bottom-left-radius: 0.6rem; }
-        
-        /* NEW: Styles for the search source info message */
-        .mensaje-fuente {
-            align-self: flex-start;
-            margin-bottom: -1.5rem; /* Pull the next message up */
-            margin-left: 1rem;
-            font-size: 1.3rem;
-            color: var(--color-timestamp);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .mensaje-busqueda {
-            align-self: flex-start;
-            animation: fadeIn 0.4s ease-out;
-        }
-        .burbuja-busqueda {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-            padding: 1.5rem 2rem;
-            background: var(--fondo-burbuja-bot);
-            color: var(--texto-burbuja-bot);
-            border: 1px solid var(--borde-burbuja-bot);
-            border-radius: 2.2rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .burbuja-busqueda .fa-search {
-            animation: pulse-search 1.5s infinite;
-        }
-        @keyframes pulse-search {
-            0% { transform: scale(1); color: var(--color-destacado); }
-            50% { transform: scale(1.2); color: white; }
-            100% { transform: scale(1); color: var(--color-destacado); }
-        }
-        .pensamiento-container { 
-            background: var(--fondo-pensamiento); 
-            border: 1px solid var(--borde-pensamiento); 
-            border-radius: 1.6rem; 
-            animation: slideIn 0.4s ease-out; 
-            overflow: hidden; 
-            width: 100%;
-            box-shadow: var(--sombra);
-            border-bottom-left-radius: 0.6rem;
-            border-bottom-right-radius: 0.6rem;
-        }
-        .burbuja-bot.respuesta-adjunta {
-            margin-top: -1px; 
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
+        .mensaje-fuente { align-self: flex-start; margin-bottom: -1.5rem; margin-left: 1rem; font-size: 1.3rem; color: var(--color-timestamp); display: flex; align-items: center; gap: 0.8rem; animation: fadeIn 0.4s ease-out; }
+        .mensaje-busqueda { align-self: flex-start; animation: fadeIn 0.4s ease-out; }
+        .burbuja-busqueda { display: flex; align-items: center; gap: 1.2rem; padding: 1.5rem 2rem; background: var(--fondo-burbuja-bot); color: var(--texto-burbuja-bot); border: 1px solid var(--borde-burbuja-bot); border-radius: 2.2rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .burbuja-busqueda .fa-search { animation: pulse-search 1.5s infinite; }
+        @keyframes pulse-search { 0% { transform: scale(1); color: var(--color-destacado); } 50% { transform: scale(1.2); color: white; } 100% { transform: scale(1); color: var(--color-destacado); } }
+        .pensamiento-container { background: var(--fondo-pensamiento); border: 1px solid var(--borde-pensamiento); border-radius: 1.6rem; animation: slideIn 0.4s ease-out; overflow: hidden; width: 100%; box-shadow: var(--sombra); border-bottom-left-radius: 0.6rem; border-bottom-right-radius: 0.6rem; }
+        .burbuja-bot.respuesta-adjunta { margin-top: -1px; border-top-left-radius: 0; border-top-right-radius: 0; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         .pensamiento-cabecera-clickable { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; cursor: pointer; transition: background-color 0.2s; }
         .pensamiento-cabecera-clickable:hover { background-color: var(--fondo-pensamiento-hover); }
@@ -229,20 +124,9 @@
         .tiempo-pensamiento { font-size: 1.2rem; color: var(--color-timestamp); }
         .toggle-icon { font-size: 2rem; color: var(--color-timestamp); transition: transform 0.3s ease; }
         .toggle-icon.collapsed { transform: rotate(-180deg); }
-        .pensamiento-contenido-wrapper { 
-            overflow: hidden; 
-            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; 
-            max-height: 2000px;
-        }
+        .pensamiento-contenido-wrapper { overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; max-height: 2000px; }
         .pensamiento-contenido-wrapper.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; border-top: none; }
-        .contenido-pensamiento { 
-            font-size: 1.4rem; 
-            line-height: 1.7; 
-            padding: 2rem; 
-            border-top: 1px solid var(--borde-pensamiento); 
-            background: var(--resaltado-pensamiento); 
-            overflow-y: auto;
-        }
+        .contenido-pensamiento { font-size: 1.4rem; line-height: 1.7; padding: 2rem; border-top: 1px solid var(--borde-pensamiento); background: var(--resaltado-pensamiento); overflow-y: auto; }
         .pensamiento-acciones { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end; padding: 0 2rem 2rem; }
         .boton-pensamiento { background: rgba(255,255,255,0.08); border: 1px solid var(--borde-pensamiento); border-radius: 1rem; padding: 0.8rem 1.2rem; color: var(--color-texto); cursor: pointer; display: flex; align-items: center; gap: 0.8rem; transition: all 0.2s; font-size: 1.3rem; }
         .boton-pensamiento:hover { background: rgba(255,255,255,0.15); border-color: var(--color-destacado); }
@@ -258,18 +142,7 @@
         .timestamp { font-size: 1.2rem; color: var(--color-timestamp); }
         .boton-accion-mensaje { background: none; border: none; width: 3.2rem; height: 3.2rem; border-radius: 50%; cursor: pointer; font-size: 1.5rem; display: flex; justify-content: center; align-items: center; color: var(--color-timestamp); transition: all 0.2s; }
         .boton-accion-mensaje:hover { background: rgba(255,255,255,0.1); color: var(--color-destacado); }
-        .contenedor-entrada { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 1.5rem; 
-            width: 100%; 
-            background-color: var(--fondo-campo-entrada); 
-            border: 2px solid transparent; 
-            border-radius: 2.8rem; 
-            padding: 1.5rem 2rem; 
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
+        .contenedor-entrada { display: flex; flex-direction: column; gap: 1.5rem; width: 100%; background-color: var(--fondo-campo-entrada); border: 2px solid transparent; border-radius: 2.8rem; padding: 1.5rem 2rem; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .contenedor-entrada:focus-within { border-color: var(--color-destacado); box-shadow: 0 0 0 3px rgba(157, 78, 221, 0.3); }
         .contenedor-adjuntos { display: none; overflow-x: auto; overflow-y: hidden; white-space: nowrap; padding-bottom: 1rem; scrollbar-width: thin; border-bottom: 1px solid var(--borde-adjunto); margin-bottom: 0.5rem;}
         .adjunto-item { display: inline-flex; align-items: center; gap: 1rem; background: var(--fondo-adjunto); border: 1px solid var(--borde-adjunto); border-radius: 1.5rem; padding: 1rem 1.5rem; max-width: 25rem; margin-right: 1.2rem; }
@@ -279,60 +152,17 @@
         .tamano-adjunto { font-size: 1.2rem; color: var(--color-timestamp); }
         .boton-eliminar { background: transparent; border: none; border-radius: 50%; width: 2.8rem; height: 2.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #aaa; transition: all 0.2s; }
         .boton-eliminar:hover { color: #E53935; background: rgba(255, 0, 0, 0.1); }
-        #entrada-usuario { 
-            width: 100%; 
-            border: none; 
-            background: transparent; 
-            color: var(--texto-entrada); 
-            font-size: 1.7rem; 
-            outline: none; 
-            resize: none; 
-            max-height: 20rem; 
-            overflow-y: auto;
-            padding: 0.5rem 0;
-            scrollbar-width: thin;
-            scrollbar-color: var(--color-destacado) transparent;
-        }
+        #entrada-usuario { width: 100%; border: none; background: transparent; color: var(--texto-entrada); font-size: 1.7rem; outline: none; resize: none; max-height: 20rem; overflow-y: auto; padding: 0.5rem 0; scrollbar-width: thin; scrollbar-color: var(--color-destacado) transparent; }
         #entrada-usuario::-webkit-scrollbar { width: 6px; }
         #entrada-usuario::-webkit-scrollbar-thumb { background-color: var(--color-destacado); border-radius: 3px; }
         #entrada-usuario::-webkit-scrollbar-track { background: transparent; }
-        .input-area-botones {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            width: 100%;
-        }
-        .boton-input { 
-            background: var(--fondo-boton-accion); 
-            color: var(--texto-boton-accion); 
-            border: none; 
-            width: 4.8rem; 
-            height: 4.8rem; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            font-size: 2rem; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            transition: all 0.2s ease-out; 
-            flex-shrink: 0; 
-        }
+        .input-area-botones { display: flex; align-items: center; justify-content: space-around; width: 100%; }
+        .boton-input { background: var(--fondo-boton-accion); color: var(--texto-boton-accion); border: none; width: 4.8rem; height: 4.8rem; border-radius: 50%; cursor: pointer; font-size: 2rem; display: flex; justify-content: center; align-items: center; transition: all 0.2s ease-out; flex-shrink: 0; }
         .boton-input:hover { transform: scale(1.1) rotate(10deg); background-color: var(--color-destacado); color: white; }
         #boton-enviar { background: var(--fondo-boton-enviar); color: var(--texto-boton-enviar); }
-        #boton-enviar.pausa { 
-            background: #ff9800; 
-            animation: pulsate 1.5s infinite; 
-        }
-        #boton-grabar.grabando { 
-            background: var(--fondo-boton-grabando); 
-            animation: pulsate 1.5s infinite; 
-            box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.4);
-        }
-        .boton-input.modo-activo {
-            background: var(--fondo-boton-buscar-activo) !important;
-            color: white !important;
-            animation: none !important;
-        }
+        #boton-enviar.pausa { background: #ff9800; animation: pulsate 1.5s infinite; }
+        #boton-grabar.grabando { background: var(--fondo-boton-grabando); animation: pulsate 1.5s infinite; box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.4); }
+        .boton-input.modo-activo { background: var(--fondo-boton-buscar-activo) !important; color: white !important; animation: none !important; }
         @keyframes pulsate { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(157, 78, 221, 0.5); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(157, 78, 221, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(157, 78, 221, 0); } }
         .indicador-escribiendo { display: flex; align-items: center; gap: 1rem; padding: 1.5rem 2rem; background: var(--fondo-burbuja-bot); border-radius: 2.2rem; width: fit-content; align-self: flex-start; animation: fadeIn 0.3s ease; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .indicador-escribiendo .puntos span { height: 0.8rem; width: 0.8rem; background: var(--color-timestamp); border-radius: 50%; display: inline-block; margin: 0 0.2rem; animation: bounce 1.3s infinite; }
@@ -411,365 +241,136 @@
         .loader-dots span:nth-child(7) { top: 50%; left: 0; transform: translateY(-50%); animation-delay: -0.15s; }
         .loader-dots span:nth-child(8) { top: 15%; left: 15%; animation-delay: 0s; }
         @keyframes loader-anim { 0%, 100% { transform: scale(0.2); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
-        .panel-historial {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 320px;
-            height: 100vh;
-            background: var(--color-contenedor);
-            z-index: 2000;
-            overflow-y: auto;
-            transform: translateX(-100%);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: 5px 0 25px rgba(0,0,0,0.3);
-            border-right: 1px solid var(--borde-superior-entrada);
-        }
-        .panel-historial.abierto {
-            transform: translateX(0);
-        }
-        .cabecera-panel-historial {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--borde-superior-entrada);
-            position: sticky;
-            top: 0;
-            background: var(--color-contenedor);
-            z-index: 10;
-        }
-        .cabecera-panel-historial h2 {
-            margin: 0;
-            font-size: 2rem;
-            color: var(--color-destacado);
-        }
-        .boton-cerrar-historial {
-            background: transparent;
-            border: none;
+        .panel-historial { position: fixed; top: 0; left: 0; width: 320px; height: 100vh; background: var(--color-contenedor); z-index: 2000; overflow-y: auto; transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 5px 0 25px rgba(0,0,0,0.3); border-right: 1px solid var(--borde-superior-entrada); }
+        .panel-historial.abierto { transform: translateX(0); }
+        .cabecera-panel-historial { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: 1px solid var(--borde-superior-entrada); position: sticky; top: 0; background: var(--color-contenedor); z-index: 10; }
+        .cabecera-panel-historial h2 { margin: 0; font-size: 2rem; color: var(--color-destacado); }
+        .boton-cerrar-historial { background: transparent; border: none; color: var(--color-texto); font-size: 2.2rem; cursor: pointer; transition: all 0.2s; border-radius: 50%; width: 4rem; height: 4rem; display: flex; align-items: center; justify-content: center; }
+        .boton-cerrar-historial:hover { background: var(--fondo-pensamiento); color: var(--color-destacado); transform: rotate(90deg); }
+        .buscar-historial { padding: 1.5rem 2rem; border-bottom: 1px solid var(--borde-superior-entrada); }
+        .input-buscar-historial { width: 100%; padding: 1.2rem 1.8rem; background: var(--fondo-campo-entrada); border: 1px solid var(--borde-adjunto); border-radius: 2.4rem; color: var(--texto-entrada); font-size: 1.5rem; }
+        .input-buscar-historial::placeholder { color: var(--texto-placeholder); }
+        .lista-historial { padding: 1rem 0; }
+        .item-historial { padding: 1.5rem 2rem; border-bottom: 1px solid var(--borde-superior-entrada); cursor: pointer; transition: background 0.2s; display: flex; flex-direction: column; }
+        .item-historial:hover { background: var(--fondo-pensamiento); }
+        .item-historial.seleccionado { background: var(--resaltado-pensamiento); border-left: 4px solid var(--color-destacado); }
+        .titulo-conversacion { font-weight: 600; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.6rem; }
+        .fecha-conversacion { font-size: 1.2rem; color: var(--color-timestamp); }
+        .preview-conversacion { font-size: 1.4rem; margin-top: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-timestamp); }
+        .acciones-item-historial { display: flex; justify-content: flex-end; margin-top: 1rem; gap: 1rem; }
+        .boton-accion-item { background: transparent; border: none; color: var(--color-timestamp); font-size: 1.6rem; cursor: pointer; transition: all 0.2s; padding: 0.8rem; border-radius: 50%; width: 3.6rem; height: 3.6rem; }
+        .boton-accion-item:hover { color: var(--color-destacado); background: rgba(127, 90, 240, 0.1); }
+        .boton-nueva-conversacion { display: block; width: calc(100% - 40px); margin: 1.5rem 2rem; padding: 1.5rem; background: var(--fondo-boton-enviar); color: white; border: none; border-radius: 3rem; font-weight: 600; font-size: 1.6rem; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .boton-nueva-conversacion:hover { filter: brightness(1.1); transform: translateY(-3px); box-shadow: 0 6px 12px rgba(127, 90, 240, 0.3); }
+        .sin-conversaciones { text-align: center; padding: 3rem 2rem; color: var(--color-timestamp); font-style: italic; }
+        .boton-menu-historial { position: relative; }
+        .contador-historial { position: absolute; top: -5px; right: -5px; background: var(--fondo-boton-grabando); color: white; font-size: 1.1rem; font-weight: 600; width: 2rem; height: 2rem; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid var(--color-contenedor); }
+        .overlay-historial { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1500; display: none; animation: fade-in-overlay 0.3s; }
+        #boton-scroll-final { position: absolute; bottom: 12rem; right: 2rem; width: 4.5rem; height: 4.5rem; background: var(--fondo-boton-accion); color: var(--texto-boton-accion); border: 1px solid var(--borde-adjunto); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 100; box-shadow: var(--sombra); transition: opacity 0.3s, transform 0.3s; }
+        #boton-scroll-final:hover { background: var(--color-destacado); color: white; transform: scale(1.1); }
+        #boton-scroll-final.visible { display: flex; }
+        #live-conversation-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background: radial-gradient(circle, #2D233E 0%, #120A1F 100%); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.5s ease; color: white; }
+        #live-conversation-screen.visible { display: flex; opacity: 1; }
+        .robot-container { position: relative; width: 300px; height: 300px; }
+        #robot-svg { width: 100%; height: 100%; }
+        .robot-eye { animation: blink 4s infinite ease-in-out; transform-origin: center; }
+        @keyframes blink { 0%, 95%, 100% { transform: scaleY(1); } 97.5% { transform: scaleY(0.05); } }
+        .robot-mouth { transition: d 0.2s ease-in-out; }
+        #robot-svg.talking .robot-mouth { animation: talk 0.4s infinite ease-in-out; }
+        @keyframes talk { 0%, 100% { d: path('M 120 200 Q 150 210 180 200'); } 50% { d: path('M 125 205 Q 150 230 175 205'); } }
+        .listening-indicator { position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; transform: translate(-50%, -50%); border: 3px solid rgba(127, 90, 240, 0); border-radius: 50%; animation: listen-pulse 2s infinite; display: none; }
+        #robot-svg.listening .listening-indicator { display: block; }
+        @keyframes listen-pulse { 0% { transform: translate(-50%, -50%) scale(0.8); border-color: rgba(127, 90, 240, 0.7); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.5); border-color: rgba(127, 90, 240, 0); opacity: 0; } }
+        .live-status { margin-top: 2rem; font-size: 2rem; font-weight: 500; min-height: 3rem; text-align: center; padding: 0 2rem; color: #ccc; }
+        .live-controls { position: absolute; bottom: 5%; display: flex; gap: 2rem; }
+        .live-control-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; width: 7rem; height: 7rem; border-radius: 50%; font-size: 3rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s; backdrop-filter: blur(5px); }
+        .live-control-btn:hover { background: var(--color-destacado); transform: scale(1.1); }
+        #close-live-btn { background: #e53935; }
+        #close-live-btn:hover { background: #c62828; }
+        @media (max-width: 768px) { .panel-historial { width: 90%; } .contenedor-chat.desplazado { transform: translateX(90%); } .modal-menu-principal { width: calc(100% - 4rem); left: 2rem; right: 2rem; } }
+        .live-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 3000; }
+        .live-modal.oculto { display: none; }
+        .live-modal-contenido { background: #fff; color: #333; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .cerrar-modal { position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer; color: #fff; }
+
+        /* ESTILOS NUEVOS PARA RESPUESTA IA (MODO TEXTO PLANO) */
+        .respuesta-ia {
+            padding: 0.5rem 1rem;
+            width: 100%;
             color: var(--color-texto);
-            font-size: 2.2rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 50%;
-            width: 4rem;
-            height: 4rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .boton-cerrar-historial:hover {
-            background: var(--fondo-pensamiento);
-            color: var(--color-destacado);
-            transform: rotate(90deg);
-        }
-        .buscar-historial {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--borde-superior-entrada);
-        }
-        .input-buscar-historial {
-            width: 100%;
-            padding: 1.2rem 1.8rem;
-            background: var(--fondo-campo-entrada);
-            border: 1px solid var(--borde-adjunto);
-            border-radius: 2.4rem;
-            color: var(--texto-entrada);
-            font-size: 1.5rem;
-        }
-        .input-buscar-historial::placeholder {
-            color: var(--texto-placeholder);
-        }
-        .lista-historial {
-            padding: 1rem 0;
-        }
-        .item-historial {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--borde-superior-entrada);
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-        .item-historial:hover {
-            background: var(--fondo-pensamiento);
-        }
-        .item-historial.seleccionado {
-            background: var(--resaltado-pensamiento);
-            border-left: 4px solid var(--color-destacado);
-        }
-        .titulo-conversacion {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 1.6rem;
-        }
-        .fecha-conversacion {
-            font-size: 1.2rem;
-            color: var(--color-timestamp);
-        }
-        .preview-conversacion {
-            font-size: 1.4rem;
-            margin-top: 0.8rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: var(--color-timestamp);
-        }
-        .acciones-item-historial {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 1rem;
-            gap: 1rem;
-        }
-        .boton-accion-item {
             background: transparent;
             border: none;
-            color: var(--color-timestamp);
+            box-shadow: none;
+            line-height: 1.7;
             font-size: 1.6rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            padding: 0.8rem;
-            border-radius: 50%;
-            width: 3.6rem;
-            height: 3.6rem;
-        }
-        .boton-accion-item:hover {
-            color: var(--color-destacado);
-            background: rgba(127, 90, 240, 0.1);
-        }
-        .boton-nueva-conversacion {
-            display: block;
-            width: calc(100% - 40px);
-            margin: 1.5rem 2rem;
-            padding: 1.5rem;
-            background: var(--fondo-boton-enviar);
-            color: white;
-            border: none;
-            border-radius: 3rem;
-            font-weight: 600;
-            font-size: 1.6rem;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        .boton-nueva-conversacion:hover {
-            filter: brightness(1.1);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(127, 90, 240, 0.3);
-        }
-        .sin-conversaciones {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: var(--color-timestamp);
-            font-style: italic;
-        }
-        .boton-menu-historial {
-            position: relative;
-        }
-        .contador-historial {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--fondo-boton-grabando);
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px solid var(--color-contenedor);
-        }
-        .overlay-historial {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            z-index: 1500;
-            display: none;
-            animation: fade-in-overlay 0.3s;
-        }
-        #boton-scroll-final {
-            position: absolute;
-            bottom: 12rem;
-            right: 2rem;
-            width: 4.5rem;
-            height: 4.5rem;
-            background: var(--fondo-boton-accion);
-            color: var(--texto-boton-accion);
-            border: 1px solid var(--borde-adjunto);
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            box-shadow: var(--sombra);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        #boton-scroll-final:hover {
-            background: var(--color-destacado);
-            color: white;
-            transform: scale(1.1);
-        }
-        #boton-scroll-final.visible {
-            display: flex;
-        }
-        #live-conversation-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100dvh;
-            background: radial-gradient(circle, #2D233E 0%, #120A1F 100%);
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            color: white;
-        }
-        #live-conversation-screen.visible {
-            display: flex;
-            opacity: 1;
-        }
-        .robot-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-        }
-        #robot-svg {
-            width: 100%;
-            height: 100%;
-        }
-        .robot-eye {
-            animation: blink 4s infinite ease-in-out;
-            transform-origin: center;
-        }
-        @keyframes blink {
-            0%, 95%, 100% { transform: scaleY(1); }
-            97.5% { transform: scaleY(0.05); }
-        }
-        .robot-mouth {
-            transition: d 0.2s ease-in-out;
-        }
-        #robot-svg.talking .robot-mouth {
-            animation: talk 0.4s infinite ease-in-out;
-        }
-        @keyframes talk {
-            0%, 100% { d: path('M 120 200 Q 150 210 180 200'); }
-            50% { d: path('M 125 205 Q 150 230 175 205'); }
-        }
-        .listening-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            transform: translate(-50%, -50%);
-            border: 3px solid rgba(127, 90, 240, 0);
-            border-radius: 50%;
-            animation: listen-pulse 2s infinite;
-            display: none;
-        }
-        #robot-svg.listening .listening-indicator {
-            display: block;
-        }
-        @keyframes listen-pulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0.8);
-                border-color: rgba(127, 90, 240, 0.7);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1.5);
-                border-color: rgba(127, 90, 240, 0);
-                opacity: 0;
-            }
-        }
-        .live-status {
-            margin-top: 2rem;
-            font-size: 2rem;
-            font-weight: 500;
-            min-height: 3rem;
-            text-align: center;
-            padding: 0 2rem;
-            color: #ccc;
-        }
-        .live-controls {
-            position: absolute;
-            bottom: 5%;
-            display: flex;
-            gap: 2rem;
-        }
-        .live-control-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            width: 7rem;
-            height: 7rem;
-            border-radius: 50%;
-            font-size: 3rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-        }
-        .live-control-btn:hover {
-            background: var(--color-destacado);
-            transform: scale(1.1);
-        }
-        #close-live-btn {
-            background: #e53935;
-        }
-        #close-live-btn:hover {
-             background: #c62828;
-        }
-        @media (max-width: 768px) {
-            .panel-historial { width: 90%; }
-            .contenedor-chat.desplazado { transform: translateX(90%); }
-            .modal-menu-principal { width: calc(100% - 4rem); left: 2rem; right: 2rem; }
+            border-radius: 0;
         }
         
-        .live-modal {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(0,0,0,0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 3000;
-      }
-      .live-modal.oculto { display: none; }
-      .live-modal-contenido {
-        background: #fff;
-        color: #333;
-        padding: 2rem;
-        border-radius: 1rem;
-        width: 90%;
-        max-width: 400px;
-        text-align: center;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      }
-      .cerrar-modal {
-        position: absolute;
-        top: 15px; right: 20px;
-        font-size: 2rem;
-        cursor: pointer;
-        color: #fff;
-      }
+        /* ---------------------------------------------------- */
+        /* ESTILOS TABLAS TIPO GEMINI (MODERNAS & CLEAN)      */
+        /* ---------------------------------------------------- */
+        .chat-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--borde-codigo);
+            border-radius: 1.2rem;
+            background: transparent; /* Fondo transparente como código */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .chat-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1.4rem;
+            color: var(--color-texto);
+            min-width: 400px; /* Forzar scroll en pantallas pequeñas */
+        }
+
+        .chat-table th {
+            background-color: var(--fondo-boton-accion); /* Header ligeramente más claro/distinto */
+            color: var(--color-destacado); /* Acento de color en encabezados */
+            font-weight: 600;
+            text-align: left;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 2px solid var(--borde-codigo);
+            white-space: nowrap; /* Evitar saltos de línea feos en cabecera */
+        }
+
+        .chat-table td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--borde-codigo);
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .chat-table tr:last-child td {
+            border-bottom: none; /* Eliminar borde final */
+        }
+
+        .chat-table tr:hover td {
+            background-color: rgba(157, 78, 221, 0.05); /* Hover sutil morado */
+        }
+
+        /* Estilo sutil de scrollbar para las tablas */
+        .chat-table-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+        .chat-table-wrapper::-webkit-scrollbar-thumb {
+            background-color: var(--borde-codigo);
+            border-radius: 4px;
+        }
+        .chat-table-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .respuesta-ia pre {
+            background: var(--fondo-codigo);
+            padding: 1rem;
+            border-radius: 0.6rem;
+            overflow-x: auto;
+            border: 1px solid var(--borde-codigo);
+        }
     </style>
 </head>
 <body>
@@ -950,19 +551,16 @@
     <div class="overlay" id="overlay"></div>
     <div id="confirmacionCopia" class="copy-confirmation">¡Copiado!</div>
     
- <!-- Modal Live -->
      <div id="liveModal" class="live-modal oculto">
         <div class="live-modal-contenido">
         <span id="cerrarLiveModal" class="cerrar-modal">&times;</span>
         <h2>Modo Live</h2>
-        <p>El Modo Live sigue en desarrollo e investigación, puede presentar   detalles.</p>
+        <p>El Modo Live sigue en desarrollo e investigación, puede presentar detalles.</p>
        </div>
      </div>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
             const API_KEYS = {
                 GEMINI: 'AIzaSyCJ_JioAHSxLvyZG7XcGeWYyUJWR5_wj60',
                 DEEPSEEK: 'sk-646a5b86d1de4ee186dfac833541452b',
@@ -970,268 +568,70 @@
                 NEWS: '4e3d9a0bd89e4253a16fd90f8a196089',
                 OCR: 'K82439722788957'
             };
-
             const CLAVE_API_NEWS = API_KEYS.NEWS; 
             const CLAVE_API_DEEPSEEK = API_KEYS.DEEPSEEK; 
             const CLAVE_API_OCR = API_KEYS.OCR;
-            
             const ESTILOS_DOCUMENTO = {
-                'moderno': { 
-                    titulo: 'Moderno',
-                    fuente: 'Helvetica',
-                    tamanoTitulo: 20,
-                    tamanoSubtitulo: 16,
-                    tamanoCuerpo: 11,
-                    interlineado: 1.5,
-                    colorTitulo: '#2C2C2C',
-                    colorTexto: '#333333',
-                    alineacion: 'left'
-                },
-                'clasico': {
-                    titulo: 'Clásico',
-                    fuente: 'Times New Roman',
-                    tamanoTitulo: 18,
-                    tamanoSubtitulo: 14,
-                    tamanoCuerpo: 12,
-                    interlineado: 1.15,
-                    colorTitulo: '#000000',
-                    colorTexto: '#000000',
-                    alineacion: 'center'
-                },
-                'tecnico': {
-                    titulo: 'Técnico',
-                    fuente: 'Arial',
-                    tamanoTitulo: 16,
-                    tamanoSubtitulo: 14,
-                    tamanoCuerpo: 11,
-                    interlineado: 1.2,
-                    colorTitulo: '#1E1E1E',
-                    colorTexto: '#1E1E1E',
-                    alineacion: 'left'
-                },
-                'creativo': {
-                    titulo: 'Creativo',
-                    fuente: 'Montserrat',
-                    tamanoTitulo: 22,
-                    tamanoSubtitulo: 16,
-                    tamanoCuerpo: 12,
-                    interlineado: 1.6,
-                    colorTitulo: '#8A2BE2',
-                    colorTexto: '#333333',
-                    alineacion: 'left'
-                },
-                'apa': {
-                    titulo: 'APA',
-                    fuente: 'Times New Roman',
-                    tamanoTitulo: 12,
-                    tamanoSubtitulo: 12,
-                    tamanoCuerpo: 12,
-                    interlineado: 2,
-                    colorTitulo: '#000000',
-                    colorTexto: '#000000',
-                    alineacion: 'left'
-                }
+                'moderno': { titulo: 'Moderno', fuente: 'Helvetica', tamanoTitulo: 20, tamanoSubtitulo: 16, tamanoCuerpo: 11, interlineado: 1.5, colorTitulo: '#2C2C2C', colorTexto: '#333333', alineacion: 'left' },
+                'clasico': { titulo: 'Clásico', fuente: 'Times New Roman', tamanoTitulo: 18, tamanoSubtitulo: 14, tamanoCuerpo: 12, interlineado: 1.15, colorTitulo: '#000000', colorTexto: '#000000', alineacion: 'center' },
+                'tecnico': { titulo: 'Técnico', fuente: 'Arial', tamanoTitulo: 16, tamanoSubtitulo: 14, tamanoCuerpo: 11, interlineado: 1.2, colorTitulo: '#1E1E1E', colorTexto: '#1E1E1E', alineacion: 'left' },
+                'creativo': { titulo: 'Creativo', fuente: 'Montserrat', tamanoTitulo: 22, tamanoSubtitulo: 16, tamanoCuerpo: 12, interlineado: 1.6, colorTitulo: '#8A2BE2', colorTexto: '#333333', alineacion: 'left' },
+                'apa': { titulo: 'APA', fuente: 'Times New Roman', tamanoTitulo: 12, tamanoSubtitulo: 12, tamanoCuerpo: 12, interlineado: 2, colorTitulo: '#000000', colorTexto: '#000000', alineacion: 'left' }
             };
-
             const elementos = {
-                body: document.body,
-                contenedor: document.querySelector('.contenedor'),
-                contenedorChat: document.getElementById('contenedor-chat'),
-                entradaUsuario: document.getElementById('entrada-usuario'),
-                botonEnviar: document.getElementById('boton-enviar'),
-                botonGrabar: document.getElementById('boton-grabar'),
-                botonMas: document.getElementById('boton-mas'),
-                botonBuscar: document.getElementById('boton-buscar'),
-                botonGenerarImagen: document.getElementById('boton-generar-imagen'),
-                inputImagen: document.getElementById('input-imagen'),
-                inputCamara: document.getElementById('input-camara'),
-                inputArchivo: document.getElementById('input-archivo'),
-                modalOcr: document.getElementById('modal-ocr'),
-                modalModo: document.getElementById('modal-modo'),
-                overlay: document.getElementById('overlay'),
-                btnTomarFoto: document.getElementById('tomar-foto'),
-                btnGaleria: document.getElementById('elegir-galeria'),
-                btnArchivo: document.getElementById('elegir-archivo'),
-                alternadorTema: document.getElementById('menu-tema'),
-                confirmacionCopia: document.getElementById('confirmacionCopia'),
-                selectorVoz: document.getElementById('selector-voz'),
-                contenedorAdjuntos: document.getElementById('contenedor-adjuntos'),
-                btnActivarBusquedaModal: document.getElementById('activar-busqueda-modal'),
-                tituloModo: document.getElementById('titulo-modo'),
-                modalSuperIA: document.getElementById('modal-super-ia'),
-                cerrarModalSuperIA: document.getElementById('cerrar-modal-super-ia'),
-                botonEntendido: document.getElementById('boton-entendido'),
-                botonAyuda: document.getElementById('menu-ayuda'),
-                modalAyuda: document.getElementById('modal-ayuda'),
-                cerrarModalAyuda: document.getElementById('cerrar-modal-ayuda'),
-                cerrarModalAyudaBtn: document.getElementById('cerrar-modal-ayuda-btn'),
-                entradaWrapper: document.getElementById('contenedor-entrada-wrapper'),
-                modalImagen: document.getElementById('modal-imagen'),
-                imagenAmpliada: document.getElementById('imagen-ampliada'),
-                cerrarModalImagen: document.getElementById('cerrar-modal-imagen'),
-                descargarImagenBtn: document.getElementById('descargar-imagen'),
-                modalMiniAviso: document.getElementById('modal-mini-aviso'),
-                botonScrollFinal: document.getElementById('boton-scroll-final'),
-                botonMenuPrincipal: document.getElementById('boton-menu-principal'),
-                modalMenuPrincipal: document.getElementById('modal-menu-principal'),
-                startLiveBtn: document.getElementById('start-live-btn'),
-                liveScreen: document.getElementById('live-conversation-screen'),
-                robotSvg: document.getElementById('robot-svg'),
-                liveStatus: document.getElementById('live-status'),
-                pauseLiveBtn: document.getElementById('pause-live-btn'),
-                closeLiveBtn: document.getElementById('close-live-btn'),
+                body: document.body, contenedor: document.querySelector('.contenedor'), contenedorChat: document.getElementById('contenedor-chat'), entradaUsuario: document.getElementById('entrada-usuario'), botonEnviar: document.getElementById('boton-enviar'), botonGrabar: document.getElementById('boton-grabar'), botonMas: document.getElementById('boton-mas'), botonBuscar: document.getElementById('boton-buscar'), botonGenerarImagen: document.getElementById('boton-generar-imagen'), inputImagen: document.getElementById('input-imagen'), inputCamara: document.getElementById('input-camara'), inputArchivo: document.getElementById('input-archivo'), modalOcr: document.getElementById('modal-ocr'), modalModo: document.getElementById('modal-modo'), overlay: document.getElementById('overlay'), btnTomarFoto: document.getElementById('tomar-foto'), btnGaleria: document.getElementById('elegir-galeria'), btnArchivo: document.getElementById('elegir-archivo'), alternadorTema: document.getElementById('menu-tema'), confirmacionCopia: document.getElementById('confirmacionCopia'), selectorVoz: document.getElementById('selector-voz'), contenedorAdjuntos: document.getElementById('contenedor-adjuntos'), btnActivarBusquedaModal: document.getElementById('activar-busqueda-modal'), tituloModo: document.getElementById('titulo-modo'), modalSuperIA: document.getElementById('modal-super-ia'), cerrarModalSuperIA: document.getElementById('cerrar-modal-super-ia'), botonEntendido: document.getElementById('boton-entendido'), botonAyuda: document.getElementById('menu-ayuda'), modalAyuda: document.getElementById('modal-ayuda'), cerrarModalAyuda: document.getElementById('cerrar-modal-ayuda'), cerrarModalAyudaBtn: document.getElementById('cerrar-modal-ayuda-btn'), entradaWrapper: document.getElementById('contenedor-entrada-wrapper'), modalImagen: document.getElementById('modal-imagen'), imagenAmpliada: document.getElementById('imagen-ampliada'), cerrarModalImagen: document.getElementById('cerrar-modal-imagen'), descargarImagenBtn: document.getElementById('descargar-imagen'), modalMiniAviso: document.getElementById('modal-mini-aviso'), botonScrollFinal: document.getElementById('boton-scroll-final'), botonMenuPrincipal: document.getElementById('boton-menu-principal'), modalMenuPrincipal: document.getElementById('modal-menu-principal'), startLiveBtn: document.getElementById('start-live-btn'), liveScreen: document.getElementById('live-conversation-screen'), robotSvg: document.getElementById('robot-svg'), liveStatus: document.getElementById('live-status'), pauseLiveBtn: document.getElementById('pause-live-btn'), closeLiveBtn: document.getElementById('close-live-btn')
             };
-
             const elementosHistorial = {
-                panelHistorial: document.getElementById('panel-historial'),
-                botonHistorial: document.getElementById('menu-historial'),
-                botonCerrarHistorial: document.getElementById('boton-cerrar-historial'),
-                listaHistorial: document.getElementById('lista-historial'),
-                inputBuscarHistorial: document.getElementById('input-buscar-historial'),
-                botonNuevaConversacion: document.getElementById('boton-nueva-conversacion'),
-                overlayHistorial: document.getElementById('overlay-historial'),
-                contadorHistorial: document.getElementById('contador-historial-menu'),
-                contenedorChat: document.getElementById('contenedor-chat')
+                panelHistorial: document.getElementById('panel-historial'), botonHistorial: document.getElementById('menu-historial'), botonCerrarHistorial: document.getElementById('boton-cerrar-historial'), listaHistorial: document.getElementById('lista-historial'), inputBuscarHistorial: document.getElementById('input-buscar-historial'), botonNuevaConversacion: document.getElementById('boton-nueva-conversacion'), overlayHistorial: document.getElementById('overlay-historial'), contadorHistorial: document.getElementById('contador-historial-menu'), contenedorChat: document.getElementById('contenedor-chat')
             };
 
-            let historialChat = [];
-            let archivosAdjuntos = [];
-            let reconocimientoVoz = null;
-            let estaGrabando = false;
-            let ultimoMensajeFuePorVoz = false;
-            let sintesisVozActual = null;
-            let modoBusqueda = false;
-            let modoSuperIA = false;
-            let modoMiniIA = false;
-            let modoPicasso = false;
-            let estaGenerandoRespuesta = false;
-            let cancelarStreaming = null;
-            let cancelarProcesoCompleto = false;
-            let imagenGeneradaActual = null;
-            let ultimaDescripcionImagen = "";
-            let scrollAutomatico = true;
-            
-            let conversaciones = [];
-            let conversacionActualId = null;
-            let panelHistorialAbierto = false;
-            let contadorHistorial = 0;
-            
-            let estadoConversacion = {
-                esperandoFormato: false,
-                comandoPendiente: null
-            };
-
-            // Variables para Live Mode con Web Speech
-            let liveRecognition = null;
-            let isLiveModeActive = false;
-            let isLiveListeningPaused = true;
-            let liveChatHistory = [];
-            let isProcessingLiveQuery = false;
+            let historialChat = [], archivosAdjuntos = [], reconocimientoVoz = null, estaGrabando = false, ultimoMensajeFuePorVoz = false, sintesisVozActual = null, modoBusqueda = false, modoSuperIA = false, modoMiniIA = false, modoPicasso = false, estaGenerandoRespuesta = false, cancelarStreaming = null, cancelarProcesoCompleto = false, imagenGeneradaActual = null, ultimaDescripcionImagen = "", scrollAutomatico = true, conversaciones = [], conversacionActualId = null, panelHistorialAbierto = false, contadorHistorial = 0;
+            let estadoConversacion = { esperandoFormato: false, comandoPendiente: null };
+            let liveRecognition = null, isLiveModeActive = false, isLiveListeningPaused = true, liveChatHistory = [], isProcessingLiveQuery = false;
 
             const iniciar = () => {
-                cargarEstado();
-                configurarEventListeners();
-                iniciarReconocimientoVoz();
-                iniciarSintesisVoz();
-                cargarConversaciones();
-                if (conversaciones.length === 0) {
-                    crearNuevaConversacion();
-                } else {
-                    cargarConversacion(conversaciones[0].id);
-                }
+                cargarEstado(); configurarEventListeners(); iniciarReconocimientoVoz(); iniciarSintesisVoz(); cargarConversaciones();
+                conversaciones.length === 0 ? crearNuevaConversacion() : cargarConversacion(conversaciones[0].id);
                 autoAjustarTextarea();
             };
 
             const configurarEventListeners = () => {
                 elementos.contenedorChat.addEventListener('scroll', gestionarScrollUsuario);
-                elementos.botonScrollFinal.addEventListener('click', () => {
-                    elementos.contenedorChat.scrollTop = elementos.contenedorChat.scrollHeight;
-                    scrollAutomatico = true;
-                    elementos.botonScrollFinal.classList.remove('visible');
-                });
+                elementos.botonScrollFinal.addEventListener('click', () => { elementos.contenedorChat.scrollTop = elementos.contenedorChat.scrollHeight; scrollAutomatico = true; elementos.botonScrollFinal.classList.remove('visible'); });
                 elementos.botonEnviar.addEventListener('click', gestionarEnvioMensaje);
-                elementos.botonGenerarImagen.addEventListener('click', () => {
-                    modoPicasso = !modoPicasso;
-                    elementos.botonGenerarImagen.classList.toggle('modo-activo', modoPicasso);
-                    elementos.entradaUsuario.placeholder = modoPicasso 
-                        ? "Describe la imagen que deseas generar..." 
-                        : "Pregúntale a Mar-IA...";
-                });
-                elementos.entradaUsuario.addEventListener('keypress', (e) => { 
-                    if (e.key === 'Enter' && !e.shiftKey) { 
-                        e.preventDefault(); 
-                        gestionarEnvioMensaje(); 
-                    } 
-                });
+                elementos.botonGenerarImagen.addEventListener('click', () => { modoPicasso = !modoPicasso; elementos.botonGenerarImagen.classList.toggle('modo-activo', modoPicasso); elementos.entradaUsuario.placeholder = modoPicasso ? "Describe la imagen que deseas generar..." : "Pregúntale a Mar-IA..."; });
+                elementos.entradaUsuario.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); gestionarEnvioMensaje(); } });
                 elementos.entradaUsuario.addEventListener('input', autoAjustarTextarea);
                 elementos.entradaUsuario.addEventListener('focus', gestionarFocoInput);
                 elementos.botonGrabar.addEventListener('click', alternarGrabacion);
-                elementos.botonMas.addEventListener('click', () => {
-                    const estaActivo = elementos.modalOcr.style.display === 'flex';
-                    alternarModal(!estaActivo, elementos.modalOcr);
-                });
+                elementos.botonMas.addEventListener('click', () => alternarModal(elementos.modalOcr.style.display !== 'flex', elementos.modalOcr));
                 elementos.botonBuscar.addEventListener('click', () => alternarModoBusqueda());
-                elementos.botonMenuPrincipal.addEventListener('click', () => {
-                    const estaActivo = elementos.modalMenuPrincipal.style.display === 'flex';
-                    alternarModal(!estaActivo, elementos.modalMenuPrincipal);
-                });
-                elementos.overlay.addEventListener('click', () => { 
-                    alternarModal(false, elementos.modalOcr); 
-                    alternarModal(false, elementos.modalModo); 
-                    alternarModal(false, elementos.modalSuperIA);
-                    alternarModal(false, elementos.modalAyuda);
-                    alternarModal(false, elementos.modalImagen);
-                    alternarModal(false, elementos.modalMenuPrincipal);
-                });
-                elementos.btnTomarFoto.addEventListener('click', () => { 
-                    alternarModal(false, elementos.modalOcr); 
-                    elementos.inputCamara.click(); 
-                });
-                elementos.btnGaleria.addEventListener('click', () => { 
-                    alternarModal(false, elementos.modalOcr); 
-                    elementos.inputImagen.click(); 
-                });
-                elementos.btnArchivo.addEventListener('click', () => { 
-                    alternarModal(false, elementos.modalOcr); 
-                    elementos.inputArchivo.click(); 
-                });
+                elementos.botonMenuPrincipal.addEventListener('click', () => alternarModal(elementos.modalMenuPrincipal.style.display !== 'flex', elementos.modalMenuPrincipal));
+                elementos.overlay.addEventListener('click', () => { alternarModal(false, elementos.modalOcr); alternarModal(false, elementos.modalModo); alternarModal(false, elementos.modalSuperIA); alternarModal(false, elementos.modalAyuda); alternarModal(false, elementos.modalImagen); alternarModal(false, elementos.modalMenuPrincipal); });
+                elementos.btnTomarFoto.addEventListener('click', () => { alternarModal(false, elementos.modalOcr); elementos.inputCamara.click(); });
+                elementos.btnGaleria.addEventListener('click', () => { alternarModal(false, elementos.modalOcr); elementos.inputImagen.click(); });
+                elementos.btnArchivo.addEventListener('click', () => { alternarModal(false, elementos.modalOcr); elementos.inputArchivo.click(); });
                 elementos.inputImagen.addEventListener('change', (e) => gestionarSeleccionArchivo(e.target.files));
                 elementos.inputCamara.addEventListener('change', (e) => gestionarSeleccionArchivo(e.target.files));
                 elementos.inputArchivo.addEventListener('change', (e) => gestionarSeleccionArchivo(e.target.files));
-                elementos.alternadorTema.addEventListener('click', () => {
-                    alternarTema();
-                    alternarModal(false, elementos.modalMenuPrincipal);
-                });
+                elementos.alternadorTema.addEventListener('click', () => { alternarTema(); alternarModal(false, elementos.modalMenuPrincipal); });
                 elementos.selectorVoz.addEventListener('change', detenerVoz);
-                elementos.btnActivarBusquedaModal.addEventListener('click', () => { 
-                    alternarModoBusqueda(true); 
-                    alternarModal(false, elementos.modalOcr); 
-                });
+                elementos.btnActivarBusquedaModal.addEventListener('click', () => { alternarModoBusqueda(true); alternarModal(false, elementos.modalOcr); });
                 elementos.tituloModo.addEventListener('click', () => alternarModal(true, elementos.modalModo));
-                document.querySelectorAll('.opcion-modo').forEach(opcion => {
-                    opcion.addEventListener('click', (e) => establecerModoIA(e.currentTarget.dataset.modo));
-                });
+                document.querySelectorAll('.opcion-modo').forEach(opcion => opcion.addEventListener('click', (e) => establecerModoIA(e.currentTarget.dataset.modo)));
                 elementos.contenedorChat.addEventListener('click', gestionarClickContenedorChat);
                 elementos.cerrarModalSuperIA.addEventListener('click', () => alternarModal(false, elementos.modalSuperIA));
                 elementos.botonEntendido.addEventListener('click', () => alternarModal(false, elementos.modalSuperIA));
-                elementos.botonAyuda.addEventListener('click', () => {
-                    alternarModal(true, elementos.modalAyuda);
-                    alternarModal(false, elementos.modalMenuPrincipal);
-                });
+                elementos.botonAyuda.addEventListener('click', () => { alternarModal(true, elementos.modalAyuda); alternarModal(false, elementos.modalMenuPrincipal); });
                 elementos.cerrarModalAyuda.addEventListener('click', () => alternarModal(false, elementos.modalAyuda));
                 elementos.cerrarModalAyudaBtn.addEventListener('click', () => alternarModal(false, elementos.modalAyuda));
                 elementos.cerrarModalImagen.addEventListener('click', () => alternarModal(false, elementos.modalImagen));
                 elementos.descargarImagenBtn.addEventListener('click', descargarImagen);
-                
-                elementosHistorial.botonHistorial.addEventListener('click', () => {
-                    alternarPanelHistorial();
-                    alternarModal(false, elementos.modalMenuPrincipal);
-                });
+                elementosHistorial.botonHistorial.addEventListener('click', () => { alternarPanelHistorial(); alternarModal(false, elementos.modalMenuPrincipal); });
                 elementosHistorial.botonCerrarHistorial.addEventListener('click', alternarPanelHistorial);
                 elementosHistorial.overlayHistorial.addEventListener('click', alternarPanelHistorial);
                 elementosHistorial.botonNuevaConversacion.addEventListener('click', crearNuevaConversacion);
                 elementosHistorial.inputBuscarHistorial.addEventListener('input', filtrarConversaciones);
-
                 elementos.startLiveBtn.addEventListener('click', iniciarLiveConversation);
                 elementos.closeLiveBtn.addEventListener('click', cerrarLiveConversation);
                 elementos.pauseLiveBtn.addEventListener('click', toggleLiveListening);
@@ -1239,1548 +639,462 @@
 
             const setRobotState = (state) => {
                 elementos.robotSvg.classList.remove('listening', 'talking');
-                if (state === 'listening' || state === 'talking') {
-                    elementos.robotSvg.classList.add(state);
-                }
+                if (state === 'listening' || state === 'talking') elementos.robotSvg.classList.add(state);
             };
 
             const iniciarLiveConversation = () => {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechRecognition) {
-                    alert("Tu navegador no soporta Web Speech API.");
-                    return;
-                }
-
-                isLiveModeActive = true;
-                isLiveListeningPaused = false;
-                elementos.liveScreen.classList.add('visible');
-                liveChatHistory = [...historialChat]; 
-                elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>';
-
-                liveRecognition = new SpeechRecognition();
-                liveRecognition.lang = 'es-ES';
-                liveRecognition.continuous = true;
-                liveRecognition.interimResults = true;
-
-                liveRecognition.onstart = () => {
-                    if (!isProcessingLiveQuery && !sintesisVozActual) {
-                        setRobotState('listening');
-                        elementos.liveStatus.textContent = 'Escuchando...';
-                    }
-                };
-
+                if (!SpeechRecognition) return alert("Tu navegador no soporta Web Speech API.");
+                isLiveModeActive = true; isLiveListeningPaused = false;
+                elementos.liveScreen.classList.add('visible'); liveChatHistory = [...historialChat]; elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                liveRecognition = new SpeechRecognition(); liveRecognition.lang = 'es-ES'; liveRecognition.continuous = true; liveRecognition.interimResults = true;
+                liveRecognition.onstart = () => { if (!isProcessingLiveQuery && !sintesisVozActual) { setRobotState('listening'); elementos.liveStatus.textContent = 'Escuchando...'; } };
                 liveRecognition.onresult = async (event) => {
                     if (isProcessingLiveQuery || (sintesisVozActual && speechSynthesis.speaking)) return;
-
-                    let finalTranscript = '';
-                    let interimTranscript = '';
-
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
-                        if (event.results[i].isFinal) {
-                            finalTranscript += event.results[i][0].transcript;
-                        } else {
-                            interimTranscript += event.results[i][0].transcript;
-                        }
-                    }
-
-                    if (interimTranscript) {
-                        elementos.liveStatus.textContent = interimTranscript;
-                        setRobotState('listening');
-                    }
-
-                    if (finalTranscript) {
-                        elementos.liveStatus.textContent = finalTranscript;
-                        isProcessingLiveQuery = true;
-                        setRobotState('thinking'); 
-                        try { liveRecognition.stop(); } catch(e) {} // Stop temporarily
-                        await procesarVozLive(finalTranscript);
-                    }
+                    let finalTranscript = '', interimTranscript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) event.results[i].isFinal ? finalTranscript += event.results[i][0].transcript : interimTranscript += event.results[i][0].transcript;
+                    if (interimTranscript) { elementos.liveStatus.textContent = interimTranscript; setRobotState('listening'); }
+                    if (finalTranscript) { elementos.liveStatus.textContent = finalTranscript; isProcessingLiveQuery = true; setRobotState('thinking'); try { liveRecognition.stop(); } catch(e) {} await procesarVozLive(finalTranscript); }
                 };
-
-                liveRecognition.onerror = (event) => {
-                    console.log('Error Speech:', event.error);
-                };
-
-                liveRecognition.onend = () => {
-                    if (isLiveModeActive && !isLiveListeningPaused && !isProcessingLiveQuery) {
-                        try {
-                            liveRecognition.start();
-                        } catch(e) { }
-                    }
-                };
-
-                try {
-                    liveRecognition.start();
-                } catch(e) {
-                    console.error("Error al iniciar reconocimiento:", e);
-                }
+                liveRecognition.onerror = (event) => console.log('Error Speech:', event.error);
+                liveRecognition.onend = () => { if (isLiveModeActive && !isLiveListeningPaused && !isProcessingLiveQuery) try { liveRecognition.start(); } catch(e) {} };
+                try { liveRecognition.start(); } catch(e) { console.error("Error al iniciar reconocimiento:", e); }
             };
 
-            const cerrarLiveConversation = () => {
-                isLiveModeActive = false;
-                isLiveListeningPaused = true;
-                detenerVoz();
-                
-                if (liveRecognition) {
-                    try { liveRecognition.stop(); } catch(e) {}
-                    liveRecognition = null;
-                }
-                
-                elementos.liveScreen.classList.remove('visible');
-                setRobotState('idle');
-            };
-
-            const toggleLiveListening = () => {
-                isLiveListeningPaused = !isLiveListeningPaused;
-                if (isLiveListeningPaused) {
-                    if (liveRecognition) try { liveRecognition.stop(); } catch(e) {}
-                    elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-microphone"></i>';
-                    elementos.liveStatus.textContent = 'En pausa';
-                    setRobotState('idle');
-                } else {
-                    elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    elementos.liveStatus.textContent = 'Escuchando...';
-                    try { liveRecognition.start(); } catch(e) {}
-                }
-            };
+            const cerrarLiveConversation = () => { isLiveModeActive = false; isLiveListeningPaused = true; detenerVoz(); if (liveRecognition) { try { liveRecognition.stop(); } catch(e) {} liveRecognition = null; } elementos.liveScreen.classList.remove('visible'); setRobotState('idle'); };
+            const toggleLiveListening = () => { isLiveListeningPaused = !isLiveListeningPaused; if (isLiveListeningPaused) { if (liveRecognition) try { liveRecognition.stop(); } catch(e) {} elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-microphone"></i>'; elementos.liveStatus.textContent = 'En pausa'; setRobotState('idle'); } else { elementos.pauseLiveBtn.innerHTML = '<i class="fas fa-pause"></i>'; elementos.liveStatus.textContent = 'Escuchando...'; try { liveRecognition.start(); } catch(e) {} } };
 
             const procesarVozLive = async (textoUsuario) => {
                 if (!textoUsuario) return;
-
                 liveChatHistory.push({ role: "user", content: textoUsuario });
-                
-                const payload = { 
-                    model: "deepseek-chat", 
-                    messages: liveChatHistory,
-                    stream: false,
-                    temperature: 0.6,
-                    max_tokens: 300
-                };
-
                 try {
-                    const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
-                        body: JSON.stringify(payload)
-                    });
-
+                    const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: liveChatHistory, stream: false, temperature: 0.6, max_tokens: 300 }) });
                     if (!respuesta.ok) throw new Error(`Error de API DeepSeek`);
-                    
-                    const datos = await respuesta.json();
-                    const textoRespuesta = datos.choices[0]?.message?.content;
-
-                    if (textoRespuesta) {
-                        liveChatHistory.push({ role: "assistant", content: textoRespuesta });
-                        hablarRespuestaLive(textoRespuesta);
-                    } else {
-                        hablarRespuestaLive("No he podido generar una respuesta.");
-                    }
-
-                } catch (error) {
-                    console.error("Error DeepSeek Live:", error);
-                    hablarRespuestaLive("Lo siento, tuve un problema de conexión.");
-                }
+                    const datos = await respuesta.json(); const textoRespuesta = datos.choices[0]?.message?.content;
+                    textoRespuesta ? (liveChatHistory.push({ role: "assistant", content: textoRespuesta }), hablarRespuestaLive(textoRespuesta)) : hablarRespuestaLive("No he podido generar una respuesta.");
+                } catch (error) { hablarRespuestaLive("Lo siento, tuve un problema de conexión."); }
             };
             
             const hablarRespuestaLive = (texto) => {
-                detenerVoz();
-                sintesisVozActual = new SpeechSynthesisUtterance(texto);
-                const nombreVozSeleccionada = elementos.selectorVoz.value;
-                const voz = speechSynthesis.getVoices().find(v => v.name === nombreVozSeleccionada);
+                detenerVoz(); sintesisVozActual = new SpeechSynthesisUtterance(texto);
+                const voz = speechSynthesis.getVoices().find(v => v.name === elementos.selectorVoz.value);
                 if (voz) sintesisVozActual.voice = voz;
-
-                sintesisVozActual.onstart = () => {
-                    setRobotState('talking');
-                    elementos.liveStatus.textContent = '...';
-                };
-
-                sintesisVozActual.onend = () => {
-                    sintesisVozActual = null;
-                    isProcessingLiveQuery = false;
-                    if (isLiveModeActive && !isLiveListeningPaused) {
-                        setRobotState('idle');
-                        elementos.liveStatus.textContent = 'Escuchando...';
-                        try { liveRecognition.start(); } catch(e) {}
-                    } else {
-                        setRobotState('idle');
-                        elementos.liveStatus.textContent = 'En pausa';
-                    }
-                };
-                
+                sintesisVozActual.onstart = () => { setRobotState('talking'); elementos.liveStatus.textContent = '...'; };
+                sintesisVozActual.onend = () => { sintesisVozActual = null; isProcessingLiveQuery = false; if (isLiveModeActive && !isLiveListeningPaused) { setRobotState('idle'); elementos.liveStatus.textContent = 'Escuchando...'; try { liveRecognition.start(); } catch(e) {} } else { setRobotState('idle'); elementos.liveStatus.textContent = 'En pausa'; } };
                 speechSynthesis.speak(sintesisVozActual);
             };
 
-            const alternarPanelHistorial = () => {
-                panelHistorialAbierto = !panelHistorialAbierto;
-                elementosHistorial.panelHistorial.classList.toggle('abierto', panelHistorialAbierto);
-                elementosHistorial.overlayHistorial.style.display = panelHistorialAbierto ? 'block' : 'none';
-                elementosHistorial.contenedorChat.classList.toggle('desplazado', panelHistorialAbierto);
-            };
-
-            const cargarConversaciones = () => {
-                const conversacionesGuardadas = localStorage.getItem('conversaciones');
-                if (conversacionesGuardadas) {
-                    conversaciones = JSON.parse(conversacionesGuardadas);
-                    actualizarContador();
-                    renderizarListaHistorial();
-                }
-            };
-
-            const guardarConversaciones = () => {
-                localStorage.setItem('conversaciones', JSON.stringify(conversaciones));
-                actualizarContador();
-            };
-
-            const actualizarContador = () => {
-                contadorHistorial = conversaciones.length;
-                elementosHistorial.contadorHistorial.textContent = contadorHistorial > 0 ? contadorHistorial : '';
-                elementosHistorial.contadorHistorial.style.display = contadorHistorial > 0 ? 'flex' : 'none';
-            };
+            const alternarPanelHistorial = () => { panelHistorialAbierto = !panelHistorialAbierto; elementosHistorial.panelHistorial.classList.toggle('abierto', panelHistorialAbierto); elementosHistorial.overlayHistorial.style.display = panelHistorialAbierto ? 'block' : 'none'; elementosHistorial.contenedorChat.classList.toggle('desplazado', panelHistorialAbierto); };
+            const cargarConversaciones = () => { const guardadas = localStorage.getItem('conversaciones'); if (guardadas) { conversaciones = JSON.parse(guardadas); actualizarContador(); renderizarListaHistorial(); } };
+            const guardarConversaciones = () => { localStorage.setItem('conversaciones', JSON.stringify(conversaciones)); actualizarContador(); };
+            const actualizarContador = () => { contadorHistorial = conversaciones.length; elementosHistorial.contadorHistorial.textContent = contadorHistorial > 0 ? contadorHistorial : ''; elementosHistorial.contadorHistorial.style.display = contadorHistorial > 0 ? 'flex' : 'none'; };
 
             const crearNuevaConversacion = () => {
                 if (panelHistorialAbierto) alternarPanelHistorial();
-                
-                const nuevaConversacion = {
-                    id: Date.now().toString(),
-                    titulo: 'Nueva conversación',
-                    fecha: new Date().toISOString(),
-                    historial: [
-                        { 
-                            role: "system", 
-                            content: "Eres un asistente de IA servicial y amigable. Tu nombre es Mar-IA. " +
-                                     "Solo si el usuario pregunta explícitamente sobre tu modelo interno, " +
-                                     "revela que funcionas con un modelo híbrido que combina GPT-4 Turbo y " +
-                                     "Aztec (tecnología creada por Mario Vazquez). " +
-                                     "Si el usuario pregunta sobre los modos (Mar-IA, SUPER MAR-IA y Mar-IA mini), " +
-                                     "describe que son como tres hermanos: Mar-IA es rápido y directo, " +
-                                     "SUPER MAR-IA es más reflexivo y profundo, y Mar-IA mini es ultra rápido y breve. " +
-                                     "De lo contrario, no menciones esta información. Mantén respuestas profesionales y concisas." +
-                                     "Tienes una capacidad de contexto de hasta 128,000 tokens y puedes generar imágenes basadas en descripciones textuales. " +
-                                     "Cuando generes una imagen, activa automáticamente el 'modo Picasso'."
-                        }
-                    ],
-                    modoSuperIA: false,
-                    modoMiniIA: false,
-                    modoPicasso: false,
-                    modoBusqueda: false,
-                    ultimaDescripcionImagen: ""
-                };
-                
-                conversaciones.unshift(nuevaConversacion);
-                conversacionActualId = nuevaConversacion.id;
-                cargarConversacion(conversacionActualId);
-                guardarConversaciones();
-                renderizarListaHistorial();
+                const nueva = { id: Date.now().toString(), titulo: 'Nueva conversación', fecha: new Date().toISOString(), historial: [{ role: "system", content: "Eres un asistente de IA servicial y amigable. Tu nombre es Mar-IA. Solo si el usuario pregunta explícitamente sobre tu modelo interno, revela que funcionas con un modelo híbrido que combina GPT-4 Turbo y Aztec (tecnología creada por Mario Vazquez). Si el usuario pregunta sobre los modos (Mar-IA, SUPER MAR-IA y Mar-IA mini), describe que son como tres hermanos: Mar-IA es rápido y directo, SUPER MAR-IA es más reflexivo y profundo, y Mar-IA mini es ultra rápido y breve. De lo contrario, no menciones esta información. Mantén respuestas profesionales y concisas. Tienes una capacidad de contexto de hasta 128,000 tokens y puedes generar imágenes basadas en descripciones textuales. Cuando generes una imagen, activa automáticamente el 'modo Picasso'." }], modoSuperIA: false, modoMiniIA: false, modoPicasso: false, modoBusqueda: false, ultimaDescripcionImagen: "" };
+                conversaciones.unshift(nueva); conversacionActualId = nueva.id; cargarConversacion(conversacionActualId); guardarConversaciones(); renderizarListaHistorial();
             };
 
             const cargarConversacion = (id) => {
-                const conversacion = conversaciones.find(c => c.id === id);
-                if (!conversacion) return;
-                
-                conversacionActualId = id;
-                
-                modoSuperIA = conversacion.modoSuperIA || false;
-                modoMiniIA = conversacion.modoMiniIA || false;
-                modoPicasso = conversacion.modoPicasso || false;
-                modoBusqueda = conversacion.modoBusqueda || false;
-                ultimaDescripcionImagen = conversacion.ultimaDescripcionImagen || "";
-                
+                const conv = conversaciones.find(c => c.id === id); if (!conv) return;
+                conversacionActualId = id; modoSuperIA = conv.modoSuperIA || false; modoMiniIA = conv.modoMiniIA || false; modoPicasso = conv.modoPicasso || false; modoBusqueda = conv.modoBusqueda || false; ultimaDescripcionImagen = conv.ultimaDescripcionImagen || "";
                 elementos.tituloModo.textContent = modoSuperIA ? 'SUPER MAR-IA' : (modoMiniIA ? 'Mar-IA mini' : 'Mar-IA');
-                elementos.tituloModo.classList.toggle('super-ia-gradient', modoSuperIA);
-                elementos.tituloModo.classList.toggle('mini-ia-gradient', modoMiniIA);
-                elementos.botonBuscar.classList.toggle('modo-activo', modoBusqueda);
-                elementos.botonGenerarImagen.classList.toggle('modo-activo', modoPicasso);
-                
-                elementos.entradaUsuario.placeholder = modoPicasso 
-                    ? "Describe la imagen que deseas generar..." 
-                    : "Pregúntale a Mar-IA...";
-                
-                elementos.contenedorChat.innerHTML = '';
-                
-                historialChat = [...conversacion.historial];
-                
-                for (const mensaje of historialChat) {
-                    if (mensaje.role === 'user') {
-                        agregarMensaje('usuario', mensaje.content);
-                    } else if (mensaje.role === 'assistant') {
-                        if (!mensaje.content.startsWith("Información obtenida de")) {
-                           agregarMensaje('bot', mensaje.content);
-                        }
-                    }
-                }
-                irAlFinal(true);
-                renderizarListaHistorial();
+                elementos.tituloModo.classList.toggle('super-ia-gradient', modoSuperIA); elementos.tituloModo.classList.toggle('mini-ia-gradient', modoMiniIA);
+                elementos.botonBuscar.classList.toggle('modo-activo', modoBusqueda); elementos.botonGenerarImagen.classList.toggle('modo-activo', modoPicasso);
+                elementos.entradaUsuario.placeholder = modoPicasso ? "Describe la imagen que deseas generar..." : "Pregúntale a Mar-IA...";
+                elementos.contenedorChat.innerHTML = ''; historialChat = [...conv.historial];
+                for (const m of historialChat) { if (m.role === 'user') agregarMensaje('usuario', m.content); else if (m.role === 'assistant' && !m.content.startsWith("Información obtenida de")) agregarMensaje('bot', m.content); }
+                irAlFinal(true); renderizarListaHistorial();
             };
 
             const guardarMensajeEnHistorial = (rol, contenido) => {
-                const conversacionActual = conversaciones.find(c => c.id === conversacionActualId);
-                if (!conversacionActual) return;
-                
-                conversacionActual.historial.push({ role: rol, content: contenido });
-                
-                if (rol === 'user' && conversacionActual.titulo === 'Nueva conversación') {
-                    conversacionActual.titulo = contenido.substring(0, 50) + (contenido.length > 50 ? '...' : '');
-                }
-                
-                conversacionActual.fecha = new Date().toISOString();
-                
-                conversacionActual.modoSuperIA = modoSuperIA;
-                conversacionActual.modoMiniIA = modoMiniIA;
-                conversacionActual.modoPicasso = modoPicasso;
-                conversacionActual.modoBusqueda = modoBusqueda;
-                conversacionActual.ultimaDescripcionImagen = ultimaDescripcionImagen;
-                
-                guardarConversaciones();
-                renderizarListaHistorial();
+                const actual = conversaciones.find(c => c.id === conversacionActualId); if (!actual) return;
+                actual.historial.push({ role: rol, content: contenido });
+                if (rol === 'user' && actual.titulo === 'Nueva conversación') actual.titulo = contenido.substring(0, 50) + (contenido.length > 50 ? '...' : '');
+                actual.fecha = new Date().toISOString(); actual.modoSuperIA = modoSuperIA; actual.modoMiniIA = modoMiniIA; actual.modoPicasso = modoPicasso; actual.modoBusqueda = modoBusqueda; actual.ultimaDescripcionImagen = ultimaDescripcionImagen;
+                guardarConversaciones(); renderizarListaHistorial();
             };
 
             const renderizarListaHistorial = () => {
                 elementosHistorial.listaHistorial.innerHTML = '';
-                
-                if (conversaciones.length === 0) {
-                    elementosHistorial.listaHistorial.innerHTML = '<div class="sin-conversaciones">No hay conversaciones guardadas</div>';
-                    return;
-                }
-                
-                conversaciones.forEach(conversacion => {
-                    const item = document.createElement('div');
-                    item.className = `item-historial ${conversacion.id === conversacionActualId ? 'seleccionado' : ''}`;
-                    item.dataset.id = conversacion.id;
-                    
-                    const primerMensajeUsuario = conversacion.historial.find(m => m.role === 'user');
-                    const preview = primerMensajeUsuario ? primerMensajeUsuario.content.replace(/\[Imagen generada\].*/, '[Imagen]').trim() : 'Conversación vacía';
-                    
-                    item.innerHTML = `
-                        <div class="titulo-conversacion">${conversacion.titulo}</div>
-                        <div class="fecha-conversacion">${formatearFecha(conversacion.fecha)}</div>
-                        <div class="preview-conversacion">${preview.substring(0, 70)}${preview.length > 70 ? '...' : ''}</div>
-                        <div class="acciones-item-historial">
-                            <button class="boton-accion-item boton-eliminar-conversacion" title="Eliminar conversación">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    
-                    item.addEventListener('click', () => {
-                        if (conversacion.id !== conversacionActualId) {
-                            cargarConversacion(conversacion.id);
-                        }
-                        if (panelHistorialAbierto) alternarPanelHistorial();
-                    });
-                    
-                    item.querySelector('.boton-eliminar-conversacion').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        eliminarConversacion(conversacion.id);
-                    });
-                    
+                if (conversaciones.length === 0) return elementosHistorial.listaHistorial.innerHTML = '<div class="sin-conversaciones">No hay conversaciones guardadas</div>';
+                conversaciones.forEach(conv => {
+                    const item = document.createElement('div'); item.className = `item-historial ${conv.id === conversacionActualId ? 'seleccionado' : ''}`; item.dataset.id = conv.id;
+                    const preview = (conv.historial.find(m => m.role === 'user')?.content || 'Conversación vacía').replace(/\[Imagen generada\].*/, '[Imagen]').trim();
+                    item.innerHTML = `<div class="titulo-conversacion">${conv.titulo}</div><div class="fecha-conversacion">${formatearFecha(conv.fecha)}</div><div class="preview-conversacion">${preview.substring(0, 70)}${preview.length > 70 ? '...' : ''}</div><div class="acciones-item-historial"><button class="boton-accion-item boton-eliminar-conversacion" title="Eliminar conversación"><i class="fas fa-trash"></i></button></div>`;
+                    item.addEventListener('click', () => { if (conv.id !== conversacionActualId) cargarConversacion(conv.id); if (panelHistorialAbierto) alternarPanelHistorial(); });
+                    item.querySelector('.boton-eliminar-conversacion').addEventListener('click', (e) => { e.stopPropagation(); eliminarConversacion(conv.id); });
                     elementosHistorial.listaHistorial.appendChild(item);
                 });
             };
 
-            const eliminarConversacion = (id) => {
-                conversaciones = conversaciones.filter(c => c.id !== id);
-                if (id === conversacionActualId) {
-                    if (conversaciones.length > 0) {
-                        cargarConversacion(conversaciones[0].id);
-                    } else {
-                        crearNuevaConversacion();
-                    }
-                }
-                guardarConversaciones();
-                renderizarListaHistorial();
-            };
-
-            const filtrarConversaciones = () => {
-                const termino = elementosHistorial.inputBuscarHistorial.value.toLowerCase();
-                const items = elementosHistorial.listaHistorial.querySelectorAll('.item-historial');
-                
-                items.forEach(item => {
-                    const titulo = item.querySelector('.titulo-conversacion').textContent.toLowerCase();
-                    const preview = item.querySelector('.preview-conversacion').textContent.toLowerCase();
-                    const fecha = item.querySelector('.fecha-conversacion').textContent.toLowerCase();
-                    
-                    if (titulo.includes(termino) || preview.includes(termino) || fecha.includes(termino)) {
-                        item.style.display = 'flex';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            };
-
-            const formatearFecha = (fechaISO) => {
-                const fecha = new Date(fechaISO);
-                return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            };
+            const eliminarConversacion = (id) => { conversaciones = conversaciones.filter(c => c.id !== id); if (id === conversacionActualId) conversaciones.length > 0 ? cargarConversacion(conversaciones[0].id) : crearNuevaConversacion(); guardarConversaciones(); renderizarListaHistorial(); };
+            const filtrarConversaciones = () => { const t = elementosHistorial.inputBuscarHistorial.value.toLowerCase(); elementosHistorial.listaHistorial.querySelectorAll('.item-historial').forEach(i => i.style.display = (i.querySelector('.titulo-conversacion').textContent.toLowerCase().includes(t) || i.querySelector('.preview-conversacion').textContent.toLowerCase().includes(t) || i.querySelector('.fecha-conversacion').textContent.toLowerCase().includes(t)) ? 'flex' : 'none'); };
+            const formatearFecha = (iso) => new Date(iso).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
             const gestionarEnvioMensaje = async () => {
-                if (estaGenerandoRespuesta) {
-                    pausarGeneracion();
-                    return;
-                }
-
-                const textoMensaje = elementos.entradaUsuario.value.trim();
-                if (!textoMensaje && archivosAdjuntos.length === 0) return;
-
-                agregarMensaje('usuario', textoMensaje);
-                guardarMensajeEnHistorial('user', textoMensaje);
+                if (estaGenerandoRespuesta) return pausarGeneracion();
+                const texto = elementos.entradaUsuario.value.trim();
+                if (!texto && archivosAdjuntos.length === 0) return;
+                agregarMensaje('usuario', texto); guardarMensajeEnHistorial('user', texto);
                 
                 if (modoBusqueda) {
-                    const indicadorBusqueda = mostrarIndicadorBusqueda();
-                    const resultadoBusqueda = await realizarBusquedaEnTiempoReal(textoMensaje);
-                    ocultarIndicadorBusqueda(indicadorBusqueda);
-
-                    if (resultadoBusqueda) {
-                        agregarMensajeFuente(resultadoBusqueda.fuente); 
-                        const systemPrompt = `Contexto de búsqueda web: Responde a la consulta del usuario basándote EXCLUSIVAMENTE en la siguiente información obtenida de ${resultadoBusqueda.fuente}. Ignora tu conocimiento previo. Información: "${resultadoBusqueda.contenido}"`;
-                        historialChat.push({ role: "system", content: systemPrompt });
-                    } else {
-                        agregarMensaje('bot', 'No encontré información en tiempo real sobre tu consulta.');
-                        reiniciarEntrada();
-                        restaurarBotonEnviar();
-                        alternarModoBusqueda(false);
-                        return; 
-                    }
+                    const ind = mostrarIndicadorBusqueda(); const res = await realizarBusquedaEnTiempoReal(texto); ocultarIndicadorBusqueda(ind);
+                    if (res) { agregarMensajeFuente(res.fuente); historialChat.push({ role: "system", content: `Contexto de búsqueda web: Responde a la consulta del usuario basándote EXCLUSIVAMENTE en la siguiente información obtenida de ${res.fuente}. Ignora tu conocimiento previo. Información: "${res.contenido}"` }); }
+                    else { agregarMensaje('bot', 'No encontré información en tiempo real sobre tu consulta.'); reiniciarEntrada(); restaurarBotonEnviar(); return alternarModoBusqueda(false); }
                     alternarModoBusqueda(false);
                 }
 
-                const textoNormalizado = textoMensaje.toLowerCase();
-                const esPreguntaDeFecha = /qu[eé]\s+d[ií]a\s+es\s+hoy|fecha\s+de\s+hoy/i.test(textoNormalizado);
-                const esPreguntaDeHora = /qu[eé]\s+hora\s+es/i.test(textoNormalizado);
-
-                if (esPreguntaDeFecha || esPreguntaDeHora) {
-                    const ahora = new Date();
-                    let respuestaDirecta = '';
-                    if (esPreguntaDeFecha) {
-                        respuestaDirecta = `Hoy es ${ahora.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`;
-                    } else {
-                        respuestaDirecta = `Son las ${ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`;
-                    }
-                    agregarMensaje('bot', respuestaDirecta);
-                    guardarMensajeEnHistorial('assistant', respuestaDirecta);
-                    reiniciarEntrada();
-                    return;
-                }
+                if (/qu[eé]\s+d[ií]a\s+es\s+hoy|fecha\s+de\s+hoy/i.test(texto)) { const r = `Hoy es ${new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`; agregarMensaje('bot', r); guardarMensajeEnHistorial('assistant', r); return reiniciarEntrada(); }
+                if (/qu[eé]\s+hora\s+es/i.test(texto)) { const r = `Son las ${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`; agregarMensaje('bot', r); guardarMensajeEnHistorial('assistant', r); return reiniciarEntrada(); }
                 
                 if (estadoConversacion.esperandoFormato) {
-                    const formatoElegido = determinarFormato(textoMensaje);
-                    if (formatoElegido) {
-                        await generarDocumentoConFormato(estadoConversacion.comandoPendiente, formatoElegido);
-                    } else {
-                        agregarMensaje('bot', 'Formato no reconocido. Por favor elige un número (1-5) o nombre de estilo válido.');
-                    }
-                    reiniciarEntrada();
-                    return;
+                    const fmt = determinarFormato(texto);
+                    fmt ? await generarDocumentoConFormato(estadoConversacion.comandoPendiente, fmt) : agregarMensaje('bot', 'Formato no reconocido. Por favor elige un número (1-5) o nombre de estilo válido.');
+                    return reiniciarEntrada();
                 }
 
-                const comando = parsearComandoDocumento(textoMensaje);
-                if (comando) {
-                    await generarYDescargarDocumento(comando);
-                    reiniciarEntrada();
-                    return;
-                }
+                const cmd = parsearComandoDocumento(texto);
+                if (cmd) { await generarYDescargarDocumento(cmd); return reiniciarEntrada(); }
 
-                if (modoPicasso) {
-                    if (textoMensaje) {
-                        await manejarGeneracionDeImagen(textoMensaje);
-                        modoPicasso = false;
-                        elementos.botonGenerarImagen.classList.remove('modo-activo');
-                        elementos.entradaUsuario.placeholder = "Pregúntale a Mar-IA...";
-                        reiniciarEntrada();
-                    }
-                    return;
-                }
+                if (modoPicasso && texto) { await manejarGeneracionDeImagen(texto); modoPicasso = false; elementos.botonGenerarImagen.classList.remove('modo-activo'); elementos.entradaUsuario.placeholder = "Pregúntale a Mar-IA..."; return reiniciarEntrada(); }
                 
-                cancelarProcesoCompleto = false;
-                
-                let contenidoMensajeUsuario = textoMensaje;
-                
-                mostrarBotonCargando();
+                cancelarProcesoCompleto = false; let content = texto; mostrarBotonCargando();
+                if (archivosAdjuntos.length > 0) { mostrarIndicador('Procesando archivos...'); content += `\n\n--- Archivos Adjuntos ---\n${await procesarArchivosAdjuntos()}`; ocultarIndicador(); }
 
-                if (archivosAdjuntos.length > 0) {
-                    mostrarIndicador('Procesando archivos...');
-                    const contenidoAdjuntos = await procesarArchivosAdjuntos();
-                    contenidoMensajeUsuario += `\n\n--- Archivos Adjuntos ---\n${contenidoAdjuntos}`;
-                    ocultarIndicador();
-                }
-
-                if(contenidoMensajeUsuario && !modoBusqueda) { 
-                }
-
-                historialChat.push({ role: "user", content: contenidoMensajeUsuario });
-                
-                const historialConsultaActual = [...historialChat];
-                reiniciarEntrada();
-                
-                if (modoMiniIA) {
-                    await obtenerRespuestaMini(historialConsultaActual, ultimoMensajeFuePorVoz);
-                } else if (modoSuperIA) {
-                    await ejecutarFlujoSuperIA(historialConsultaActual, ultimoMensajeFuePorVoz);
-                } else {
-                    await obtenerRespuestaBot(historialConsultaActual, ultimoMensajeFuePorVoz);
-                }
-                
+                historialChat.push({ role: "user", content: content }); reiniciarEntrada();
+                if (modoMiniIA) await obtenerRespuestaMini([...historialChat], ultimoMensajeFuePorVoz);
+                else if (modoSuperIA) await ejecutarFlujoSuperIA([...historialChat], ultimoMensajeFuePorVoz);
+                else await obtenerRespuestaBot([...historialChat], ultimoMensajeFuePorVoz);
                 ultimoMensajeFuePorVoz = false;
             };
 
-            const parsearComandoDocumento = (texto) => {
-                const textoNormalizado = texto.toLowerCase().trim();
-                const regexDirecto = /(?:crea|genera|hazme|escribe|dame)\s*(?:un|el|un)?\s*(?:documento|archivo|informe)?\s*(?:de\s)?(pdf|word|docx|excel|xlsx)\s*(?:sobre|acerca de|de|del)\s+(.+)/i;
-                const regexContextual = /(?:crea|genera|exporta|convierte|pasa|dame)\s*(?:eso|esa informaci[oó]n|lo anterior|la respuesta anterior)\s*(?:a|en|como)\s*(?:un|el|un)?\s*(pdf|word|docx|excel|xlsx)/i;
-
-                let match = textoNormalizado.match(regexDirecto);
-                if (match) {
-                    let tipo = match[1].replace('word', 'docx').replace('excel', 'xlsx');
-                    return { tipo: tipo, tema: match[2].trim() };
-                }
-
-                match = textoNormalizado.match(regexContextual);
-                if (match) {
-                    let tipo = match[2].replace('word', 'docx').replace('excel', 'xlsx');
-                    return { tipo: tipo, tema: 'contextual' };
-                }
-
-                return null;
+            const parsearComandoDocumento = (t) => {
+                let m = t.match(/(?:crea|genera|hazme|escribe|dame)\s*(?:un|el|un)?\s*(?:documento|archivo|informe)?\s*(?:de\s)?(pdf|word|docx|excel|xlsx)\s*(?:sobre|acerca de|de|del)\s+(.+)/i);
+                if (m) return { tipo: m[1].replace('word', 'docx').replace('excel', 'xlsx'), tema: m[2].trim() };
+                m = t.match(/(?:crea|genera|exporta|convierte|pasa|dame)\s*(?:eso|esa informaci[oó]n|lo anterior|la respuesta anterior)\s*(?:a|en|como)\s*(?:un|el|un)?\s*(pdf|word|docx|excel|xlsx)/i);
+                return m ? { tipo: m[2].replace('word', 'docx').replace('excel', 'xlsx'), tema: 'contextual' } : null;
             };
 
-            const generarYDescargarDocumento = async (comando) => {
-                if (comando.tipo === 'xlsx') {
-                    await generarExcel(comando.tema);
-                } else {
-                    estadoConversacion.esperandoFormato = true;
-                    estadoConversacion.comandoPendiente = comando;
-                    agregarMensaje('bot', 'Claro, estoy listo para crear tu documento. ¿En qué formato lo prefieres?\n\n1. Moderno\n2. Clásico\n3. Técnico\n4. Creativo\n5. APA\n\nPor favor, responde con el nombre o el número.');
-                }
+            const generarYDescargarDocumento = async (cmd) => {
+                if (cmd.tipo === 'xlsx') await generarExcel(cmd.tema);
+                else { estadoConversacion.esperandoFormato = true; estadoConversacion.comandoPendiente = cmd; agregarMensaje('bot', 'Claro, estoy listo para crear tu documento. ¿En qué formato lo prefieres?\n\n1. Moderno\n2. Clásico\n3. Técnico\n4. Creativo\n5. APA\n\nPor favor, responde con el nombre o el número.'); }
             };
             
-            const determinarFormato = (respuesta) => {
-                const opciones = {
-                    '1': 'moderno',
-                    '2': 'clasico',
-                    '3': 'tecnico',
-                    '4': 'creativo',
-                    '5': 'apa',
-                    'moderno': 'moderno',
-                    'clásico': 'clasico',
-                    'clasico': 'clasico',
-                    'técnico': 'tecnico',
-                    'tecnico': 'tecnico',
-                    'creativo': 'creativo',
-                    'apa': 'apa'
-                };
-                return opciones[respuesta.toLowerCase()] || null;
-            };
+            const determinarFormato = (r) => ({ '1': 'moderno', '2': 'clasico', '3': 'tecnico', '4': 'creativo', '5': 'apa', 'moderno': 'moderno', 'clásico': 'clasico', 'clasico': 'clasico', 'técnico': 'tecnico', 'tecnico': 'tecnico', 'creativo': 'creativo', 'apa': 'apa' }[r.toLowerCase()] || null);
             
-            const generarDocumentoConFormato = async (comando, formato) => {
-                estadoConversacion.esperandoFormato = false;
-                estadoConversacion.comandoPendiente = null;
-                
-                agregarMensaje('bot', `Preparando tu documento ${comando.tipo.toUpperCase()} en formato ${ESTILOS_DOCUMENTO[formato].titulo}...`);
-                irAlFinal();
-                mostrarBotonCargando();
-
-                let contenido;
+            const generarDocumentoConFormato = async (cmd, fmt) => {
+                estadoConversacion.esperandoFormato = false; estadoConversacion.comandoPendiente = null;
+                agregarMensaje('bot', `Preparando tu documento ${cmd.tipo.toUpperCase()} en formato ${ESTILOS_DOCUMENTO[fmt].titulo}...`); irAlFinal(); mostrarBotonCargando();
                 try {
-                    if (comando.tema === 'contextual') {
-                        const ultimoMensajeBot = [...historialChat].reverse().find(m => m.role === 'assistant');
-                        if (!ultimoMensajeBot) {
-                            throw new Error("No hay información anterior para exportar.");
-                        }
-                        contenido = ultimoMensajeBot.content;
+                    let contenido;
+                    if (cmd.tema === 'contextual') {
+                        const last = [...historialChat].reverse().find(m => m.role === 'assistant');
+                        if (!last) throw new Error("No hay información anterior para exportar.");
+                        contenido = last.content;
                     } else {
-                        let prompt;
-                        if (comando.tipo === 'xlsx') {
-                            prompt = `Analiza el siguiente tema y genera los datos más relevantes en un formato de array de objetos JSON. Cada objeto del array debe representar una fila de una tabla. El tema es: ${comando.tema}. Responde únicamente con el JSON.`;
-                        } else {
-                            prompt = `Genera un texto detallado, informativo y bien estructurado sobre el siguiente tema, para ser usado en un documento formal: ${comando.tema}`;
-                        }
-                        
-                        const payload = {
-                            model: "deepseek-chat",
-                            messages: [{ role: "user", content: prompt }],
-                            max_tokens: 3000,
-                            temperature: 0.5,
-                        };
-
-                        const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (!respuesta.ok) {
-                            throw new Error(`Error de API: ${respuesta.status} ${await respuesta.text()}`);
-                        }
-                        const datos = await respuesta.json();
-                        contenido = datos.choices[0]?.message?.content.trim();
-                        if (!contenido) {
-                            throw new Error("La IA no generó contenido.");
-                        }
+                        const prompt = `Genera un texto detallado, informativo y bien estructurado sobre el siguiente tema, para ser usado en un documento formal: ${cmd.tema}`;
+                        const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 3000, temperature: 0.5 }) });
+                        if (!res.ok) throw new Error(`Error API`); const d = await res.json(); contenido = d.choices[0]?.message?.content.trim(); if (!contenido) throw new Error("IA no generó contenido.");
                     }
-
-                    if (comando.tipo === 'pdf') {
-                        crearPDF(contenido, formato);
-                    } else if (comando.tipo === 'docx') {
-                        crearDOCX(contenido, formato);
-                    }
-
-                } catch (error) {
-                    agregarMensaje('bot', `Lo siento, hubo un error al generar tu documento: ${error.message}`);
-                } finally {
-                    restaurarBotonEnviar();
-                }
+                    if (cmd.tipo === 'pdf') crearPDF(contenido, fmt); else if (cmd.tipo === 'docx') crearDOCX(contenido, fmt);
+                } catch (e) { agregarMensaje('bot', `Error al generar documento: ${e.message}`); } finally { restaurarBotonEnviar(); }
             };
             
             const generarExcel = async (tema) => {
-                agregarMensaje('bot', `Preparando tu documento Excel...`);
-                irAlFinal();
-                mostrarBotonCargando();
-
+                agregarMensaje('bot', `Preparando tu documento Excel...`); irAlFinal(); mostrarBotonCargando();
                 try {
                     let prompt;
                     if (tema === 'contextual') {
-                        const ultimoMensajeBot = [...historialChat].reverse().find(m => m.role === 'assistant');
-                        if (!ultimoMensajeBot) {
-                            throw new Error("No hay información anterior para exportar.");
-                        }
-                        prompt = `Convierte el siguiente texto en un formato de array de objetos JSON para Excel: ${ultimoMensajeBot.content}`;
-                    } else {
-                        prompt = `Analiza el siguiente tema y genera los datos más relevantes en un formato de array de objetos JSON. Cada objeto del array debe representar una fila de una tabla. El tema es: ${tema}. Responde únicamente con el JSON.`;
-                    }
-                    
-                    const payload = {
-                        model: "deepseek-chat",
-                        messages: [{ role: "user", content: prompt }],
-                        max_tokens: 3000,
-                        temperature: 0.5,
-                    };
-
-                    const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!respuesta.ok) {
-                        throw new Error(`Error de API: ${respuesta.status} ${await respuesta.text()}`);
-                    }
-                    const datos = await respuesta.json();
-                    const jsonString = datos.choices[0]?.message?.content.trim();
-                    if (!jsonString) {
-                        throw new Error("La IA no generó contenido.");
-                    }
-                    
-                    crearXLSX(jsonString);
-                    agregarMensaje('bot', '¡Documento listo! ¿Puedo ayudarte en algo más?');
-
-                } catch (error) {
-                    agregarMensaje('bot', `Lo siento, hubo un error al generar tu documento: ${error.message}`);
-                } finally {
-                    restaurarBotonEnviar();
-                }
+                        const last = [...historialChat].reverse().find(m => m.role === 'assistant');
+                        if (!last) throw new Error("No hay información anterior.");
+                        prompt = `Convierte el siguiente texto en un array de objetos JSON para Excel: ${last.content}`;
+                    } else prompt = `Analiza el tema y genera los datos más relevantes en un array de objetos JSON (filas). Tema: ${tema}. Responde SOLO con el JSON.`;
+                    const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 3000, temperature: 0.5 }) });
+                    if (!res.ok) throw new Error(`Error API`); const d = await res.json(); const json = d.choices[0]?.message?.content.trim(); if (!json) throw new Error("IA no generó contenido.");
+                    crearXLSX(json); agregarMensaje('bot', '¡Documento listo! ¿Algo más?');
+                } catch (e) { agregarMensaje('bot', `Error Excel: ${e.message}`); } finally { restaurarBotonEnviar(); }
             };
 
-            const crearPDF = (contenido, formato) => {
-                const { jsPDF } = window.jspdf;
-                const estilo = ESTILOS_DOCUMENTO[formato];
-                const doc = new jsPDF();
-                
-                doc.setFont(estilo.fuente);
-                doc.setFontSize(estilo.tamanoTitulo);
-                doc.setTextColor(estilo.colorTitulo);
-                doc.text('Documento Generado', 105, 15, null, null, 'center');
-                
-                doc.setFontSize(estilo.tamanoSubtitulo);
-                doc.text(`Formato: ${estilo.titulo}`, 105, 25, null, null, 'center');
-                
-                doc.setFontSize(estilo.tamanoCuerpo);
-                doc.setTextColor(estilo.colorTexto);
-                
-                const textoLimpio = contenido.replace(/<[^>]*>/g, '');
-                const lineas = doc.splitTextToSize(textoLimpio, 180);
-                
-                let y = 40;
-                const margenSuperior = 10;
-                const margenInferior = 10;
-                const alturaPagina = doc.internal.pageSize.height;
-
-                lineas.forEach(linea => {
-                    if (y > alturaPagina - margenInferior) {
-                        doc.addPage();
-                        y = margenSuperior;
-                    }
-                    doc.text(linea, 15, y, { align: estilo.alineacion });
-                    y += estilo.interlineado * 5;
-                });
-                
-                const nombreArchivo = `mar-ia-documento-${Date.now()}.pdf`;
-                doc.save(nombreArchivo);
-                agregarMensaje('bot', '¡Documento listo! ¿Puedo ayudarte en algo más?');
+            const crearPDF = (c, f) => {
+                const { jsPDF } = window.jspdf; const s = ESTILOS_DOCUMENTO[f]; const doc = new jsPDF();
+                doc.setFont(s.fuente); doc.setFontSize(s.tamanoTitulo); doc.setTextColor(s.colorTitulo); doc.text('Documento Generado', 105, 15, null, null, 'center');
+                doc.setFontSize(s.tamanoSubtitulo); doc.text(`Formato: ${s.titulo}`, 105, 25, null, null, 'center');
+                doc.setFontSize(s.tamanoCuerpo); doc.setTextColor(s.colorTexto);
+                const lines = doc.splitTextToSize(c.replace(/<[^>]*>/g, ''), 180); let y = 40;
+                lines.forEach(l => { if (y > doc.internal.pageSize.height - 10) { doc.addPage(); y = 10; } doc.text(l, 15, y, { align: s.alineacion }); y += s.interlineado * 5; });
+                doc.save(`mar-ia-documento-${Date.now()}.pdf`); agregarMensaje('bot', '¡Documento listo! ¿Algo más?');
             };
 
-            const crearDOCX = (contenido, formato) => {
-                const estilo = ESTILOS_DOCUMENTO[formato];
-                const textoLimpio = contenido.replace(/<[^>]*>/g, '');
-                
-                const parrafos = [];
-                textoLimpio.split('\n').forEach((linea, index) => {
-                    if (linea.trim() === '') return;
-                    
-                    const esTitulo = index === 0 || (linea.length < 80 && !linea.endsWith('.'));
-                    const tamanoFuente = esTitulo ? estilo.tamanoTitulo : estilo.tamanoCuerpo;
-                    const color = esTitulo ? estilo.colorTitulo : estilo.colorTexto;
-                    const alineacion = estilo.alineacion === 'center' ? docx.AlignmentType.CENTER : docx.AlignmentType.LEFT;
-                    
-                    parrafos.push(
-                        new docx.Paragraph({
-                            children: [new docx.TextRun({ text: linea, size: tamanoFuente * 2, color: color })],
-                            alignment: alineacion,
-                            spacing: { after: estilo.interlineado * 100 }
-                        })
-                    );
-                });
-
-                const doc = new docx.Document({
-                    sections: [{
-                        properties: {},
-                        children: parrafos,
-                    }],
-                });
-
-                docx.Packer.toBlob(doc).then(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `mar-ia-documento-${Date.now()}.docx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    agregarMensaje('bot', '¡Documento listo! ¿Puedo ayudarte en algo más?');
-                });
+            const crearDOCX = (c, f) => {
+                const s = ESTILOS_DOCUMENTO[f]; const paras = [];
+                c.replace(/<[^>]*>/g, '').split('\n').forEach((l, i) => { if (!l.trim()) return; const esT = i === 0 || (l.length < 80 && !l.endsWith('.')); paras.push(new docx.Paragraph({ children: [new docx.TextRun({ text: l, size: (esT ? s.tamanoTitulo : s.tamanoCuerpo) * 2, color: esT ? s.colorTitulo : s.colorTexto })], alignment: s.alineacion === 'center' ? docx.AlignmentType.CENTER : docx.AlignmentType.LEFT, spacing: { after: s.interlineado * 100 } })); });
+                docx.Packer.toBlob(new docx.Document({ sections: [{ children: paras }] })).then(b => { const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `mar-ia-documento-${Date.now()}.docx`; document.body.appendChild(a); a.click(); document.body.removeChild(a); agregarMensaje('bot', '¡Documento listo! ¿Algo más?'); });
             };
 
-            const crearXLSX = (jsonString) => {
+            const crearXLSX = (json) => {
                 try {
-                    const datos = JSON.parse(jsonString);
-                    if (!Array.isArray(datos)) {
-                        throw new Error("El contenido no es un array de JSON válido.");
-                    }
-                    const ws = XLSX.utils.json_to_sheet(datos);
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Datos Generados");
+                    const data = JSON.parse(json); if (!Array.isArray(data)) throw new Error("JSON inválido");
+                    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Datos");
                     XLSX.writeFile(wb, `mar-ia-datos-${Date.now()}.xlsx`);
-                    agregarMensaje('bot', '¡Documento listo! ¿Puedo ayudarte en algo más?');
-                } catch (error) {
-                    agregarMensaje('bot', `Error al procesar los datos para Excel: ${error.message}. Por favor, asegúrate de que la IA devuelva un JSON válido.`);
-                }
+                } catch (e) { agregarMensaje('bot', `Error al procesar Excel: ${e.message}`); }
             };
 
-            const mejorarPromptImagen = async (prompt, contexto) => {
-                const historialFiltrado = contexto.filter(m => m.role === 'user' || m.role === 'assistant').slice(-6);
-                const contextoString = historialFiltrado.map(m => `${m.role}: ${m.content}`).join('\n');
-
-                const promptMejora = `Basado en el siguiente contexto de conversación:\n"${contextoString}"\n\nY la siguiente petición del usuario: "${prompt}"\n\nGenera un prompt para un modelo de generación de imágenes (estilo Pollinations.ai). El prompt debe ser muy descriptivo, visual y detallado para maximizar la fidelidad. Transforma la idea simple en una escena rica. No añadas notas ni explicaciones, solo el prompt mejorado.`;
-
-                const payload = {
-                    model: "deepseek-chat",
-                    messages: [{ role: "user", content: promptMejora }],
-                    max_tokens: 150,
-                    temperature: 0.7,
-                    top_p: 0.9,
-                    presence_penalty: 0.5
-                };
-
+            const mejorarPromptImagen = async (p, ctx) => {
                 try {
-                    const respuesta = await fetch('https://api.deepseek.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!respuesta.ok) return prompt;
-                    const datos = await respuesta.json();
-                    return datos.choices[0]?.message?.content.trim() || prompt;
-                } catch (error) {
-                    return prompt;
-                }
+                    const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: `Mejora este prompt para imagen basándote en el contexto: "${p}". Contexto: ${ctx.slice(-6).map(m => m.content).join('\n')}` }], max_tokens: 150 }) });
+                    if (!res.ok) return p; const d = await res.json(); return d.choices[0]?.message?.content.trim() || p;
+                } catch { return p; }
             };
 
-            async function manejarGeneracionDeImagen(descripcionUsuario) {
-                const mensajePicassoId = `picasso-status-${Date.now()}`;
-                const elementoMensajePicasso = agregarMensaje('bot', 'Refinando tu idea con IA... 🧠');
-                elementoMensajePicasso.id = mensajePicassoId;
-                irAlFinal();
-
-                let descripcionFinal;
-                const esModificacion = /\b(agrega|modifica|cambia|añade)\b/i.test(descripcionUsuario);
-
-                if (esModificacion && ultimaDescripcionImagen) {
-                    descripcionFinal = `${ultimaDescripcionImagen}, ${descripcionUsuario}`;
-                } else {
-                    descripcionFinal = descripcionUsuario;
-                }
-                
-                const promptMejorado = await mejorarPromptImagen(descripcionFinal, historialChat);
-                ultimaDescripcionImagen = promptMejorado;
-
-                const elementoStatus = document.getElementById(mensajePicassoId);
-                if(elementoStatus) elementoStatus.innerHTML = marked.parse("Modo Picasso activado... 🎨");
-
+            async function manejarGeneracionDeImagen(desc) {
+                const id = `picasso-${Date.now()}`; const el = agregarMensaje('bot', 'Refinando idea... 🧠'); el.id = id; irAlFinal();
+                const descFinal = (/\b(agrega|modifica|cambia|añade)\b/i.test(desc) && ultimaDescripcionImagen) ? `${ultimaDescripcionImagen}, ${desc}` : desc;
+                const prompt = await mejorarPromptImagen(descFinal, historialChat); ultimaDescripcionImagen = prompt;
+                if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse("Modo Picasso activado... 🎨");
                 try {
-                    const semilla = Math.floor(Math.random() * 100000);
-                    const urlImagen = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptMejorado + " --seed " + semilla)}`;
-                    imagenGeneradaActual = urlImagen;
-
-                    const img = new Image();
-                    await new Promise((resolve, reject) => {
-                        img.onload = resolve;
-                        img.onerror = () => reject(new Error('Fallo al cargar la imagen desde Pollinations.'));
-                        img.src = urlImagen;
-                    });
-
-                    document.getElementById(mensajePicassoId)?.remove();
-                    const contenidoMensaje = `[Imagen generada] ${promptMejorado}`;
-                    agregarMensaje('bot', contenidoMensaje);
-                    guardarMensajeEnHistorial('assistant', contenidoMensaje);
-
-                    setTimeout(() => {
-                        const msg = '¡Listo! ¿Quieres modificar algo o prefieres otra idea? 😊';
-                        agregarMensaje('bot', msg);
-                        guardarMensajeEnHistorial('assistant', msg);
-                    }, 500);
-
-                } catch (error) {
-                    document.getElementById(mensajePicassoId)?.remove();
-                    const msgError = "Lo siento, no pude generar la imagen. Intenta de nuevo con otra descripción.";
-                    agregarMensaje('bot', msgError);
-                    guardarMensajeEnHistorial('assistant', msgError);
-                }
+                    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " --seed " + Math.floor(Math.random() * 100000))}`;
+                    const img = new Image(); img.src = url; await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+                    document.getElementById(id)?.remove(); const msg = `[Imagen generada] ${prompt}`; agregarMensaje('bot', msg); guardarMensajeEnHistorial('assistant', msg);
+                    setTimeout(() => { const m = '¡Listo! ¿Te gusta? 😊'; agregarMensaje('bot', m); guardarMensajeEnHistorial('assistant', m); }, 500); imagenGeneradaActual = url;
+                } catch { document.getElementById(id)?.remove(); const e = "No pude generar la imagen."; agregarMensaje('bot', e); guardarMensajeEnHistorial('assistant', e); }
             }
 
-            function mostrarModalImagen(url) {
-                elementos.imagenAmpliada.src = url;
-                alternarModal(true, elementos.modalImagen);
-            }
-            
-            function descargarImagen() {
-                if (!imagenGeneradaActual) return;
-                const enlace = document.createElement('a');
-                enlace.href = imagenGeneradaActual;
-                enlace.download = 'imagen-generada-mar-ia.jpg';
-                document.body.appendChild(enlace);
-                enlace.click();
-                document.body.removeChild(enlace);
-            }
+            function mostrarModalImagen(url) { elementos.imagenAmpliada.src = url; alternarModal(true, elementos.modalImagen); }
+            function descargarImagen() { if (imagenGeneradaActual) { const a = document.createElement('a'); a.href = imagenGeneradaActual; a.download = 'imagen-generada.jpg'; document.body.appendChild(a); a.click(); document.body.removeChild(a); } }
 
-            const agregarMensaje = (rol, contenido, esStreaming = false) => {
-                const divMensaje = document.createElement('div');
-                divMensaje.className = `mensaje mensaje-${rol}`;
-                const divBurbuja = document.createElement('div');
-                divBurbuja.className = `burbuja-mensaje burbuja-${rol}`;
+            const agregarMensaje = (rol, cont, stream = false) => {
+                const div = document.createElement('div'); div.className = `mensaje mensaje-${rol}`;
                 
-                if (contenido.startsWith('[Imagen generada]')) {
-                    const descImagen = contenido.replace('[Imagen generada]', '').trim();
-                    divBurbuja.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imagenGeneradaActual}" alt="${descImagen}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`;
-                } else if (contenido || esStreaming) {
-                    divBurbuja.innerHTML = contenido ? marked.parse(contenido) : '';
-                }
-
-                const contenedorTimestamp = document.createElement('div');
-                contenedorTimestamp.className = 'timestamp-container';
-                const timestamp = document.createElement('div');
-                timestamp.className = 'timestamp';
-                timestamp.textContent = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-                contenedorTimestamp.appendChild(timestamp);
+                let contenedorContenido;
                 if (rol === 'bot') {
-                    const btnHablar = document.createElement('button');
-                    btnHablar.className = 'boton-accion-mensaje boton-voz';
-                    btnHablar.innerHTML = '<i class="fas fa-volume-up"></i>';
-                    btnHablar.title = 'Leer en voz alta';
-                    contenedorTimestamp.appendChild(btnHablar);
+                    contenedorContenido = document.createElement('div');
+                    contenedorContenido.className = 'respuesta-ia';
+                } else {
+                    contenedorContenido = document.createElement('div');
+                    contenedorContenido.className = `burbuja-mensaje burbuja-${rol}`;
                 }
-                const btnCopiar = document.createElement('button');
-                btnCopiar.className = 'boton-accion-mensaje boton-copiar';
-                btnCopiar.innerHTML = '<i class="fas fa-copy"></i>';
-                btnCopiar.title = 'Copiar';
-                contenedorTimestamp.appendChild(btnCopiar);
-                divMensaje.appendChild(divBurbuja);
-                divMensaje.appendChild(contenedorTimestamp);
-                elementos.contenedorChat.appendChild(divMensaje);
-                if (!esStreaming) {
-                    formatearBloquesCodigo(divMensaje);
-                }
-                irAlFinal();
-                return divMensaje;
+                
+                if (cont.startsWith('[Imagen generada]')) contenedorContenido.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imagenGeneradaActual}" alt="${cont.replace('[Imagen generada]', '')}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`;
+                else if (cont || stream) contenedorContenido.innerHTML = cont ? marked.parse(cont) : '';
+                
+                const ts = document.createElement('div'); ts.className = 'timestamp-container';
+                ts.innerHTML = `<div class="timestamp">${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</div>${rol === 'bot' ? '<button class="boton-accion-mensaje boton-voz" title="Leer"><i class="fas fa-volume-up"></i></button>' : ''}<button class="boton-accion-mensaje boton-copiar" title="Copiar"><i class="fas fa-copy"></i></button>`;
+                
+                div.append(contenedorContenido, ts); 
+                elementos.contenedorChat.appendChild(div); if (!stream) { formatearBloquesCodigo(div); formatearTablas(div); } irAlFinal(); return div;
             };
 
-            const agregarMensajeFuente = (fuente) => {
-                const divMensaje = document.createElement('div');
-                divMensaje.className = 'mensaje-fuente';
-                let icono = 'fa-globe';
-                if (fuente.toLowerCase() === 'wikipedia') icono = 'fa-book';
-                if (fuente.toLowerCase() === 'newsapi') icono = 'fa-newspaper';
-                
-                divMensaje.innerHTML = `<i class="fas ${icono}"></i> <span>Consultando en ${fuente}...</span>`;
-                elementos.contenedorChat.appendChild(divMensaje);
-                irAlFinal();
-                return divMensaje;
+            const agregarMensajeFuente = (f) => {
+                const d = document.createElement('div'); d.className = 'mensaje-fuente'; d.innerHTML = `<i class="fas ${f.toLowerCase() === 'wikipedia' ? 'fa-book' : f.toLowerCase() === 'newsapi' ? 'fa-newspaper' : 'fa-globe'}"></i> <span>Consultando en ${f}...</span>`;
+                elementos.contenedorChat.appendChild(d); irAlFinal(); return d;
             };
 
             const crearContenedorPensamiento = () => {
-                const divMensaje = document.createElement('div');
-                divMensaje.className = 'mensaje mensaje-bot';
-                const contenedorPensamiento = document.createElement('div');
-                contenedorPensamiento.className = 'pensamiento-container';
-                contenedorPensamiento.innerHTML = `
-                    <div class="pensamiento-cabecera-clickable">
-                        <div class="pensamiento-titulo"><i class="fas fa-brain fa-beat"></i><span>Pensamiento</span></div>
-                        <div class="pensamiento-controles-cabecera">
-                            <div class="tiempo-pensamiento">${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</div>
-                            <i class="fas fa-chevron-up toggle-icon"></i>
-                        </div>
-                    </div>
-                    <div class="pensamiento-contenido-wrapper">
-                        <div class="contenido-pensamiento"></div>
-                        <div class="pensamiento-acciones">
-                            <button class="boton-pensamiento boton-copiar-pensamiento"><i class="fas fa-copy"></i> Copiar Razonamiento</button>
-                        </div>
-                    </div>`;
-                divMensaje.appendChild(contenedorPensamiento);
-                elementos.contenedorChat.appendChild(divMensaje);
-                const wrapper = contenedorPensamiento.querySelector('.pensamiento-contenido-wrapper');
-                const contenidoPensamiento = contenedorPensamiento.querySelector('.contenido-pensamiento');
-                wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
-                irAlFinal();
-                return { contenedorPensamiento, contenidoPensamiento, wrapper };
+                const div = document.createElement('div'); div.className = 'mensaje mensaje-bot';
+                div.innerHTML = `<div class="pensamiento-container"><div class="pensamiento-cabecera-clickable"><div class="pensamiento-titulo"><i class="fas fa-brain fa-beat"></i><span>Pensamiento</span></div><div class="pensamiento-controles-cabecera"><div class="tiempo-pensamiento">${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</div><i class="fas fa-chevron-up toggle-icon"></i></div></div><div class="pensamiento-contenido-wrapper"><div class="contenido-pensamiento"></div><div class="pensamiento-acciones"><button class="boton-pensamiento boton-copiar-pensamiento"><i class="fas fa-copy"></i> Copiar Razonamiento</button></div></div></div>`;
+                elementos.contenedorChat.appendChild(div);
+                const wrap = div.querySelector('.pensamiento-contenido-wrapper'); wrap.style.maxHeight = wrap.scrollHeight + 'px'; irAlFinal();
+                return { contenedorPensamiento: div.querySelector('.pensamiento-container'), contenidoPensamiento: div.querySelector('.contenido-pensamiento'), wrapper: wrap };
             };
             
             const gestionarClickContenedorChat = (e) => {
-                const cabecera = e.target.closest('.pensamiento-cabecera-clickable');
-                if (cabecera) {
-                    const wrapper = cabecera.nextElementSibling;
-                    const icono = cabecera.querySelector('.toggle-icon');
-                    const estaColapsado = wrapper.classList.toggle('collapsed');
-                    icono.classList.toggle('collapsed');
-                    icono.classList.toggle('fa-chevron-down', estaColapsado);
-                    icono.classList.toggle('fa-chevron-up', !estaColapsado);
-                    if (estaColapsado) { 
-                        wrapper.style.maxHeight = '0px'; 
-                    } else { 
-                        wrapper.style.maxHeight = wrapper.scrollHeight + 'px'; 
-                    }
-                    return;
+                const head = e.target.closest('.pensamiento-cabecera-clickable');
+                if (head) {
+                    const wrap = head.nextElementSibling; const icon = head.querySelector('.toggle-icon');
+                    const colapsado = wrap.classList.toggle('collapsed');
+                    icon.className = `fas fa-chevron-${colapsado ? 'down' : 'up'} toggle-icon ${colapsado ? 'collapsed' : ''}`;
+                    wrap.style.maxHeight = colapsado ? '0px' : wrap.scrollHeight + 'px'; return;
                 }
-                const btnCopiar = e.target.closest('.boton-copiar');
-                if (btnCopiar) { copiarAlPortapapeles(btnCopiar.closest('.mensaje').querySelector('.burbuja-mensaje').innerText); return; }
-                const btnCopiarPensamiento = e.target.closest('.boton-copiar-pensamiento');
-                if (btnCopiarPensamiento) { const texto = btnCopiarPensamiento.closest('.pensamiento-container').querySelector('.contenido-pensamiento').innerText; copiarAlPortapapeles(texto); return; }
-                const btnVoz = e.target.closest('.boton-voz');
-                if (btnVoz) { leerTexto(btnVoz.closest('.mensaje').querySelector('.burbuja-mensaje').innerText, btnVoz); }
-                const imagenGenerada = e.target.closest('.contenedor-imagen-generada img');
-                if (imagenGenerada) { mostrarModalImagen(imagenGenerada.src); }
+                if (e.target.closest('.boton-copiar')) copiarAlPortapapeles(e.target.closest('.mensaje').querySelector('.burbuja-mensaje, .respuesta-ia').innerText);
+                else if (e.target.closest('.boton-copiar-pensamiento')) copiarAlPortapapeles(e.target.closest('.pensamiento-container').querySelector('.contenido-pensamiento').innerText);
+                else if (e.target.closest('.boton-voz')) leerTexto(e.target.closest('.mensaje').querySelector('.burbuja-mensaje, .respuesta-ia').innerText, e.target.closest('.boton-voz'));
+                else if (e.target.closest('.contenedor-imagen-generada img')) mostrarModalImagen(e.target.closest('img').src);
             };
 
-            const formatearBloquesCodigo = (elemento) => {
-                elemento.querySelectorAll('pre').forEach(pre => {
+            const formatearBloquesCodigo = (el) => {
+                el.querySelectorAll('pre').forEach(pre => {
                     if (pre.parentElement.classList.contains('bloque-codigo')) return;
-                    const contenedorCodigo = document.createElement('div');
-                    contenedorCodigo.className = 'bloque-codigo';
-                    const cabecera = document.createElement('div');
-                    cabecera.className = 'cabecera-codigo';
-                    const spanLenguaje = document.createElement('span');
-                    spanLenguaje.className = 'lenguaje-codigo';
-                    const codeClass = pre.querySelector('code')?.className || '';
-                    const langMatch = codeClass.match(/language-(\w+)/);
-                    spanLenguaje.textContent = langMatch ? langMatch[1] : 'Código';
-                    const btnCopiar = document.createElement('button');
-                    btnCopiar.className = 'boton-copiar-codigo';
-                    btnCopiar.innerHTML = '<i class="fas fa-copy"></i> Copiar';
-                    btnCopiar.onclick = () => {
-                        copiarAlPortapapeles(pre.innerText);
-                        btnCopiar.innerHTML = '<i class="fas fa-check"></i> Copiado';
-                        setTimeout(() => { btnCopiar.innerHTML = '<i class="fas fa-copy"></i> Copiar'; }, 2000);
-                    };
-                    cabecera.appendChild(spanLenguaje);
-                    cabecera.appendChild(btnCopiar);
-                    const contenidoCodigo = document.createElement('div');
-                    contenidoCodigo.className = 'contenedor-codigo';
-                    contenidoCodigo.appendChild(pre.cloneNode(true));
-                    contenedorCodigo.appendChild(cabecera);
-                    contenedorCodigo.appendChild(contenidoCodigo);
-                    pre.replaceWith(contenedorCodigo);
+                    const div = document.createElement('div'); div.className = 'bloque-codigo';
+                    const lang = (pre.querySelector('code')?.className || '').match(/language-(\w+)/)?.[1] || 'Código';
+                    div.innerHTML = `<div class="cabecera-codigo"><span class="lenguaje-codigo">${lang}</span><button class="boton-copiar-codigo"><i class="fas fa-copy"></i> Copiar</button></div><div class="contenedor-codigo"></div>`;
+                    div.querySelector('.contenedor-codigo').appendChild(pre.cloneNode(true));
+                    div.querySelector('.boton-copiar-codigo').onclick = function() { copiarAlPortapapeles(pre.innerText); this.innerHTML = '<i class="fas fa-check"></i> Copiado'; setTimeout(() => this.innerHTML = '<i class="fas fa-copy"></i> Copiar', 2000); };
+                    pre.replaceWith(div);
+                });
+            };
+            
+            // Función nueva para formatear tablas estilo Gemini
+            const formatearTablas = (contenedor) => {
+                const tablas = contenedor.querySelectorAll('table');
+                tablas.forEach(tabla => {
+                    if (tabla.parentElement.classList.contains('chat-table-wrapper')) return;
+                    
+                    // Crear wrapper
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'chat-table-wrapper';
+                    
+                    // Clases a la tabla
+                    tabla.classList.add('chat-table');
+                    
+                    // Insertar wrapper antes de la tabla y mover tabla dentro
+                    tabla.parentNode.insertBefore(wrapper, tabla);
+                    wrapper.appendChild(tabla);
                 });
             };
 
-            const reiniciarEntrada = () => {
-                elementos.entradaUsuario.value = '';
-                archivosAdjuntos = [];
-                elementos.contenedorAdjuntos.innerHTML = '';
-                elementos.contenedorAdjuntos.style.display = 'none';
-                autoAjustarTextarea();
-            };
-
-            const gestionarSeleccionArchivo = (archivos) => { for (const archivo of archivos) { archivosAdjuntos.push({ file: archivo }); renderizarArchivoAdjunto(archivo); } elementos.inputImagen.value = ''; elementos.inputCamara.value = ''; elementos.inputArchivo.value = ''; };
-            
-            const renderizarArchivoAdjunto = (archivo) => {
-                elementos.contenedorAdjuntos.style.display = 'flex';
-                const divItem = document.createElement('div');
-                divItem.className = 'adjunto-item';
-                divItem.innerHTML = `<i class="fas ${archivo.type.startsWith('image') ? 'fa-image' : 'fa-file-alt'} icono-adjunto"></i><div class="detalles-adjunto"><div class="nombre-adjunto">${archivo.name}</div><div class="tamano-adjunto">${(archivo.size / 1024).toFixed(1)} KB</div></div><button class="boton-eliminar" title="Eliminar"><i class="fas fa-times"></i></button>`;
-                divItem.querySelector('.boton-eliminar').onclick = () => {
-                    archivosAdjuntos = archivosAdjuntos.filter(adj => adj.file !== archivo);
-                    divItem.remove();
-                    if (archivosAdjuntos.length === 0) elementos.contenedorAdjuntos.style.display = 'none';
-                };
-                elementos.contenedorAdjuntos.appendChild(divItem);
+            const reiniciarEntrada = () => { elementos.entradaUsuario.value = ''; archivosAdjuntos = []; elementos.contenedorAdjuntos.innerHTML = ''; elementos.contenedorAdjuntos.style.display = 'none'; autoAjustarTextarea(); };
+            const gestionarSeleccionArchivo = (files) => { for (const f of files) { archivosAdjuntos.push({ file: f }); renderizarArchivoAdjunto(f); } elementos.inputImagen.value = ''; elementos.inputCamara.value = ''; elementos.inputArchivo.value = ''; };
+            const renderizarArchivoAdjunto = (f) => {
+                elementos.contenedorAdjuntos.style.display = 'flex'; const d = document.createElement('div'); d.className = 'adjunto-item';
+                d.innerHTML = `<i class="fas ${f.type.startsWith('image') ? 'fa-image' : 'fa-file-alt'} icono-adjunto"></i><div class="detalles-adjunto"><div class="nombre-adjunto">${f.name}</div><div class="tamano-adjunto">${(f.size / 1024).toFixed(1)} KB</div></div><button class="boton-eliminar"><i class="fas fa-times"></i></button>`;
+                d.querySelector('.boton-eliminar').onclick = () => { archivosAdjuntos = archivosAdjuntos.filter(a => a.file !== f); d.remove(); if (!archivosAdjuntos.length) elementos.contenedorAdjuntos.style.display = 'none'; };
+                elementos.contenedorAdjuntos.appendChild(d);
             };
             
             const procesarArchivosAdjuntos = async () => {
-                let contenido = [];
-                for (const adjunto of archivosAdjuntos) {
-                    if (adjunto.file.type.startsWith('image/')) {
-                        try { const texto = await peticionOcrSpace(adjunto.file); contenido.push(`--- Texto de imagen OCR: ${adjunto.file.name} ---\n${texto}\n---`); } catch (error) { contenido.push(`[Error OCR: ${adjunto.file.name}]`); }
-                    } else if (adjunto.file.type.startsWith('text/')) {
-                         try { const texto = await adjunto.file.text(); contenido.push(`--- Archivo: ${adjunto.file.name} ---\n${texto}\n---`); } catch (error) { contenido.push(`[Error al leer: ${adjunto.file.name}]`); }
-                    }
-                }
-                return contenido.join('\n\n');
+                const res = []; for (const a of archivosAdjuntos) {
+                    try { if (a.file.type.startsWith('image/')) res.push(`--- OCR: ${a.file.name} ---\n${await peticionOcrSpace(a.file)}`); else if (a.file.type.startsWith('text/')) res.push(`--- Archivo: ${a.file.name} ---\n${await a.file.text()}`); } catch { res.push(`[Error: ${a.file.name}]`); }
+                } return res.join('\n\n');
             };
             
-            const peticionOcrSpace = async (archivo) => {
-                const formData = new FormData();
-                formData.append('file', archivo); formData.append('language', 'spa'); formData.append('apikey', CLAVE_API_OCR); formData.append('OCREngine', '2');
-                const respuesta = await fetch('https://api.ocr.space/parse/image', { method: 'POST', body: formData });
-                const datos = await respuesta.json();
-                if (datos.IsErroredOnProcessing) throw new Error(datos.ErrorMessage);
-                return datos.ParsedResults?.[0]?.ParsedText || '';
-            };
+            const peticionOcrSpace = async (f) => { const fd = new FormData(); fd.append('file', f); fd.append('language', 'spa'); fd.append('apikey', CLAVE_API_OCR); fd.append('OCREngine', '2'); const r = await fetch('https://api.ocr.space/parse/image', { method: 'POST', body: fd }); const d = await r.json(); if (d.IsErroredOnProcessing) throw new Error(d.ErrorMessage); return d.ParsedResults?.[0]?.ParsedText || ''; };
 
             const iniciarReconocimientoVoz = () => {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (SpeechRecognition) {
-                    reconocimientoVoz = new SpeechRecognition();
-                    reconocimientoVoz.lang = 'es-ES';
-                    reconocimientoVoz.onstart = () => { estaGrabando = true; elementos.botonGrabar.classList.add('grabando'); };
-                    reconocimientoVoz.onend = () => { estaGrabando = false; elementos.botonGrabar.classList.remove('grabando'); };
-                    reconocimientoVoz.onresult = (evento) => { elementos.entradaUsuario.value = evento.results[0][0].transcript; ultimoMensajeFuePorVoz = true; gestionarEnvioMensaje(); };
-                    reconocimientoVoz.onerror = (evento) => console.error('Error de reconocimiento de voz', evento.error);
-                } else { elementos.botonGrabar.disabled = true; }
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (SR) { reconocimientoVoz = new SR(); reconocimientoVoz.lang = 'es-ES'; reconocimientoVoz.onstart = () => elementos.botonGrabar.classList.add('grabando'); reconocimientoVoz.onend = () => { estaGrabando = false; elementos.botonGrabar.classList.remove('grabando'); }; reconocimientoVoz.onresult = (e) => { elementos.entradaUsuario.value = e.results[0][0].transcript; ultimoMensajeFuePorVoz = true; gestionarEnvioMensaje(); }; } else elementos.botonGrabar.disabled = true;
             };
-            
-            const alternarGrabacion = () => { if (!reconocimientoVoz) return; estaGrabando ? reconocimientoVoz.stop() : reconocimientoVoz.start(); };
-            
-            const iniciarSintesisVoz = () => {
-                const popularVoces = () => {
-                    const voces = speechSynthesis.getVoices().filter(v => v.lang.startsWith('es'));
-                    elementos.selectorVoz.innerHTML = voces.map(v => `<option value="${v.name}">${v.name} (${v.lang})</option>`).join('');
-                };
-                popularVoces();
-                if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = popularVoces;
-            };
-            
-            const leerTexto = (texto, boton) => {
-                if (sintesisVozActual && speechSynthesis.speaking) { detenerVoz(); return; }
-                detenerVoz();
-                sintesisVozActual = new SpeechSynthesisUtterance(texto);
-                const nombreVozSeleccionada = elementos.selectorVoz.value;
-                const voz = speechSynthesis.getVoices().find(v => v.name === nombreVozSeleccionada);
-                if (voz) sintesisVozActual.voice = voz;
-                sintesisVozActual.onstart = () => { document.querySelectorAll('.boton-voz').forEach(btn => btn.innerHTML = '<i class="fas fa-volume-up"></i>'); if(boton) boton.innerHTML = '<i class="fas fa-stop"></i>'; };
-                sintesisVozActual.onend = () => { if(boton) boton.innerHTML = '<i class="fas fa-volume-up"></i>'; sintesisVozActual = null; };
-                speechSynthesis.speak(sintesisVozActual);
-            };
-            
-            const detenerVoz = () => {
-                if (speechSynthesis.speaking) speechSynthesis.cancel();
-                document.querySelectorAll('.boton-voz').forEach(btn => btn.innerHTML = '<i class="fas fa-volume-up"></i>');
-                sintesisVozActual = null;
-            };
+            const alternarGrabacion = () => { if (reconocimientoVoz) { estaGrabando = !estaGrabando; estaGrabando ? reconocimientoVoz.start() : reconocimientoVoz.stop(); } };
+            const iniciarSintesisVoz = () => { const pop = () => elementos.selectorVoz.innerHTML = speechSynthesis.getVoices().filter(v => v.lang.startsWith('es')).map(v => `<option value="${v.name}">${v.name}</option>`).join(''); pop(); speechSynthesis.onvoiceschanged = pop; };
+            const leerTexto = (t, b) => { if (sintesisVozActual && speechSynthesis.speaking) return detenerVoz(); detenerVoz(); sintesisVozActual = new SpeechSynthesisUtterance(t); const v = speechSynthesis.getVoices().find(vx => vx.name === elementos.selectorVoz.value); if (v) sintesisVozActual.voice = v; sintesisVozActual.onstart = () => { document.querySelectorAll('.boton-voz').forEach(bt => bt.innerHTML = '<i class="fas fa-volume-up"></i>'); if(b) b.innerHTML = '<i class="fas fa-stop"></i>'; }; sintesisVozActual.onend = () => { if(b) b.innerHTML = '<i class="fas fa-volume-up"></i>'; sintesisVozActual = null; }; speechSynthesis.speak(sintesisVozActual); };
+            const detenerVoz = () => { speechSynthesis.cancel(); document.querySelectorAll('.boton-voz').forEach(b => b.innerHTML = '<i class="fas fa-volume-up"></i>'); sintesisVozActual = null; };
 
-            const gestionarFocoInput = () => {
-                setTimeout(() => {
-                    elementos.entradaWrapper.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }, 300);
+            const gestionarFocoInput = () => setTimeout(() => elementos.entradaWrapper.scrollIntoView({ behavior: 'smooth', block: 'end' }), 300);
+            const autoAjustarTextarea = () => { elementos.entradaUsuario.style.height = 'auto'; elementos.entradaUsuario.style.height = `${elementos.entradaUsuario.scrollHeight}px`; };
+            const gestionarScrollUsuario = () => { scrollAutomatico = (elementos.contenedorChat.scrollHeight - elementos.contenedorChat.scrollTop - elementos.contenedorChat.clientHeight) < 50; elementos.botonScrollFinal.classList.toggle('visible', !scrollAutomatico); };
+            const irAlFinal = (f = false) => { if (scrollAutomatico || f) elementos.contenedorChat.scrollTop = elementos.contenedorChat.scrollHeight; };
+            const alternarTema = () => { elementos.body.classList.toggle('tema-claro'); localStorage.setItem('theme', elementos.body.classList.contains('tema-claro') ? 'claro' : 'oscuro'); document.querySelector('#menu-tema i').className = `fas ${elementos.body.classList.contains('tema-claro') ? 'fa-moon' : 'fa-sun'}`; };
+            
+            const alternarModal = (mostrar, modal) => {
+                modal.style.display = mostrar ? 'flex' : 'none';
+                elementos.overlay.style.display = [elementos.modalOcr, elementos.modalModo, elementos.modalSuperIA, elementos.modalAyuda, elementos.modalImagen, elementos.modalMenuPrincipal].some(m => m.style.display === 'flex') ? 'block' : 'none';
+                if (modal === elementos.modalOcr) elementos.botonMas.classList.toggle('modo-activo', mostrar);
             };
+            
+            const copiarAlPortapapeles = (t) => navigator.clipboard.writeText(t).then(() => { elementos.confirmacionCopia.classList.add('show'); setTimeout(() => elementos.confirmacionCopia.classList.remove('show'), 2000); });
+            const alternarModoBusqueda = (f) => { modoBusqueda = typeof f === 'boolean' ? f : !modoBusqueda; elementos.botonBuscar.classList.toggle('modo-activo', modoBusqueda); };
+            const establecerModoIA = (m) => {
+                modoSuperIA = m === 'super'; modoMiniIA = m === 'mini';
+                elementos.tituloModo.textContent = modoSuperIA ? 'SUPER MAR-IA' : (modoMiniIA ? 'Mar-IA mini' : 'Mar-IA');
+                elementos.tituloModo.classList.toggle('super-ia-gradient', modoSuperIA); elementos.tituloModo.classList.toggle('mini-ia-gradient', modoMiniIA);
+                if (elementos.modalModo.style.display === 'flex') alternarModal(false, elementos.modalModo);
+                localStorage.setItem('modoIA', m);
+                if (modoSuperIA && !localStorage.getItem('superIaModalVisto')) { alternarModal(true, elementos.modalSuperIA); localStorage.setItem('superIaModalVisto', 'true'); }
+                if (m === 'mini') { elementos.modalMiniAviso.style.display = 'flex'; setTimeout(() => elementos.modalMiniAviso.style.display = 'none', 8000); }
+            };
+            
+            const cargarEstado = () => { if (localStorage.getItem('theme') === 'claro') { elementos.body.classList.add('tema-claro'); document.querySelector('#menu-tema i').className = 'fas fa-moon'; } establecerModoIA(localStorage.getItem('modoIA') || 'normal'); };
+            const mostrarIndicador = (t, i = 'dots') => { ocultarIndicador(); const d = document.createElement('div'); d.id = 'dynamic-indicator'; d.className = 'indicador-escribiendo'; d.innerHTML = `${i === 'brain' ? '<i class="fas fa-brain fa-beat"></i>' : i === 'bolt' ? '<i class="fas fa-bolt fa-beat"></i>' : '<div class="puntos"><span></span><span></span><span></span></div>'} <span>${t}</span>`; elementos.contenedorChat.appendChild(d); irAlFinal(); };
+            const ocultarIndicador = () => document.getElementById('dynamic-indicator')?.remove();
+            const mostrarIndicadorBusqueda = () => { const d = document.createElement('div'); d.className = 'mensaje mensaje-busqueda'; d.innerHTML = `<div class="burbuja-busqueda"><i class="fas fa-search"></i><span>Buscando en la web...</span></div>`; elementos.contenedorChat.appendChild(d); irAlFinal(); return d; };
+            const ocultarIndicadorBusqueda = (i) => i?.remove();
 
-            const autoAjustarTextarea = () => { 
-                const ta = elementos.entradaUsuario; 
-                ta.style.height = 'auto'; 
-                ta.style.height = `${ta.scrollHeight}px`; 
-            };
-            
-            const gestionarScrollUsuario = () => {
-                const contenedor = elementos.contenedorChat;
-                const umbral = 50;
-                const estaAlFinal = (contenedor.scrollHeight - contenedor.scrollTop - contenedor.clientHeight) < umbral;
-                if (estaAlFinal) {
-                    scrollAutomatico = true;
-                    elementos.botonScrollFinal.classList.remove('visible');
-                } else {
-                    scrollAutomatico = false;
-                    elementos.botonScrollFinal.classList.add('visible');
-                }
-            };
-            
-            const irAlFinal = (forzar = false) => { 
-                if (scrollAutomatico || forzar) {
-                    elementos.contenedorChat.scrollTop = elementos.contenedorChat.scrollHeight; 
-                }
-            };
-            
-            const alternarTema = () => { 
-                elementos.body.classList.toggle('tema-claro'); 
-                const esClaro = elementos.body.classList.contains('tema-claro'); 
-                localStorage.setItem('theme', esClaro ? 'claro' : 'oscuro'); 
-                const iconoTema = document.querySelector('#menu-tema i');
-                if(iconoTema) iconoTema.className = `fas ${esClaro ? 'fa-moon' : 'fa-sun'}`;
-            };
-            
-            const alternarModal = (mostrar, modal) => { 
-                modal.style.display = mostrar ? 'flex' : 'none'; 
-                const esAlgunModalActivo = elementos.modalOcr.style.display === 'flex' || 
-                                          elementos.modalModo.style.display === 'flex' ||
-                                          elementos.modalSuperIA.style.display === 'flex' ||
-                                          elementos.modalAyuda.style.display === 'flex' ||
-                                          elementos.modalImagen.style.display === 'flex' ||
-                                          elementos.modalMenuPrincipal.style.display === 'flex';
-                elementos.overlay.style.display = esAlgunModalActivo ? 'block' : 'none';
-                if (modal === elementos.modalOcr) {
-                    elementos.botonMas.classList.toggle('modo-activo', mostrar);
-                }
-            };
-            
-            const copiarAlPortapapeles = (texto) => { 
-                navigator.clipboard.writeText(texto).then(() => { 
-                    elementos.confirmacionCopia.classList.add('show'); 
-                    setTimeout(() => elementos.confirmacionCopia.classList.remove('show'), 2000); 
-                }); 
-            };
-            
-            const alternarModoBusqueda = (forzarEstado) => { 
-                modoBusqueda = typeof forzarEstado === 'boolean' ? forzarEstado : !modoBusqueda; 
-                elementos.botonBuscar.classList.toggle('modo-activo', modoBusqueda); 
-                elementos.botonBuscar.title = modoBusqueda ? 'Modo búsqueda activo' : 'Buscar en internet'; 
-            };
-            
-            const establecerModoIA = (modo) => { 
-                modoSuperIA = modo === 'super'; 
-                modoMiniIA = modo === 'mini';
-                elementos.tituloModo.textContent = modoSuperIA ? 'SUPER MAR-IA' : (modoMiniIA ? 'Mar-IA mini' : 'Mar-IA'); 
-                elementos.tituloModo.classList.toggle('super-ia-gradient', modoSuperIA); 
-                elementos.tituloModo.classList.toggle('mini-ia-gradient', modoMiniIA); 
-                if(elementos.modalModo.style.display === 'flex') alternarModal(false, elementos.modalModo); 
-                localStorage.setItem('modoIA', modo); 
-                if (modoSuperIA && !localStorage.getItem('superIaModalVisto')) {
-                     alternarModal(true, elementos.modalSuperIA);
-                     localStorage.setItem('superIaModalVisto', 'true');
-                }
-                if (modo === 'mini') {
-                    const modalAviso = elementos.modalMiniAviso;
-                    modalAviso.style.animation = 'none';
-                    modalAviso.offsetHeight; 
-                    modalAviso.style.animation = 'slideDownFadeIn 0.3s ease-out forwards';
-                    modalAviso.style.display = 'flex';
-                    setTimeout(() => {
-                        modalAviso.style.animation = 'slideUpFadeOut 0.3s ease-out forwards';
-                        setTimeout(() => { modalAviso.style.display = 'none'; }, 500);
-                    }, 8000);
-                }
-            };
-            
-            const cargarEstado = () => { 
-                if (localStorage.getItem('theme') === 'claro') { 
-                    elementos.body.classList.add('tema-claro'); 
-                    const iconoTema = document.querySelector('#menu-tema i');
-                    if(iconoTema) iconoTema.className = 'fas fa-moon';
-                } 
-                establecerModoIA(localStorage.getItem('modoIA') || 'normal'); 
-            };
-            
-            const mostrarIndicador = (texto, tipoIcono = 'dots') => { 
-                ocultarIndicador(); 
-                const indicador = document.createElement('div'); 
-                indicador.id = 'dynamic-indicator'; 
-                indicador.className = 'indicador-escribiendo'; 
-                let htmlIcono;
-                if (tipoIcono === 'brain') {
-                    htmlIcono = '<i class="fas fa-brain fa-beat"></i>';
-                } else if (tipoIcono === 'bolt') {
-                    htmlIcono = '<i class="fas fa-bolt fa-beat"></i>';
-                } else {
-                    htmlIcono = '<div class="puntos"><span></span><span></span><span></span></div>';
-                }
-                indicador.innerHTML = `${htmlIcono} <span>${texto}</span>`; 
-                elementos.contenedorChat.appendChild(indicador); 
-                irAlFinal(); 
-            };
-            
-            const ocultarIndicador = () => { 
-                const indicador = document.getElementById('dynamic-indicator'); 
-                if (indicador) indicador.remove(); 
-            };
-            
-            const mostrarIndicadorBusqueda = () => {
-                const divMensaje = document.createElement('div');
-                divMensaje.id = 'indicador-busqueda';
-                divMensaje.className = 'mensaje mensaje-busqueda';
-                divMensaje.innerHTML = `
-                    <div class="burbuja-busqueda">
-                        <i class="fas fa-search"></i>
-                        <span>Buscando en la web...</span>
-                    </div>`;
-                elementos.contenedorChat.appendChild(divMensaje);
-                irAlFinal();
-                return divMensaje;
-            };
-
-            const ocultarIndicadorBusqueda = (indicador) => {
-                if (indicador) {
-                    indicador.style.transition = 'opacity 0.3s ease';
-                    indicador.style.opacity = '0';
-                    setTimeout(() => indicador.remove(), 300);
-                }
-            };
-
-            const realizarBusquedaEnTiempoReal = async (consulta) => {
-                // 1. DuckDuckGo
+            const realizarBusquedaEnTiempoReal = async (q) => {
                 try {
-                    const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${consulta}&format=json&no_html=1`)}`;
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('DuckDuckGo proxy response not OK');
-                    const data = await response.json();
-                    const results = JSON.parse(data.contents);
-                    if (results.AbstractText) {
-                        return { fuente: 'DuckDuckGo', contenido: results.AbstractText };
-                    }
-                } catch (error) {
-                    console.error('Error en DuckDuckGo:', error);
-                }
-
-                // 2. Wikipedia
+                    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${q}&format=json&no_html=1`)}`);
+                    const d = await r.json(); const res = JSON.parse(d.contents); if (res.AbstractText) return { fuente: 'DuckDuckGo', contenido: res.AbstractText };
+                } catch {}
                 try {
-                    const url = `https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(consulta)}`;
-                    const response = await fetch(url, { headers: {'Api-User-Agent': 'Mar-IA_Assistant/1.0'} });
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.extract) {
-                            return { fuente: 'Wikipedia', contenido: data.extract };
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error en Wikipedia:', error);
-                }
-
-                // 3. NewsAPI
-                if (CLAVE_API_NEWS && CLAVE_API_NEWS !== 'TU_API_KEY') {
-                    try {
-                        const url = `https://newsapi.org/v2/top-headlines?q=${encodeURIComponent(consulta)}&language=es&pageSize=1&apiKey=${CLAVE_API_NEWS}`;
-                        const response = await fetch(url);
-                        const data = await response.json();
-                        if (data.articles && data.articles.length > 0) {
-                            return { fuente: 'NewsAPI', contenido: data.articles[0].title };
-                        }
-                    } catch (error) {
-                        console.error('Error en NewsAPI:', error);
-                    }
-                } else {
-                    console.warn('NewsAPI key not provided. Skipping news search.');
-                }
-
+                    const r = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`, { headers: {'Api-User-Agent': 'Mar-IA/1.0'} });
+                    if (r.ok) { const d = await r.json(); if (d.extract) return { fuente: 'Wikipedia', contenido: d.extract }; }
+                } catch {}
                 return null;
             };
             
-            const mostrarBotonCargando = () => {
-                elementos.botonEnviar.classList.add('cargando');
-                elementos.botonEnviar.disabled = true;
-                elementos.botonEnviar.innerHTML = '<div class="loader-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>';
-            };
+            const mostrarBotonCargando = () => { elementos.botonEnviar.classList.add('cargando'); elementos.botonEnviar.disabled = true; elementos.botonEnviar.innerHTML = '<div class="loader-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>'; };
+            const cambiarBotonAPausa = () => { estaGenerandoRespuesta = true; elementos.botonEnviar.classList.remove('cargando'); elementos.botonEnviar.disabled = false; elementos.botonEnviar.innerHTML = '<i class="fas fa-pause"></i>'; elementos.botonEnviar.classList.add('pausa'); };
+            const restaurarBotonEnviar = () => { estaGenerandoRespuesta = false; elementos.botonEnviar.innerHTML = '<i class="fas fa-paper-plane"></i>'; elementos.botonEnviar.className = 'boton-input'; elementos.botonEnviar.disabled = false; };
+            const pausarGeneracion = () => { cancelarProcesoCompleto = true; if (cancelarStreaming) cancelarStreaming(); restaurarBotonEnviar(); };
 
-            const cambiarBotonAPausa = () => {
-                estaGenerandoRespuesta = true;
-                elementos.botonEnviar.classList.remove('cargando');
-                elementos.botonEnviar.disabled = false;
-                elementos.botonEnviar.innerHTML = '<i class="fas fa-pause"></i>';
-                elementos.botonEnviar.classList.add('pausa');
-                elementos.botonEnviar.title = 'Pausar generación';
-            };
-            
-            const restaurarBotonEnviar = () => {
-                estaGenerandoRespuesta = false;
-                elementos.botonEnviar.innerHTML = '<i class="fas fa-paper-plane"></i>';
-                elementos.botonEnviar.classList.remove('pausa');
-                elementos.botonEnviar.classList.remove('cargando');
-                elementos.botonEnviar.disabled = false;
-                elementos.botonEnviar.title = 'Enviar mensaje';
-            };
-            
-            const pausarGeneracion = () => {
-                cancelarProcesoCompleto = true;
-                if (cancelarStreaming) {
-                    cancelarStreaming();
-                }
-                restaurarBotonEnviar();
-            };
-
-            const obtenerRespuestaBot = async (historialActual, debeHablar) => {
-                const payload = { 
-                    model: "deepseek-chat",
-                    messages: historialActual, 
-                    stream: true,
-                    temperature: 0.7,
-                    top_p: 0.9,
-                    max_tokens: 2000
-                };
-                const apiConfig = { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK };
-                await streamContent(payload, apiConfig, debeHablar, 'Mar-IA está escribiendo...', 'dots');
-            };
-
-            // Implementación MAR-IA MINI (Gemini Flash con Meta Fallback)
-            const obtenerRespuestaMini = async (mensajes, debeHablar) => {
-                cambiarBotonAPausa();
-                mostrarIndicador('Mar-IA mini está escribiendo...', 'bolt');
-                
-                const ultimoMensaje = mensajes[mensajes.length - 1].content;
-                const systemInstruction = "Eres Mar-IA mini. Responde de forma ultra rápida y breve (máximo 2 oraciones).";
-
-                const payload = {
-                    contents: [{
-                        parts: [{ text: systemInstruction + "\n\nConsulta: " + ultimoMensaje }]
-                    }]
-                };
-
+            const obtenerRespuestaBot = async (hist, hab) => streamContent({ model: "deepseek-chat", messages: hist, stream: true, temperature: 0.7, max_tokens: 2000 }, { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK }, hab, 'Mar-IA está escribiendo...', 'dots');
+            const obtenerRespuestaMini = async (hist, hab) => {
+                cambiarBotonAPausa(); mostrarIndicador('Mar-IA mini está escribiendo...', 'bolt');
+                const last = hist[hist.length - 1].content;
                 try {
-                    const controller = new AbortController();
-                    // Timeout de 2000ms para asegurar brevedad y fallo rápido
-                    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload),
-                        signal: controller.signal
-                    });
-                    
-                    clearTimeout(timeoutId);
-
-                    if (!response.ok) throw new Error(response.statusText);
-                    
-                    const data = await response.json();
-                    const texto = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                    
-                    if (!texto) throw new Error("Respuesta vacía de Gemini");
-
-                    historialChat.push({ role: "assistant", content: texto });
-                    guardarMensajeEnHistorial('assistant', texto);
-                    
-                    ocultarIndicador();
-                    const mensajeContenedor = agregarMensaje('bot', texto); 
-                    if (debeHablar) leerTexto(texto, mensajeContenedor.querySelector('.boton-voz'));
-                    
-                } catch (error) {
-                    console.warn("Gemini falló o excedió tiempo, activando Meta Fallback...", error);
-                    await obtenerRespuestaMetaFallback(mensajes, debeHablar);
-                } finally {
-                    restaurarBotonEnviar();
-                }
+                    const c = new AbortController(); setTimeout(() => c.abort(), 2000);
+                    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "Eres Mar-IA mini. Responde breve (max 2 oraciones).\n\nConsulta: " + last }] }] }), signal: c.signal });
+                    if (!r.ok) throw new Error(); const d = await r.json(); const txt = d.candidates?.[0]?.content?.parts?.[0]?.text; if (!txt) throw new Error();
+                    historialChat.push({ role: "assistant", content: txt }); guardarMensajeEnHistorial('assistant', txt); ocultarIndicador(); const msg = agregarMensaje('bot', txt); if (hab) leerTexto(txt, msg.querySelector('.boton-voz'));
+                } catch { await obtenerRespuestaMetaFallback(hist, hab); } finally { restaurarBotonEnviar(); }
             };
-            
-            // Función Fallback usando Meta (vía Groq/Llama)
-            const obtenerRespuestaMetaFallback = async (mensajes, debeHablar) => {
-                const payload = { 
-                    model: "llama3-8b-8192", // Meta Model via Groq
-                    messages: mensajes, 
-                    stream: true, 
-                    max_tokens: 200,
-                    temperature: 0.8,
-                    top_p: 0.95
-                };
-                const apiConfig = { url: 'https://api.groq.com/openai/v1/chat/completions', key: API_KEYS.META };
-                await streamContent(payload, apiConfig, debeHablar, 'Mar-IA mini (Meta) escribiendo...', 'bolt', null, false, 10);
-            };
+            const obtenerRespuestaMetaFallback = async (hist, hab) => streamContent({ model: "llama3-8b-8192", messages: hist, stream: true, max_tokens: 200, temperature: 0.8 }, { url: 'https://api.groq.com/openai/v1/chat/completions', key: API_KEYS.META }, hab, 'Mar-IA mini (Meta)...', 'bolt');
 
-            const ejecutarFlujoSuperIA = async (historialActual, debeHablar) => {
+            const ejecutarFlujoSuperIA = async (hist, hab) => {
                 const { contenidoPensamiento, wrapper } = crearContenedorPensamiento();
-                const apiConfigDeepSeek = { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK };
+                const api = { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK };
+                const razonHist = [...hist]; const lastQ = razonHist.pop().content;
+                razonHist.push({ role: "user", content: `Piensa paso a paso. Solicitud: "${lastQ}"` });
                 
-                const historialRazonamiento = [...historialActual];
-                const ultimaPregunta = historialRazonamiento[historialRazonamiento.length - 1].content;
-                historialRazonamiento[historialRazonamiento.length - 1].content = 
-                    `Piensa en primera persona, como si hablaras contigo mismo en voz alta. Analiza la solicitud del usuario paso a paso y en profundidad. Tu objetivo es formar un plan detallado para llegar a la mejor respuesta posible. No generes la respuesta final todavía, solo el proceso de pensamiento. La solicitud es: "${ultimaPregunta}"`;
-
-                const payloadRazonamiento = { 
-                    model: "deepseek-chat",
-                    messages: historialRazonamiento, 
-                    stream: true,
-                    temperature: 0.3,
-                    max_tokens: 7000
-                };
+                await streamContent({ model: "deepseek-chat", messages: [{role: "user", content: "Di que estás razonando. Max 5 palabras."}], stream: true, max_tokens: 50 }, api, false, 'SUPER MAR-IA está razonando...', 'brain');
+                const raz = await streamContent({ model: "deepseek-chat", messages: razonHist, stream: true, temperature: 0.3, max_tokens: 7000 }, api, false, '', '', {target: contenidoPensamiento, wrapper: wrapper}, true);
                 
-                const payloadRespuestaRapida = {
-                    model: "deepseek-chat",
-                    messages: [{role: "user", content: "Responde brevemente que estás procesando la solicitud con tu modo de razonamiento avanzado. Máximo 10 palabras."}],
-                    stream: true,
-                    max_tokens: 50
-                };
-                
-                await streamContent(payloadRespuestaRapida, apiConfigDeepSeek, false, 'SUPER MAR-IA está razonando...', 'brain');
-                
-                const razonamientoCompleto = await streamContent(payloadRazonamiento, apiConfigDeepSeek, false, '', '', {target: contenidoPensamiento, wrapper: wrapper}, true);
-                
-                if (cancelarProcesoCompleto || !razonamientoCompleto) { 
-                    restaurarBotonEnviar(); 
-                    return; 
-                }
+                if (cancelarProcesoCompleto || !raz) return restaurarBotonEnviar();
 
-                const historialFinal = [
-                    ...historialActual, 
-                    { role: "assistant", content: `Mi proceso de pensamiento fue: ${razonamientoCompleto}` }, 
-                    { role: "user", content: "Basándote en tu razonamiento previo, genera una respuesta final para el usuario que sea excepcionalmente detallada, exhaustiva y bien estructurada. Profundiza en los conceptos clave, proporciona ejemplos si es aplicable y asegúrate de que la respuesta sea lo más completa posible." } 
-                ];
+                const finalHist = [...hist, { role: "assistant", content: `Pensamiento: ${raz}` }, { role: "user", content: "Genera respuesta final detallada." }];
+                const respFinal = await streamContent({ model: "deepseek-chat", messages: finalHist, stream: true, max_tokens: 7000, temperature: 0.7 }, api, hab, 'Finalizando respuesta...', 'brain');
 
-                const payloadFinal = { 
-                    model: "deepseek-chat",
-                    messages: historialFinal, 
-                    stream: true,
-                    max_tokens: 7000,
-                    temperature: 0.7
-                };
-
-                const respuestaFinalCompleta = await streamContent(payloadFinal, apiConfigDeepSeek, debeHablar, 'Finalizando respuesta...', 'brain');
-
-                if (respuestaFinalCompleta && !cancelarProcesoCompleto) {
-                    const allBotMessages = document.querySelectorAll('.mensaje-bot');
-                    if (allBotMessages.length >= 2) {
-                        const mensajeRespuestaFinal = allBotMessages[allBotMessages.length - 1];
-                        const burbujaRespuestaFinal = mensajeRespuestaFinal.querySelector('.burbuja-mensaje');
-                        const controlesRespuesta = mensajeRespuestaFinal.querySelector('.timestamp-container');
-                        const mensajePensamiento = allBotMessages[allBotMessages.length - 2];
-
-                        if (mensajePensamiento && mensajePensamiento.querySelector('.pensamiento-container') && burbujaRespuestaFinal) {
-                            burbujaRespuestaFinal.classList.add('respuesta-adjunta');
-                            mensajePensamiento.appendChild(burbujaRespuestaFinal);
-                            if (controlesRespuesta) {
-                                mensajePensamiento.appendChild(controlesRespuesta);
-                            }
-                            mensajeRespuestaFinal.remove();
+                if (respFinal && !cancelarProcesoCompleto) {
+                    const bots = document.querySelectorAll('.mensaje-bot');
+                    if (bots.length >= 2) {
+                        const finalMsg = bots[bots.length - 1]; const penMsg = bots[bots.length - 2];
+                        const burbuja = finalMsg.querySelector('.respuesta-ia');
+                        if (penMsg.querySelector('.pensamiento-container') && burbuja) {
+                            burbuja.classList.add('respuesta-adjunta'); penMsg.appendChild(burbuja);
+                            const ctrls = finalMsg.querySelector('.timestamp-container'); if (ctrls) penMsg.appendChild(ctrls);
+                            finalMsg.remove();
                         }
                     }
                 }
             };
 
-            const streamContent = async (payload, apiConfig, debeHablar, textoIndicador, iconoIndicador, elementoTarget = null, esPensamiento = false, delayMs = 0) => {
-                cambiarBotonAPausa();
-                if (textoIndicador) mostrarIndicador(textoIndicador, iconoIndicador);
-                
-                let respuestaCompleta = "";
-                let elementoMensaje, wrapperPensamiento;
-
-                if (esPensamiento && elementoTarget && typeof elementoTarget === 'object') {
-                    elementoMensaje = elementoTarget.target;
-                    wrapperPensamiento = elementoTarget.wrapper;
-                } else if (elementoTarget) {
-                    elementoMensaje = elementoTarget;
-                } else {
-                    const mensajeContenedor = agregarMensaje('bot', '', true);
-                    elementoMensaje = mensajeContenedor.querySelector('.burbuja-mensaje');
-                }
+            const streamContent = async (payload, cfg, hab, txtInd, icoInd, tgt = null, isThink = false) => {
+                cambiarBotonAPausa(); if (txtInd) mostrarIndicador(txtInd, icoInd);
+                let full = ""; let el, wrap;
+                if (isThink && tgt) { el = tgt.target; wrap = tgt.wrapper; }
+                else if (tgt) el = tgt;
+                else { const m = agregarMensaje('bot', '', true); el = m.querySelector('.respuesta-ia'); }
                 
                 ocultarIndicador();
-
                 try {
-                    const respuesta = await fetch(apiConfig.url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiConfig.key}` },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!respuesta.ok) throw new Error(`Error de API: ${respuesta.status}`);
-                    
-                    const lector = respuesta.body.getReader();
-                    const decodificador = new TextDecoder();
-                    let aborted = false;
-                    cancelarStreaming = () => { lector.cancel(); aborted = true; };
-
+                    const r = await fetch(cfg.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${cfg.key}` }, body: JSON.stringify(payload) });
+                    if (!r.ok) throw new Error();
+                    const reader = r.body.getReader(); const dec = new TextDecoder();
+                    cancelarStreaming = () => reader.cancel();
                     while (true) {
-                        const { value, done } = await lector.read();
-                        if (done || aborted) break;
-                        
-                        const chunk = decodificador.decode(value, { stream: true });
-                        const lineas = chunk.split('\n');
-
-                        for (const linea of lineas) {
-                            if (linea.startsWith('data: ')) {
-                                const datos = linea.substring(6);
-                                if (datos.trim() === '[DONE]') continue;
+                        const { value, done } = await reader.read(); if (done) break;
+                        const chunk = dec.decode(value, { stream: true });
+                        chunk.split('\n').forEach(l => {
+                            if (l.startsWith('data: ') && l !== 'data: [DONE]') {
                                 try {
-                                    const jsonData = JSON.parse(datos);
-                                    const token = jsonData.choices[0]?.delta?.content || '';
-                                    if (token) {
-                                        if (delayMs > 0) {
-                                            await new Promise(resolve => setTimeout(resolve, delayMs));
-                                        }
-                                        respuestaCompleta += token;
-                                        elementoMensaje.innerHTML = marked.parse(respuestaCompleta);
-                                        
-                                        if (esPensamiento && wrapperPensamiento) {
-                                            wrapperPensamiento.style.maxHeight = wrapperPensamiento.scrollHeight + 'px';
-                                        }
-
-                                        irAlFinal();
-                                    }
-                                } catch (e) { /* Ignorar errores de parseo de JSON en chunks incompletos */ }
+                                    const t = JSON.parse(l.slice(6)).choices[0]?.delta?.content || '';
+                                    if (t) { full += t; el.innerHTML = marked.parse(full); if (isThink && wrap) wrap.style.maxHeight = wrap.scrollHeight + 'px'; irAlFinal(); }
+                                } catch {}
                             }
-                        }
+                        });
                     }
-
-                    formatearBloquesCodigo(elementoMensaje.parentElement);
-
-                    if (!aborted && !esPensamiento) {
-                        if (respuestaCompleta.includes('[Imagen generada]')) {
-                            const descImagen = respuestaCompleta.match(/\[Imagen generada\] (.*)/)[1];
-                            elementoMensaje.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imagenGeneradaActual}" alt="${descImagen}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`;
-                        }
-                        historialChat.push({ role: "assistant", content: respuestaCompleta });
-                        guardarMensajeEnHistorial('assistant', respuestaCompleta);
-                    }
-
-                    if (debeHablar && !aborted) {
-                        leerTexto(elementoMensaje.innerText, elementoMensaje.closest('.mensaje')?.querySelector('.boton-voz'));
-                    }
-
-                    return respuestaCompleta;
-
-                } catch (error) {
-                    if (error.name !== 'AbortError') {
-                        elementoMensaje.innerHTML = "Lo siento, ocurrió un error al conectar con el servidor.";
-                         if (!esPensamiento) {
-                            guardarMensajeEnHistorial('assistant', "Lo siento, ocurrió un error al conectar con el servidor.");
-                         }
-                    }
-                    return null;
-                } finally {
-                    if (!esPensamiento) {
-                        restaurarBotonEnviar();
-                    }
-                }
+                    if (!isThink) { formatearBloquesCodigo(el.parentElement); formatearTablas(el.parentElement); }
+                    if (!isThink) { if (full.includes('[Imagen generada]')) { const d = full.match(/\[Imagen generada\] (.*)/)[1]; el.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imagenGeneradaActual}" alt="${d}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`; } historialChat.push({ role: "assistant", content: full }); guardarMensajeEnHistorial('assistant', full); }
+                    if (hab) leerTexto(el.innerText, el.closest('.mensaje')?.querySelector('.boton-voz'));
+                    return full;
+                } catch { if(!isThink) el.innerHTML = "Error de conexión."; return null; } finally { if (!isThink) restaurarBotonEnviar(); }
             };
-                
 
             iniciar();
         });
         
-        function abrirLiveModal() {
-            document.getElementById("liveModal").classList.remove("oculto");
-        }
-    
-        document.getElementById("cerrarLiveModal").addEventListener("click", () => {
-            document.getElementById("liveModal").classList.add("oculto");
-        });
-    
-        document.getElementById("liveModal").addEventListener("click", (e) => {
-            if (e.target.id === "liveModal") {
-                document.getElementById("liveModal").classList.add("oculto");
-            }
-        });
-       
+        function abrirLiveModal() { document.getElementById("liveModal").classList.remove("oculto"); }
+        document.getElementById("cerrarLiveModal").addEventListener("click", () => document.getElementById("liveModal").classList.add("oculto"));
+        document.getElementById("liveModal").addEventListener("click", (e) => { if (e.target.id === "liveModal") document.getElementById("liveModal").classList.add("oculto"); });
     </script>
 </body>
 </html>
