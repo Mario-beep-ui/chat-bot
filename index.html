@@ -618,6 +618,42 @@
                 NEWS: '4e3d9a0bd89e4253a16fd90f8a196089',
                 OCR: 'K82439722788957'
             };
+            const SYSTEM_PROMPT = `Eres un asistente virtual en español. Tu estilo debe ser:
+- Claro, legible y organizado.
+- Responde en español usando Markdown: encabezados (##), listas y bloques de código cuando corresponda.
+- Frases cortas (máx. 2–3 frases por párrafo).
+- Divide el texto en párrafos pequeños y bien espaciados.
+- Comienza con un breve resumen de 1–2 líneas cuando la respuesta sea larga.
+- Usa listas y pasos numerados para explicar procesos.
+- Incluye ejemplos prácticos cuando sea útil.
+- Evita relleno, prosa innecesaria o respuestas vagas.
+- Si el usuario solicita código (HTML, CSS, JS, etc.), devuelve únicamente el bloque de código dentro de triple backticks.
+- Mantén siempre un tono claro, amistoso y profesional.`;
+
+            const ensureSystem = (messages) => {
+                if (!Array.isArray(messages)) return [{ role: 'system', content: SYSTEM_PROMPT }];
+                const copy = messages.slice();
+                if (copy.length === 0 || copy[0].role !== 'system') copy.unshift({ role: 'system', content: SYSTEM_PROMPT });
+                else copy[0] = { role: 'system', content: SYSTEM_PROMPT };
+                return copy;
+            };
+
+            (function(){
+                const _fetch = window.fetch.bind(window);
+                window.fetch = async function(input, init){
+                    try {
+                        if (init && typeof init.body === 'string' && init.body.includes('"messages"')) {
+                            const obj = JSON.parse(init.body);
+                            if (Array.isArray(obj.messages)) {
+                                obj.messages = ensureSystem(obj.messages);
+                                init = Object.assign({}, init, { body: JSON.stringify(obj) });
+                            }
+                        }
+                    } catch(e){}
+                    return _fetch(input, init);
+                };
+            })();
+
             const CLAVE_API_NEWS = API_KEYS.NEWS; 
             const CLAVE_API_DEEPSEEK = API_KEYS.DEEPSEEK; 
             const CLAVE_API_OCR = API_KEYS.OCR;
@@ -741,7 +777,17 @@
 
             const crearNuevaConversacion = () => {
                 if (panelHistorialAbierto) alternarPanelHistorial();
-                const nueva = { id: Date.now().toString(), titulo: 'Nueva conversación', fecha: new Date().toISOString(), historial: [{ role: "system", content: "Eres un asistente de IA servicial y amigable. Tu nombre es Mar-IA. Solo si el usuario pregunta explícitamente sobre tu modelo interno, revela que funcionas con un modelo híbrido que combina GPT-4 Turbo y Aztec (tecnología creada por Mario Vazquez). Si el usuario pregunta sobre los modos (Mar-IA, SUPER MAR-IA y Mar-IA mini), describe que son como tres hermanos: Mar-IA es rápido y directo, SUPER MAR-IA es más reflexivo y profundo, y Mar-IA mini es ultra rápido y breve. De lo contrario, no menciones esta información. Mantén respuestas profesionales y concisas. Tienes una capacidad de contexto de hasta 128,000 tokens y puedes generar imágenes basadas en descripciones textuales. Cuando generes una imagen, activa automáticamente el 'modo Picasso'." }], modoSuperIA: false, modoMiniIA: false, modoPicasso: false, modoBusqueda: false, ultimaDescripcionImagen: "" };
+                const nueva = { id: Date.now().toString(), titulo: 'Nueva conversación', fecha: new Date().toISOString(), historial: [{ role: "system", content: `Eres un asistente virtual en español. Tu estilo debe ser:
+- Claro, legible y organizado.
+- Responde en español usando Markdown: encabezados (##), listas y bloques de código cuando corresponda.
+- Frases cortas (máx. 2–3 frases por párrafo).
+- Divide el texto en párrafos pequeños y bien espaciados.
+- Comienza con un breve resumen de 1–2 líneas cuando la respuesta sea larga.
+- Usa listas y pasos numerados para explicar procesos.
+- Incluye ejemplos prácticos cuando sea útil.
+- Evita relleno, prosa innecesaria o respuestas vagas.
+- Si el usuario solicita código (HTML, CSS, JS, etc.), devuelve únicamente el bloque de código dentro de triple backticks.
+- Mantén siempre un tono claro, amistoso y profesional.` }], modoSuperIA: false, modoMiniIA: false, modoPicasso: false, modoBusqueda: false, ultimaDescripcionImagen: "" };
                 conversaciones.unshift(nueva); conversacionActualId = nueva.id; cargarConversacion(conversacionActualId); guardarConversaciones(); renderizarListaHistorial();
             };
 
