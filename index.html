@@ -371,6 +371,56 @@
             overflow-x: auto;
             border: 1px solid var(--borde-codigo);
         }
+        
+        .mensaje-bot,
+.mensaje.mensaje-bot {
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+}
+
+.mensaje-bot .respuesta-ia,
+.mensaje-bot .contenido,
+.mensaje-bot .mensaje-contenido {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.mensaje-bot .burbuja-mensaje,
+.mensaje-bot .burbuja-bot {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  max-width: 100%;
+  width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.mensaje-usuario .burbuja-mensaje,
+.mensaje-usuario .burbuja-usuario {
+  max-width: 78%;
+}
+
+.mensaje-bot pre,
+.mensaje-bot table,
+.mensaje-bot .bloque-codigo,
+.mensaje-bot .table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .mensaje-bot .respuesta-ia,
+  .mensaje-bot .burbuja-mensaje {
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+  }
+}
     </style>
 </head>
 <body>
