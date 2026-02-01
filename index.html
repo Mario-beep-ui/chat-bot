@@ -640,7 +640,6 @@
 
             (function(){
                 const _fetch = window.fetch.bind(window);
-                window._rawFetch = _fetch;
                 window.fetch = async function(input, init){
                     try {
                         if (init && typeof init.body === 'string' && init.body.includes('"messages"')) {
@@ -817,7 +816,7 @@
                 if (conversaciones.length === 0) return elementosHistorial.listaHistorial.innerHTML = '<div class="sin-conversaciones">No hay conversaciones guardadas</div>';
                 conversaciones.forEach(conv => {
                     const item = document.createElement('div'); item.className = `item-historial ${conv.id === conversacionActualId ? 'seleccionado' : ''}`; item.dataset.id = conv.id;
-                    const preview = (conv.historial.find(m => m.role === 'user')?.content || 'Conversación vacía').replace(/\[Imagen generada\].*/, '[Imagen]').trim();
+                    const preview = (conv.historial.find(m => m.role === 'user')?.content || 'Conversación vacía').replace(/\[Imagen generada(\|[^\]]*)?[\]].*/, '[Imagen]').trim();
                     item.innerHTML = `<div class="titulo-conversacion">${conv.titulo}</div><div class="fecha-conversacion">${formatearFecha(conv.fecha)}</div><div class="preview-conversacion">${preview.substring(0, 70)}${preview.length > 70 ? '...' : ''}</div><div class="acciones-item-historial"><button class="boton-accion-item boton-eliminar-conversacion" title="Eliminar conversación"><i class="fas fa-trash"></i></button></div>`;
                     item.addEventListener('click', () => { if (conv.id !== conversacionActualId) cargarConversacion(conv.id); if (panelHistorialAbierto) alternarPanelHistorial(); });
                     item.querySelector('.boton-eliminar-conversacion').addEventListener('click', (e) => { e.stopPropagation(); eliminarConversacion(conv.id); });
@@ -952,7 +951,7 @@
                 try {
                     const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " --seed " + Math.floor(Math.random() * 100000))}`;
                     const img = new Image(); img.src = url; await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
-                    document.getElementById(id)?.remove(); const msg = `[Imagen generada] ${prompt}`; agregarMensaje('bot', msg); guardarMensajeEnHistorial('assistant', msg);
+                    document.getElementById(id)?.remove(); imagenGeneradaActual = url; const msg = `[Imagen generada|${url}] ${prompt}`; agregarMensaje('bot', msg); guardarMensajeEnHistorial('assistant', msg);
                     setTimeout(() => { const m = '¡Listo! ¿Te gusta? 😊'; agregarMensaje('bot', m); guardarMensajeEnHistorial('assistant', m); }, 500); imagenGeneradaActual = url;
                 } catch { document.getElementById(id)?.remove(); const e = "No pude generar la imagen."; agregarMensaje('bot', e); guardarMensajeEnHistorial('assistant', e); }
             }
@@ -972,7 +971,7 @@
                     contenedorContenido.className = `burbuja-mensaje burbuja-${rol}`;
                 }
                 
-                if (cont.startsWith('[Imagen generada]')) contenedorContenido.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imagenGeneradaActual}" alt="${cont.replace('[Imagen generada]', '')}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`;
+                if (cont.startsWith('[Imagen generada')) { const imgMatch = cont.match(/^\[Imagen generada\|?(.*?)\]\s*(.*)/s); const imgUrl = imgMatch && imgMatch[1] ? imgMatch[1] : imagenGeneradaActual; const imgAlt = imgMatch && imgMatch[2] ? imgMatch[2] : ''; if (imgUrl) imagenGeneradaActual = imgUrl; contenedorContenido.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imgUrl}" alt="${imgAlt}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`; }
                 else if (cont || stream) contenedorContenido.innerHTML = cont ? marked.parse(cont) : '';
                 
                 const ts = document.createElement('div'); ts.className = 'timestamp-container';
@@ -1049,127 +1048,9 @@
                 elementos.contenedorAdjuntos.appendChild(d);
             };
             
-            // Redimensiona imagen a max 512px para que el base64 sea pequeño
-            const redimensionarImagen = (file) => new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const img = new Image();
-                    img.onload = () => {
-                        let w = img.width, h = img.height;
-                        const max = 512;
-                        if (w <= max && h <= max) { resolve({ base64: reader.result.split(',')[1], mimeType: file.type }); return; }
-                        if (w > h) { h = Math.round(h * max / w); w = max; } else { w = Math.round(w * max / h); h = max; }
-                        const canvas = document.createElement('canvas');
-                        canvas.width = w; canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                        resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
-                    };
-                    img.onerror = reject;
-                    img.src = reader.result;
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-
-            // Visión de imágenes — Groq como principal, catbox como fallback
-            const analizarImagenVisual = async (imageBase64, mimeType) => {
-                const dataUrl = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + imageBase64;
-                const prompt = 'Describe esta imagen en detalle en español. Identifica personas, objetos, animales, escenarios, colores principales, texto visible y el contexto general. Sé muy específico.';
-
-                // 1) Groq — modelo llama-4-scout (visión real, modelo actual)
-                // Para activar: ve a https://console.groq.com/keys y genera una key nueva
-                // Luego reemplaza el valor de GROQ_VISION_KEY abajo
-                const GROQ_VISION_KEY = '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';
-                if (GROQ_VISION_KEY !== 'TU_KEY_GROQ_AQUI') {
-                    try {
-                        console.log('Enviando imagen a Groq Vision...');
-                        const r = await window._rawFetch('https://api.groq.com/openai/v1/chat/completions', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + GROQ_VISION_KEY
-                            },
-                            body: JSON.stringify({
-                                model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-                                messages: [{
-                                    role: 'user',
-                                    content: [
-                                        { type: 'image_url', image_url: { url: dataUrl } },
-                                        { type: 'text', text: prompt }
-                                    ]
-                                }],
-                                max_tokens: 1000,
-                                temperature: 0.3
-                            })
-                        });
-                        if (r.ok) {
-                            const d = await r.json();
-                            const texto = d.choices && d.choices[0] && d.choices[0].message ? d.choices[0].message.content : null;
-                            if (texto && texto.length > 10) {
-                                console.log('✅ Visión: Groq OK');
-                                return texto;
-                            }
-                        } else {
-                            const errTxt = await r.text();
-                            console.warn('⚠️ Groq HTTP ' + r.status + ':', errTxt.slice(0, 300));
-                        }
-                    } catch(e) { console.warn('⚠️ Groq error:', e.message); }
-                } else {
-                    console.warn('⚠️ Groq: key no configurada. Ve a console.groq.com/keys para generar una.');
-                }
-
-                // 2) Fallback: subir imagen a catbox.moe y retornar URL
-                // Así al menos el usuario puede ver la imagen y describírla
-                try {
-                    console.log('Subiendo imagen a catbox.moe para obtener URL...');
-                    // Convertir base64 a blob
-                    const byteChars = atob(imageBase64);
-                    const byteNumbers = new Array(byteChars.length);
-                    for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i);
-                    const blob = new Blob([new Uint8Array(byteNumbers)], { type: mimeType || 'image/jpeg' });
-                    const file = new File([blob], 'imagen.jpg', { type: mimeType || 'image/jpeg' });
-
-                    const fd = new FormData();
-                    fd.append('reqkey', '');
-                    fd.append('fileupload', file);
-                    const r = await fetch('https://catbox.moe/api/', { method: 'POST', body: fd });
-                    if (r.ok) {
-                        const url = await r.text();
-                        if (url && url.startsWith('https://')) {
-                            console.log('✅ Imagen subida a catbox:', url);
-                            return '[Imagen subida: ' + url + ']\n\nNo pude analizar la imagen automáticamente (visión no disponible). La imagen se subió a ese enlace para que puedas verla. Si me describes qué contiene, te ayudo.';
-                        }
-                    }
-                    console.warn('⚠️ catbox no retornó URL válida');
-                } catch(e) { console.warn('⚠️ catbox error:', e.message); }
-
-                return null;
-            };
-
             const procesarArchivosAdjuntos = async () => {
                 const res = []; for (const a of archivosAdjuntos) {
-                    try {
-                        if (a.file.type.startsWith('image/')) {
-                            // Primero intentar visión real con IA
-                            const imgData = await redimensionarImagen(a.file);
-                            const visionTexto = await analizarImagenVisual(imgData.base64, imgData.mimeType);
-                            let resultado = '';
-                            if (visionTexto) {
-                                resultado += `--- Análisis Visual: ${a.file.name} ---\n${visionTexto}`;
-                            }
-                            // OCR como complemento para extraer texto específico
-                            try {
-                                const ocrTexto = await peticionOcrSpace(a.file);
-                                if (ocrTexto && ocrTexto.trim().length > 0) {
-                                    resultado += `\n\n--- Texto OCR: ${a.file.name} ---\n${ocrTexto}`;
-                                }
-                            } catch(e) { console.warn('OCR complementario falló:', e); }
-                            res.push(resultado || `[Imagen: ${a.file.name} - no se pudo analizar]`);
-                        } else if (a.file.type.startsWith('text/')) {
-                            res.push(`--- Archivo: ${a.file.name} ---\n${await a.file.text()}`);
-                        }
-                    } catch { res.push(`[Error: ${a.file.name}]`); }
+                    try { if (a.file.type.startsWith('image/')) res.push(`--- OCR: ${a.file.name} ---\n${await peticionOcrSpace(a.file)}`); else if (a.file.type.startsWith('text/')) res.push(`--- Archivo: ${a.file.name} ---\n${await a.file.text()}`); } catch { res.push(`[Error: ${a.file.name}]`); }
                 } return res.join('\n\n');
             };
             
@@ -1298,7 +1179,7 @@
                         });
                     }
                     if (!isThink) { formatearBloquesCodigo(el.parentElement); formatearTablas(el.parentElement); }
-                    if (!isThink) { if (full.includes('[Imagen generada]')) { const d = full.match(/\[Imagen generada\] (.*)/)[1]; el.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imagenGeneradaActual}" alt="${d}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`; } historialChat.push({ role: "assistant", content: full }); guardarMensajeEnHistorial('assistant', full); }
+                    if (!isThink) { if (full.includes('[Imagen generada')) { const sm = full.match(/^\[Imagen generada\|?(.*?)\]\s*(.*)/s); const sUrl = sm && sm[1] ? sm[1] : imagenGeneradaActual; const sAlt = sm && sm[2] ? sm[2] : ''; if (sUrl) imagenGeneradaActual = sUrl; el.innerHTML = `<div class="contenedor-imagen-generada"><img src="${sUrl}" alt="${sAlt}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`; } historialChat.push({ role: "assistant", content: full }); guardarMensajeEnHistorial('assistant', full); }
                     if (hab) leerTexto(el.innerText, el.closest('.mensaje')?.querySelector('.boton-voz'));
                     return full;
                 } catch { if(!isThink) el.innerHTML = "Error de conexión."; return null; } finally { if (!isThink) restaurarBotonEnviar(); }
@@ -1311,5 +1192,115 @@
         document.getElementById("cerrarLiveModal").addEventListener("click", () => document.getElementById("liveModal").classList.add("oculto"));
         document.getElementById("liveModal").addEventListener("click", (e) => { if (e.target.id === "liveModal") document.getElementById("liveModal").classList.add("oculto"); });
     </script>
+
+<!-- INJECTED: Modal for image preview + download -->
+<style>
+#modal-imagen { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); z-index: 99999; }
+#modal-imagen .modal-content { position: relative; max-width: 92%; max-height: 92%; padding: 1rem; border-radius: 12px; background: rgba(0,0,0,0.6); display: flex; gap: 1rem; align-items: center; justify-content: center; }
+#modal-imagen img { max-width: 100%; max-height: 80vh; border-radius: 10px; object-fit: contain; display: block; }
+.modal-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 0.6rem; }
+.modal-actions button { background: rgba(255,255,255,0.12); color: white; border: none; padding: 0.6rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 1.2rem; }
+.modal-actions button:hover { background: rgba(255,255,255,0.18); }
+</style>
+
+<div id="modal-imagen" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-modal="true">
+    <div class="modal-actions">
+      <button id="descargar-imagen-btn" title="Descargar imagen">⬇️</button>
+      <button id="cerrar-modal-imagen-btn" title="Cerrar">✖</button>
+    </div>
+    <img id="imagen-ampliada" src="" alt="Imagen ampliada">
+  </div>
+</div>
+
+<script>
+(function(){
+  if (typeof document === 'undefined') return;
+  function mostrarModalImagen(src){
+    const modal = document.getElementById('modal-imagen');
+    const img = document.getElementById('imagen-ampliada');
+    if(!modal || !img) return;
+    img.src = src;
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+  function cerrarModalImagen(){
+    const modal = document.getElementById('modal-imagen');
+    const img = document.getElementById('imagen-ampliada');
+    if(!modal || !img) return;
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden','true');
+    img.src = '';
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
+  function descargarImagenDesdeSrc(src){
+    const a = document.createElement('a');
+    a.href = src;
+    const ext = (src.split('.').pop().split(/\#|\?/)[0] || 'png').substring(0,4);
+    a.download = 'mar-ia-imagen.' + ext;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+  document.addEventListener('click', function(e){
+    const target = e.target;
+    if(target && target.tagName === 'IMG' && (target.classList.contains('generated-image') || (target.dataset && target.dataset.generated === 'true'))){
+      mostrarModalImagen(target.src);
+    }
+  });
+  const btnCerrar = document.getElementById('cerrar-modal-imagen-btn');
+  const btnDescargar = document.getElementById('descargar-imagen-btn');
+  const modal = document.getElementById('modal-imagen');
+  if(btnCerrar) btnCerrar.addEventListener('click', cerrarModalImagen);
+  if(btnDescargar) btnDescargar.addEventListener('click', function(){ const img = document.getElementById('imagen-ampliada'); if(img && img.src) descargarImagenDesdeSrc(img.src); });
+  document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape') cerrarModalImagen(); });
+  if(modal){ modal.addEventListener('click', function(ev){ if(ev.target === modal) cerrarModalImagen(); }); }
+  window.insertGeneratedImage = function(url, alt){
+    try{
+      const selectors = ['#contenedor-chat','.contenedor-chat','#chat','.chat'];
+      let container = null;
+      for(const s of selectors){
+        const c = document.querySelector(s);
+        if(c){ container = c; break; }
+      }
+      if(!container){ container = document.body; }
+      const wrapper = document.createElement('div');
+      wrapper.className = 'mensaje mensaje-bot';
+      wrapper.style.display = 'flex';
+      wrapper.style.marginBottom = '1rem';
+      wrapper.style.width = '100%';
+      const bubble = document.createElement('div');
+      bubble.className = 'burbuja-mensaje burbuja-bot';
+      bubble.style.padding = '0.6rem';
+      bubble.style.background = 'transparent';
+      bubble.style.border = 'none';
+      bubble.style.width = '100%';
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = alt || 'Imagen generada';
+      img.className = 'generated-image';
+      img.style.maxWidth = '100%';
+      img.style.borderRadius = '12px';
+      img.style.cursor = 'zoom-in';
+      img.dataset.generated = 'true';
+      bubble.appendChild(img);
+      wrapper.appendChild(bubble);
+      container.appendChild(wrapper);
+      if(container.scrollIntoView) wrapper.scrollIntoView({behavior:'smooth', block:'end'});
+      return wrapper;
+    }catch(err){
+      console.error('insertGeneratedImage error', err);
+      return null;
+    }
+  };
+  window.addEventListener('load', function(){
+    try{ document.querySelectorAll('img.generated-image, img[data-generated=\"true\"]').forEach(img=>{ img.style.cursor = 'zoom-in'; }); }catch(e){}
+  });
+})();
+</script>
+<!-- END INJECTED -->
 </body>
 </html>
