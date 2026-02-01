@@ -293,6 +293,23 @@
         .live-modal-contenido { background: #fff; color: #333; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .cerrar-modal { position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer; color: #fff; }
 
+        /* Streaming por líneas - MAR-IA mini */
+        .respuesta-ia .line {
+            opacity: 0;
+            animation: lineAppear 0.3s ease-out forwards;
+            padding: 0.12rem 0;
+            line-height: 1.7;
+        }
+        @keyframes lineAppear {
+            from { opacity: 0; transform: translateY(3px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .respuesta-ia .partial-line {
+            opacity: 0.55;
+            padding: 0.12rem 0;
+            line-height: 1.7;
+        }
+
         /* ESTILOS NUEVOS PARA RESPUESTA IA (MODO TEXTO PLANO) */
         .respuesta-ia {
             padding: 0.5rem 1rem;
@@ -614,9 +631,17 @@
             const API_KEYS = {
                 GEMINI: 'AIzaSyCJ_JioAHSxLvyZG7XcGeWYyUJWR5_wj60',
                 DEEPSEEK: 'sk-646a5b86d1de4ee186dfac833541452b',
-                META: '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', 
+                META: '',
                 NEWS: '4e3d9a0bd89e4253a16fd90f8a196089',
-                OCR: 'K82439722788957'
+                OCR: 'K82439722788957',
+                GROQ: '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',
+                TOGETHER: 'YOUR_TOGETHER_KEY',
+                OPENAI: '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',
+                REPLICATE: 'r8_HLTv5DZg6FYCnfiis5f2t5nCDKL1mc10iax1A',
+                HF: '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',
+                POLLINATIONS: true,
+                SERPAPI: '0034eb1bc5f50365cf5e0905296918ca6d3b140b9d7a0dd36f5fe635a7dcec2e',
+                BRAVE: 'BSA8zvfdVUQLbW6_ZOPAB6wmxXrjJ_J'
             };
             const SYSTEM_PROMPT = `Eres un asistente virtual en español. Tu estilo debe ser:
 - Claro, legible y organizado.
@@ -640,6 +665,7 @@
 
             (function(){
                 const _fetch = window.fetch.bind(window);
+                window._rawFetch = _fetch; // guardar ref original para visión multimodal
                 window.fetch = async function(input, init){
                     try {
                         if (init && typeof init.body === 'string' && init.body.includes('"messages"')) {
@@ -936,6 +962,136 @@
                 } catch (e) { agregarMensaje('bot', `Error al procesar Excel: ${e.message}`); }
             };
 
+            // ===== fileToBase64 con redimensionado para APIs de visión =====
+            const fileToBase64 = (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+            // Redimensiona imagen a máximo 512px en el lado más largo → base64 pequeño confiable
+            const redimensionarImagen = (file, maxPx = 512) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let w = img.width, h = img.height;
+                        if (w <= maxPx && h <= maxPx) {
+                            // Ya pequeña, devolver base64 directa
+                            resolve({ base64: reader.result.split(',')[1], mimeType: file.type });
+                            return;
+                        }
+                        // Escalar manteniendo proporción
+                        if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+                        else { w = Math.round(w * maxPx / h); h = maxPx; }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        // Exportar como jpeg para tamaño menor
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                        resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
+                    };
+                    img.onerror = reject;
+                    img.src = reader.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+
+            // ===== ANÁLISIS VISUAL DE IMÁGENES =====
+            const analizarImagenVisual = async (imageBase64, mimeType, pregunta) => {
+                const prompt = pregunta || 'Describe esta imagen en detalle en español. Identifica: personas (si hay, describelos), objetos, animales, escenarios, colores principales, texto visible, y el contexto general. Sé muy específico y detallado.';
+                const dataUrl = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + imageBase64;
+
+                const bodyObj = {
+                    model: 'llama',
+                    messages: [{
+                        role: 'user',
+                        content: [
+                            { type: 'image_url', image_url: { url: dataUrl } },
+                            { type: 'text', text: prompt }
+                        ]
+                    }],
+                    max_tokens: 1000
+                };
+                const bodyStr = JSON.stringify(bodyObj);
+
+                // 1) Pollinations vía corsproxy.io (resuelve CORS desde localhost)
+                try {
+                    console.log('Intentando Pollinations vía corsproxy.io...');
+                    const r = await fetch('https://corsproxy.io/?https://api.pollinations.ai/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                        body: bodyStr
+                    });
+                    if (r.ok) {
+                        const d = await r.json();
+                        const texto = d.choices && d.choices[0] && d.choices[0].message ? d.choices[0].message.content : null;
+                        if (texto && texto.length > 10) {
+                            console.log('✅ Visión: Pollinations vía corsproxy OK');
+                            return { fuente: 'Pollinations Vision', contenido: texto };
+                        } else {
+                            console.warn('⚠️ corsproxy/Pollinations texto vacío:', JSON.stringify(d).slice(0,300));
+                        }
+                    } else {
+                        console.warn('⚠️ corsproxy/Pollinations HTTP ' + r.status);
+                    }
+                } catch(e) { console.warn('⚠️ corsproxy error:', e.message); }
+
+                // 2) Pollinations directo (funciona desde GitHub Pages)
+                try {
+                    console.log('Intentando Pollinations directo...');
+                    const r = await fetch('https://api.pollinations.ai/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: bodyStr
+                    });
+                    if (r.ok) {
+                        const d = await r.json();
+                        const texto = d.choices && d.choices[0] && d.choices[0].message ? d.choices[0].message.content : null;
+                        if (texto && texto.length > 10) {
+                            console.log('✅ Visión: Pollinations directo OK');
+                            return { fuente: 'Pollinations Vision', contenido: texto };
+                        }
+                    } else {
+                        console.warn('⚠️ Pollinations directo HTTP ' + r.status);
+                    }
+                } catch(e) { console.warn('⚠️ Pollinations directo error:', e.message); }
+
+                // 3) Último recurso: usar DeepSeek (sin visión) mandando metadatos básicos
+                // para que al menos responda algo útil
+                try {
+                    console.log('Usando DeepSeek como fallback sin visión...');
+                    const rawFetch = window._rawFetch || window.fetch;
+                    const r = await rawFetch('https://api.deepseek.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API_KEYS.DEEPSEEK },
+                        body: JSON.stringify({
+                            model: 'deepseek-chat',
+                            messages: [{
+                                role: 'user',
+                                content: 'El usuario subió una imagen (formato: ' + (mimeType || 'desconocido') + ', tamaño aprox: ' + Math.round(imageBase64.length * 0.75 / 1024) + ' KB). No pude analizar la imagen automáticamente. Por favor indica al usuario que la función de visión no está disponible en este momento y sugiere que describa la imagen manualmente para que puedas ayudarle.'
+                            }],
+                            max_tokens: 200,
+                            temperature: 0.3
+                        })
+                    });
+                    if (r.ok) {
+                        const d = await r.json();
+                        const texto = d.choices && d.choices[0] && d.choices[0].message ? d.choices[0].message.content : null;
+                        if (texto) {
+                            console.log('✅ DeepSeek fallback OK (sin visión)');
+                            return { fuente: 'DeepSeek (sin visión)', contenido: texto };
+                        }
+                    }
+                } catch(e) { console.warn('⚠️ DeepSeek fallback error:', e.message); }
+
+                console.warn('❌ Todas las APIs de visión fallaron');
+                return null;
+            };
+            // ===== FIN ANÁLISIS VISUAL =====
+
             const mejorarPromptImagen = async (p, ctx) => {
                 try {
                     const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: `Mejora este prompt para imagen basándote en el contexto: "${p}". Contexto: ${ctx.slice(-6).map(m => m.content).join('\n')}` }], max_tokens: 150 }) });
@@ -949,11 +1105,65 @@
                 const prompt = await mejorarPromptImagen(descFinal, historialChat); ultimaDescripcionImagen = prompt;
                 if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse("Modo Picasso activado... 🎨");
                 try {
-                    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " --seed " + Math.floor(Math.random() * 100000))}`;
-                    const img = new Image(); img.src = url; await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
-                    document.getElementById(id)?.remove(); const msg = `[Imagen generada] ${prompt}`; agregarMensaje('bot', msg); guardarMensajeEnHistorial('assistant', msg);
-                    setTimeout(() => { const m = '¡Listo! ¿Te gusta? 😊'; agregarMensaje('bot', m); guardarMensajeEnHistorial('assistant', m); }, 500); imagenGeneradaActual = url;
-                } catch { document.getElementById(id)?.remove(); const e = "No pude generar la imagen."; agregarMensaje('bot', e); guardarMensajeEnHistorial('assistant', e); }
+                    let url = null;
+                    // 1) Principal: Replicate Flux Schnell
+                    if (!url && API_KEYS.REPLICATE) {
+                        try {
+                            if(document.getElementById(id)) document.getElementById(id).querySelector('.respuesta-ia') && (document.getElementById(id).querySelector('.respuesta-ia').innerHTML = marked.parse('Generando con Flux... 🎨'));
+                            const createRes = await fetch('https://api.replicate.com/v1/predictions', {
+                                method: 'POST',
+                                headers: { 'Authorization': 'Token ' + API_KEYS.REPLICATE, 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ version: 'black-forest-labs/flux-schnell', input: { prompt: prompt, num_outputs: 1 } })
+                            });
+                            if (createRes.ok) {
+                                let prediction = await createRes.json();
+                                let attempts = 0;
+                                while (prediction.status !== 'succeeded' && prediction.status !== 'failed' && attempts < 25) {
+                                    await new Promise(r => setTimeout(r, 1200));
+                                    const checkRes = await fetch('https://api.replicate.com/v1/predictions/' + prediction.id, { headers: { 'Authorization': 'Token ' + API_KEYS.REPLICATE } });
+                                    prediction = await checkRes.json();
+                                    attempts++;
+                                }
+                                if (prediction.status === 'succeeded' && prediction.output && prediction.output[0]) {
+                                    url = prediction.output[0];
+                                    console.log('Imagen: Replicate/Flux OK');
+                                }
+                            }
+                        } catch(e) { console.warn('Replicate error:', e); }
+                    }
+                    // 2) Secundaria: Hugging Face Stable Diffusion XL
+                    if (!url && API_KEYS.HF) {
+                        try {
+                            if(document.getElementById(id)) { const el = document.getElementById(id).querySelector('.respuesta-ia'); if(el) el.innerHTML = marked.parse('Generando con Stable Diffusion... 🖼️'); }
+                            const hfRes = await fetch('https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0', {
+                                method: 'POST',
+                                headers: { 'Authorization': 'Bearer ' + API_KEYS.HF, 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ inputs: prompt })
+                            });
+                            if (hfRes.ok) {
+                                const blob = await hfRes.blob();
+                                if (blob.size > 1000) { url = URL.createObjectURL(blob); console.log('Imagen: HuggingFace OK'); }
+                            }
+                        } catch(e) { console.warn('HuggingFace error:', e); }
+                    }
+                    // 3) Último recurso: Pollinations
+                    if (!url) {
+                        if(document.getElementById(id)) { const el = document.getElementById(id).querySelector('.respuesta-ia'); if(el) el.innerHTML = marked.parse('Generando con Pollinations... 🎨'); }
+                        url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt + ' --seed ' + Math.floor(Math.random() * 100000));
+                        await new Promise((res, rej) => { const img = new Image(); img.src = url; img.onload = res; img.onerror = rej; setTimeout(rej, 15000); });
+                        console.log('Imagen: Pollinations OK');
+                    }
+                    document.getElementById(id)?.remove();
+                    imagenGeneradaActual = url;
+                    const msg = '[Imagen generada] ' + prompt;
+                    agregarMensaje('bot', msg); guardarMensajeEnHistorial('assistant', msg);
+                    setTimeout(() => { const m = '¡Listo! ¿Te gusta? 😊'; agregarMensaje('bot', m); guardarMensajeEnHistorial('assistant', m); }, 500);
+                } catch(err) {
+                    document.getElementById(id)?.remove();
+                    const e = 'No pude generar la imagen. Intenta de nuevo.';
+                    agregarMensaje('bot', e); guardarMensajeEnHistorial('assistant', e);
+                    console.error('Gen imagen error:', err);
+                }
             }
 
             function mostrarModalImagen(url) { elementos.imagenAmpliada.src = url; alternarModal(true, elementos.modalImagen); }
@@ -1049,9 +1259,36 @@
             };
             
             const procesarArchivosAdjuntos = async () => {
-                const res = []; for (const a of archivosAdjuntos) {
-                    try { if (a.file.type.startsWith('image/')) res.push(`--- OCR: ${a.file.name} ---\n${await peticionOcrSpace(a.file)}`); else if (a.file.type.startsWith('text/')) res.push(`--- Archivo: ${a.file.name} ---\n${await a.file.text()}`); } catch { res.push(`[Error: ${a.file.name}]`); }
-                } return res.join('\n\n');
+                const res = [];
+                for (const a of archivosAdjuntos) {
+                    try {
+                        if (a.file.type.startsWith('image/')) {
+                            mostrarIndicador('Analizando imagen con visión IA...', 'brain');
+                            // Redimensionar antes de mandar a APIs (imágenes del móvil son grandes)
+                            const imgData = await redimensionarImagen(a.file, 512);
+                            let resultado = '';
+                            // Visión real con IA
+                            const visionResult = await analizarImagenVisual(imgData.base64, imgData.mimeType, null);
+                            if (visionResult) {
+                                resultado += '--- Análisis Visual (' + visionResult.fuente + '): ' + a.file.name + ' ---\n' + visionResult.contenido;
+                            }
+                            // OCR como complemento para texto específico
+                            try {
+                                const ocrText = await peticionOcrSpace(a.file);
+                                if (ocrText && ocrText.trim().length > 0) {
+                                    resultado += '\n\n--- Texto OCR extraído: ' + a.file.name + ' ---\n' + ocrText;
+                                }
+                            } catch(e) { console.warn('OCR complementario falló:', e); }
+                            res.push(resultado || '[Imagen: ' + a.file.name + ' - no se pudo analizar. Revisa consola para detalles.]');
+                        } else if (a.file.type.startsWith('text/')) {
+                            res.push('--- Archivo: ' + a.file.name + ' ---\n' + (await a.file.text()));
+                        } else {
+                            res.push('[Archivo adjunto: ' + a.file.name + ' (' + a.file.type + ')]');
+                        }
+                    } catch(e) { res.push('[Error procesando: ' + a.file.name + ': ' + e.message + ']'); console.error(e); }
+                }
+                ocultarIndicador();
+                return res.join('\n\n');
             };
             
             const peticionOcrSpace = async (f) => { const fd = new FormData(); fd.append('file', f); fd.append('language', 'spa'); fd.append('apikey', CLAVE_API_OCR); fd.append('OCREngine', '2'); const r = await fetch('https://api.ocr.space/parse/image', { method: 'POST', body: fd }); const d = await r.json(); if (d.IsErroredOnProcessing) throw new Error(d.ErrorMessage); return d.ParsedResults?.[0]?.ParsedText || ''; };
@@ -1096,14 +1333,42 @@
             const ocultarIndicadorBusqueda = (i) => i?.remove();
 
             const realizarBusquedaEnTiempoReal = async (q) => {
+                // 1) Principal: SerpAPI
                 try {
-                    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${q}&format=json&no_html=1`)}`);
-                    const d = await r.json(); const res = JSON.parse(d.contents); if (res.AbstractText) return { fuente: 'DuckDuckGo', contenido: res.AbstractText };
-                } catch {}
+                    const r = await fetch('https://serpapi.com/search?q=' + encodeURIComponent(q) + '&api_key=' + API_KEYS.SERPAPI + '&hl=es');
+                    if (r.ok) {
+                        const d = await r.json();
+                        let contenido = '';
+                        if (d.answer_box && d.answer_box.answer) contenido += 'Respuesta directa: ' + d.answer_box.answer + '\n\n';
+                        if (d.organic_results && d.organic_results.length > 0) {
+                            d.organic_results.slice(0, 4).forEach(function(res, i) {
+                                contenido += (i+1) + '. ' + res.title + '\n' + (res.snippet || '') + '\nFuente: ' + res.link + '\n\n';
+                            });
+                        }
+                        if (contenido.length > 30) return { fuente: 'Google (SerpAPI)', contenido: contenido };
+                    }
+                } catch(e) { console.warn('SerpAPI error:', e); }
+                // 2) Secundaria: Brave Search
                 try {
-                    const r = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`, { headers: {'Api-User-Agent': 'Mar-IA/1.0'} });
+                    const r = await fetch('https://api.search.brave.com/res/v1/web/search?q=' + encodeURIComponent(q) + '&count=4', {
+                        headers: { 'Accept': 'application/json', 'X-Subscription-Token': API_KEYS.BRAVE }
+                    });
+                    if (r.ok) {
+                        const d = await r.json();
+                        if (d.web && d.web.results && d.web.results.length > 0) {
+                            let contenido = '';
+                            d.web.results.slice(0, 4).forEach(function(res, i) {
+                                contenido += (i+1) + '. ' + res.title + '\n' + (res.description || '') + '\nFuente: ' + res.url + '\n\n';
+                            });
+                            return { fuente: 'Brave Search', contenido: contenido };
+                        }
+                    }
+                } catch(e) { console.warn('Brave error:', e); }
+                // 3) Reserva: Wikipedia
+                try {
+                    const r = await fetch('https://es.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(q), { headers: {'Api-User-Agent': 'Mar-IA/1.0'} });
                     if (r.ok) { const d = await r.json(); if (d.extract) return { fuente: 'Wikipedia', contenido: d.extract }; }
-                } catch {}
+                } catch(e) { console.warn('Wikipedia error:', e); }
                 return null;
             };
             
@@ -1114,16 +1379,132 @@
 
             const obtenerRespuestaBot = async (hist, hab) => streamContent({ model: "deepseek-chat", messages: hist, stream: true, temperature: 0.7, max_tokens: 2000 }, { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK }, hab, 'Mar-IA está escribiendo...', 'dots');
             const obtenerRespuestaMini = async (hist, hab) => {
-                cambiarBotonAPausa(); mostrarIndicador('Mar-IA mini está escribiendo...', 'bolt');
+                cambiarBotonAPausa(); mostrarIndicador('Mar-IA mini está escribiendo.', 'bolt');
                 const last = hist[hist.length - 1].content;
+                // prepare UI element to stream into
+                const msgNode = agregarMensaje('bot', '', true);
+                const el = msgNode.querySelector('.respuesta-ia');
+
+                // helper to append partial/full lines into the element
+                const appendToEl = (text, finalize) => {
+                    if (finalize) {
+                        // create a new line block for finalized lines
+                        const div = document.createElement('div');
+                        div.className = 'line';
+                        div.textContent = text.trim();
+                        el.appendChild(div);
+                    } else {
+                        // update or create temporary partial
+                        let p = el.querySelector('.partial-line');
+                        if (!p) { p = document.createElement('div'); p.className = 'partial-line'; el.appendChild(p); }
+                        p.textContent = text;
+                    }
+                    irAlFinal();
+                };
+
                 try {
-                    const c = new AbortController(); setTimeout(() => c.abort(), 2000);
-                    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "Eres Mar-IA mini. Responde breve (max 2 oraciones).\n\nConsulta: " + last }] }] }), signal: c.signal });
-                    if (!r.ok) throw new Error(); const d = await r.json(); const txt = d.candidates?.[0]?.content?.parts?.[0]?.text; if (!txt) throw new Error();
-                    historialChat.push({ role: "assistant", content: txt }); guardarMensajeEnHistorial('assistant', txt); ocultarIndicador(); const msg = agregarMensaje('bot', txt); if (hab) leerTexto(txt, msg.querySelector('.boton-voz'));
-                } catch { await obtenerRespuestaMetaFallback(hist, hab); } finally { restaurarBotonEnviar(); }
+                    // 1) Try GROQ (Llama) as principal ultra-rápido
+                    if (API_KEYS.GROQ) {
+                        try {
+                            const body = {
+                                model: 'llama-3.3-70b-versatile',
+                                messages: [{ role: 'system', content: 'Eres Mar-IA mini. Responde breve (máx 1-2 frases).' }, { role: 'user', content: last }],
+                                max_tokens: 120,
+                                temperature: 0.6,
+                                stream: true
+                            };
+                            const r = await fetch('https://api.groq.com/openai/v1/chat/completions', { method: 'POST', headers: { 'Authorization': 'Bearer ' + API_KEYS.GROQ, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                            if (r.ok) {
+                                await streamByLine(r, appendToEl, ()=>{});
+                                const finalText = el.textContent || '';
+                                historialChat.push({ role: "assistant", content: finalText });
+                                guardarMensajeEnHistorial('assistant', finalText);
+                                ocultarIndicador();
+                                if (hab) leerTexto(finalText, msgNode.querySelector('.boton-voz'));
+                                return;
+                            } else {
+                                console.warn('GROQ no respondió OK, status', r.status);
+                            }
+                        } catch (e) {
+                            console.warn('Error con GROQ:', e);
+                        }
+                    }
+
+                    // 2) Fallback: Gemini (Google) as secondary fast option
+                    try {
+                        const c = new AbortController(); setTimeout(() => c.abort(), 2500);
+                        const r2 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "Eres Mar-IA mini. Responde breve (max 2 oraciones).\n\nConsulta: " + last }] }] }), signal: c.signal });
+                        if (r2.ok) {
+                            const d = await r2.json();
+                            const txt = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                            if (txt) {
+                                // replace element content with final text
+                                el.innerHTML = marked.parse(txt);
+                                historialChat.push({ role: "assistant", content: txt });
+                                guardarMensajeEnHistorial('assistant', txt);
+                                ocultarIndicador();
+                                if (hab) leerTexto(txt, msgNode.querySelector('.boton-voz'));
+                                return;
+                            }
+                        } else {
+                            console.warn('Gemini response not ok', r2.status);
+                        }
+                    } catch (e) {
+                        console.warn('Gemini error:', e);
+                    }
+
+                    // 3) Final fallback: Meta/Groq via obtenerRespuestaMetaFallback (existing)
+                    await obtenerRespuestaMetaFallback(hist, hab);
+                } catch (e) {
+                    console.error('obtenerRespuestaMini error', e);
+                    // show error to user
+                    el.textContent = 'Error al generar respuesta rápida: ' + (e.message || e);
+                } finally {
+                    ocultarIndicador();
+                    restaurarBotonEnviar();
+                }
             };
-            const obtenerRespuestaMetaFallback = async (hist, hab) => streamContent({ model: "llama3-8b-8192", messages: hist, stream: true, max_tokens: 200, temperature: 0.8 }, { url: 'https://api.groq.com/openai/v1/chat/completions', key: API_KEYS.META }, hab, 'Mar-IA mini (Meta)...', 'bolt');
+            const obtenerRespuestaMetaFallback = async (hist, hab) => {
+                // META vacía → usar DeepSeek-chat como fallback final
+                const last = hist[hist.length - 1].content;
+                const lastBot = document.querySelector('.mensaje-bot:last-child');
+                const el = lastBot ? lastBot.querySelector('.respuesta-ia') : null;
+                try {
+                    const r = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` },
+                        body: JSON.stringify({
+                            model: 'deepseek-chat',
+                            messages: [
+                                { role: 'system', content: 'Eres Mar-IA mini. Responde muy breve (máx 2 frases). Si necesita más detalle, sugiere usar SUPER MAR-IA.' },
+                                { role: 'user', content: last }
+                            ],
+                            max_tokens: 150, temperature: 0.6, stream: true
+                        })
+                    });
+                    if (!r.ok) throw new Error('DeepSeek fallback fallo');
+                    if (el) {
+                        const appendFallback = (text, finalize) => {
+                            if (finalize) {
+                                const div = document.createElement('div'); div.className = 'line'; div.textContent = text.trim(); el.appendChild(div);
+                            } else {
+                                let p = el.querySelector('.partial-line');
+                                if (!p) { p = document.createElement('div'); p.className = 'partial-line'; el.appendChild(p); }
+                                p.textContent = text;
+                            }
+                            irAlFinal();
+                        };
+                        await streamByLine(r, appendFallback, ()=>{});
+                        const finalText = el.textContent || '';
+                        historialChat.push({ role: "assistant", content: finalText });
+                        guardarMensajeEnHistorial('assistant', finalText);
+                        if (hab) leerTexto(finalText, lastBot.querySelector('.boton-voz'));
+                    }
+                } catch(e) {
+                    console.error('Fallback DeepSeek mini:', e);
+                    if (el) el.textContent = 'Error de conexión.';
+                }
+            };
 
             const ejecutarFlujoSuperIA = async (hist, hab) => {
                 const { contenidoPensamiento, wrapper } = crearContenedorPensamiento();
@@ -1152,6 +1533,67 @@
                     }
                 }
             };
+
+            
+            // --- Helper: streaming por LÍNEAS (muestra renglón completo) ---
+            async function streamByLine(response, appendLineFn, onDone = ()=>{}) {
+                if (!response || !response.body) throw new Error('No stream body');
+                const reader = response.body.getReader();
+                const dec = new TextDecoder();
+                let sseBuffer = '';
+                let partial = '';
+                try {
+                    while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+                        sseBuffer += dec.decode(value, { stream: true });
+                        // Partir por salto de línea REAL del protocolo SSE
+                        const sseLines = sseBuffer.split('\n');
+                        sseBuffer = sseLines.pop();
+                        for (const raw of sseLines) {
+                            const line = raw.trim();
+                            if (!line) continue;
+                            const payload = line.startsWith('data: ') ? line.slice(6) : line;
+                            if (payload === '[DONE]') {
+                                if (partial.trim()) { appendLineFn(partial, true); partial = ''; }
+                                onDone(); return;
+                            }
+                            try {
+                                const json = JSON.parse(payload);
+                                const token = json.choices?.[0]?.delta?.content || '';
+                                if (!token) continue;
+                                // Si el token tiene salto de línea real, partir y flushear
+                                if (token.includes('\n')) {
+                                    const chunks = token.split('\n');
+                                    for (let i = 0; i < chunks.length; i++) {
+                                        partial += chunks[i];
+                                        if (i < chunks.length - 1) {
+                                            if (partial.trim()) appendLineFn(partial, true);
+                                            partial = '';
+                                        }
+                                    }
+                                } else {
+                                    partial += token;
+                                }
+                                // Flushear línea si termina en puntuación y tiene largo suficiente
+                                if (partial.length > 18 && /[.!?]$/.test(partial.trim())) {
+                                    appendLineFn(partial, true);
+                                    partial = '';
+                                } else {
+                                    appendLineFn(partial, false);
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                } catch(e) {
+                    console.error('streamByLine error', e);
+                    throw e;
+                } finally {
+                    if (partial && partial.trim()) appendLineFn(partial, true);
+                    onDone();
+                }
+            }
+            // --- fin helper ---
 
             const streamContent = async (payload, cfg, hab, txtInd, icoInd, tgt = null, isThink = false) => {
                 cambiarBotonAPausa(); if (txtInd) mostrarIndicador(txtInd, icoInd);
