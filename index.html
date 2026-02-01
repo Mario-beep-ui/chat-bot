@@ -640,6 +640,7 @@
 
             (function(){
                 const _fetch = window.fetch.bind(window);
+                window._rawFetch = _fetch;
                 window.fetch = async function(input, init){
                     try {
                         if (init && typeof init.body === 'string' && init.body.includes('"messages"')) {
@@ -853,7 +854,7 @@
                 const cmd = parsearComandoDocumento(texto);
                 if (cmd) { await generarYDescargarDocumento(cmd); return reiniciarEntrada(); }
 
-                if (modoPicasso && texto) { await manejarGeneracionDeImagen(texto); modoPicasso = false; elementos.botonGenerarImagen.classList.remove('modo-activo'); elementos.entradaUsuario.placeholder = "Pregúntale a Mar-IA..."; return reiniciarEntrada(); }
+                if (modoPicasso && texto) { const imgPicasso = archivosAdjuntos.find(a => a.file.type.startsWith('image/'))?.file || null; await manejarGeneracionDeImagen(texto, imgPicasso); modoPicasso = false; elementos.botonGenerarImagen.classList.remove('modo-activo'); elementos.entradaUsuario.placeholder = "Pregúntale a Mar-IA..."; return reiniciarEntrada(); }
                 
                 cancelarProcesoCompleto = false; let content = texto; mostrarBotonCargando();
                 if (archivosAdjuntos.length > 0) { mostrarIndicador('Procesando archivos...'); content += `\n\n--- Archivos Adjuntos ---\n${await procesarArchivosAdjuntos()}`; ocultarIndicador(); }
@@ -943,9 +944,64 @@
                 } catch { return p; }
             };
 
-            async function manejarGeneracionDeImagen(desc) {
+            const redimensionarImagen = (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let w = img.width, h = img.height;
+                        const max = 512;
+                        if (w <= max && h <= max) { resolve({ base64: reader.result.split(',')[1], mimeType: file.type }); return; }
+                        if (w > h) { h = Math.round(h * max / w); w = max; } else { w = Math.round(w * max / h); h = max; }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
+                    };
+                    img.onerror = reject;
+                    img.src = reader.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+
+            const analizarImagenVisual = async (imageBase64, mimeType) => {
+                const dataUrl = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + imageBase64;
+                const GROQ_VISION_KEY = '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';
+                if (!GROQ_VISION_KEY || GROQ_VISION_KEY === 'TU_KEY_GROQ_AQUI') { console.warn('Groq: key no configurada'); return null; }
+                try {
+                    const r = await window._rawFetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_VISION_KEY },
+                        body: JSON.stringify({
+                            model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+                            messages: [{ role: 'user', content: [
+                                { type: 'image_url', image_url: { url: dataUrl } },
+                                { type: 'text', text: 'Describe esta imagen en detalle en español. Identifica personas, objetos, animales, escenarios, colores principales, texto visible y el contexto general. Sé muy específico.' }
+                            ]}],
+                            max_tokens: 1000, temperature: 0.3
+                        })
+                    });
+                    if (r.ok) { const d = await r.json(); const texto = d.choices?.[0]?.message?.content; if (texto && texto.length > 10) { console.log('✅ Visión OK'); return texto; } }
+                    else { console.warn('⚠️ Groq HTTP ' + r.status + ':', (await r.text()).slice(0, 300)); }
+                } catch(e) { console.warn('⚠️ Groq error:', e.message); }
+                return null;
+            };
+
+            async function manejarGeneracionDeImagen(desc, imagenAdjunta) {
                 const id = `picasso-${Date.now()}`; const el = agregarMensaje('bot', 'Refinando idea... 🧠'); el.id = id; irAlFinal();
-                const descFinal = (/\b(agrega|modifica|cambia|añade)\b/i.test(desc) && ultimaDescripcionImagen) ? `${ultimaDescripcionImagen}, ${desc}` : desc;
+                let descBase = desc;
+                if (imagenAdjunta) {
+                    if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse('Analizando imagen adjunta... 👁️');
+                    try {
+                        const imgData = await redimensionarImagen(imagenAdjunta);
+                        const visionTexto = await analizarImagenVisual(imgData.base64, imgData.mimeType);
+                        if (visionTexto) { descBase = `Basándote en esta imagen: ${visionTexto}. Ahora: ${desc}`; console.log('✅ Imagen analizada para Picasso'); }
+                        else { descBase = desc; console.warn('Visión no disponible, usando solo el texto del usuario'); }
+                    } catch(e) { console.warn('Error analizando imagen adjunta:', e); descBase = desc; }
+                }
+                const descFinal = (/\b(agrega|modifica|cambia|añade)\b/i.test(descBase) && ultimaDescripcionImagen) ? `${ultimaDescripcionImagen}, ${descBase}` : descBase;
                 const prompt = await mejorarPromptImagen(descFinal, historialChat); ultimaDescripcionImagen = prompt;
                 if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse("Modo Picasso activado... 🎨");
                 try {
