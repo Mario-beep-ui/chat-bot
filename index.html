@@ -966,134 +966,220 @@
                 reader.readAsDataURL(file);
             });
 
-            
-const analizarImagenVisual = async (imageBase64, mimeType) => {
-    const dataUrl = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + imageBase64;
-    const GROQ_VISION_KEY = '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';
-    if (!GROQ_VISION_KEY || GROQ_VISION_KEY === 'TU_KEY_GROQ_AQUI') { console.warn('Groq: key no configurada'); return null; }
-    try {
-        // Request the vision model to return a strict JSON with the fields we need.
-        const instruction = `Eres un modelo de visión-lenguaje. A continuación te envío una imagen. RESPONDE SOLO UN JSON VÁLIDO (sin explicaciones) en español con estas claves: 
-- subject: string (objeto o sujeto principal, p. ej. "caja Lili")
-- objects: array de strings (objetos relevantes en la escena)
-- text_visible: array de strings (texto legible encontrado en la imagen)
-- dominant_colors: array de hex (colores dominantes)
-- scene_type: string (interior, tienda, estante, close-up, retrato, exterior, otro)
-- faces: array de objetos { age_estimate: string, gender: string, notable_features: string } (vacío si no hay rostros)
-- composition: { angle: string, framing: string, orientation: string }
-- confidence: number (0-1) nivel de confianza general
-Devuelve únicamente el JSON. Sintetiza valores cortos y concretos.`;
-        const r = await window._rawFetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_VISION_KEY },
-            body: JSON.stringify({
-                model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-                messages: [
-                    { type: 'image_url', image_url: { url: dataUrl } },
-                    { role: 'user', content: instruction }
-                ],
-                max_tokens: 1000, temperature: 0.15
-            })
-        });
-        if (r.ok) {
-            const d = await r.json();
-            let content = d.choices?.[0]?.message?.content || d.choices?.[0]?.message?.text || '';
-            content = (typeof content === 'string') ? content.trim() : JSON.stringify(content);
-            // Try to extract JSON from the response
-            try {
-                return JSON.parse(content);
-            } catch (ex) {
-                const m = content.match(/\\{[\\s\\S]*\\}/);
-                if (m) {
-                    try { return JSON.parse(m[0]); } catch(err){ console.warn('No se pudo parsear JSON extraído:', err); }
+            const analizarImagenVisual = async (imageBase64, mimeType) => {
+                const dataUrl = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + imageBase64;
+                const GROQ_VISION_KEY = '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';
+                if (!GROQ_VISION_KEY || GROQ_VISION_KEY === 'TU_KEY_GROQ_AQUI') { console.warn('Groq: key no configurada'); return null; }
+                try {
+                    const r = await window._rawFetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_VISION_KEY },
+                        body: JSON.stringify({
+                            model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+                            messages: [{ role: 'user', content: [
+                                { type: 'image_url', image_url: { url: dataUrl } },
+                                { type: 'text', text: 'Describe esta imagen en detalle en español. Identifica personas, objetos, animales, escenarios, colores principales, texto visible y el contexto general. Sé muy específico.' }
+                            ]}],
+                            max_tokens: 1000, temperature: 0.3
+                        })
+                    });
+                    if (r.ok) { const d = await r.json(); const texto = d.choices?.[0]?.message?.content; if (texto && texto.length > 10) { console.log('✅ Visión OK'); return texto; } }
+                    else { console.warn('⚠️ Groq HTTP ' + r.status + ':', (await r.text()).slice(0, 300)); }
+                } catch(e) { console.warn('⚠️ Groq error:', e.message); }
+                return null;
+            };
+
+            // Análisis FORENSE ultra-detallado para generación de imágenes
+            const analizarImagenParaGeneracion = async (imageBase64, mimeType) => {
+                const dataUrl = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + imageBase64;
+                const GROQ_VISION_KEY = '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';
+                if (!GROQ_VISION_KEY || GROQ_VISION_KEY === 'TU_KEY_GROQ_AQUI') { console.warn('Groq: key no configurada'); return null; }
+                try {
+                    const promptForense = `Analiza esta imagen con nivel FORENSE para recrearla. Describe en español:
+
+1. COMPOSICIÓN VISUAL:
+   - Elemento principal (posición exacta, tamaño relativo, orientación)
+   - Elementos secundarios (ubicación precisa en el encuadre)
+   - Distribución espacial (qué está adelante, atrás, centro, laterales)
+   - Perspectiva y ángulo de cámara
+   - Encuadre (plano general, medio, detalle)
+
+2. COLORES Y TONALIDADES:
+   - Paleta de colores dominantes (nombres específicos de colores, no solo "rojo" sino "rojo carmesí brillante")
+   - Colores secundarios y acentos
+   - Saturación (vivos, pasteles, apagados, neon)
+   - Temperatura de color (cálido, frío, neutro)
+   - Contraste (alto, bajo, medio)
+
+3. ILUMINACIÓN Y ATMOSFERA:
+   - Tipo de luz (natural, artificial, difusa, directa, dramática)
+   - Dirección de la luz (frontal, lateral, contraluz, cenital)
+   - Sombras (duras, suaves, ausentes)
+   - Brillos y reflejos
+   - Hora del día aparente
+
+4. ESTILO ARTÍSTICO:
+   - Tipo de imagen (fotografía realista, ilustración, dibujo, 3D render, pixel art, acuarela, óleo, etc)
+   - Nivel de realismo vs estilización
+   - Técnica aparente
+   - Texturas visibles
+   - Acabado (mate, brillante, rugoso, suave)
+
+5. DETALLES ESPECÍFICOS:
+   - Formas geométricas presentes
+   - Patrones o repeticiones
+   - Texto visible (exacto)
+   - Marcas, logos, etiquetas
+   - Estado de los objetos (nuevo, usado, deteriorado)
+
+6. CONTEXTO Y AMBIENTE:
+   - Ubicación o escenario
+   - Elementos del fondo
+   - Profundidad de campo
+   - Ambiente general (profesional, casual, artístico, comercial)
+
+Sé EXHAUSTIVO. Imagina que alguien debe recrear esta imagen pixel por pixel solo leyendo tu descripción.`;
+
+                    const r = await window._rawFetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_VISION_KEY },
+                        body: JSON.stringify({
+                            model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+                            messages: [{ role: 'user', content: [
+                                { type: 'image_url', image_url: { url: dataUrl } },
+                                { type: 'text', text: promptForense }
+                            ]}],
+                            max_tokens: 2000,
+                            temperature: 0.1
+                        })
+                    });
+                    if (r.ok) { 
+                        const d = await r.json(); 
+                        const analisis = d.choices?.[0]?.message?.content; 
+                        if (analisis && analisis.length > 50) { 
+                            console.log('✅ Análisis forense OK:', analisis.length, 'caracteres'); 
+                            return analisis; 
+                        } 
+                    } else { 
+                        console.warn('⚠️ Groq análisis forense HTTP ' + r.status); 
+                    }
+                } catch(e) { 
+                    console.warn('⚠️ Groq análisis forense error:', e.message); 
                 }
-                console.warn('Contenido de la visión (no JSON):', content.slice(0,500));
-            }
-        } else {
-            console.warn('Groq HTTP ' + r.status + ':', (await r.text()).slice(0, 300));
-        }
-    } catch (e) { console.warn('Groq error:', e.message); }
-    return null;
-};
+                return null;
+            };
 
+            // Construir prompt profesional para Pollinations usando análisis forense
+            const construirPromptProfesional = async (analisisForense, peticionUsuario) => {
+                try {
+                    const promptMeta = `Eres un experto en prompts para generación de imágenes con IA (Stable Diffusion, DALL-E, Midjourney).
 
-            
-function detectarEstiloEnTexto(texto){
-    texto = (texto||'').toLowerCase();
-    const estilos = ['anime','manga','ilustración','realista','foto realista','watercolor','acuarela','pixel art','cartoon','surrealista','fotorrealista','vintage','retro'];
-    for(const e of estilos) if(texto.includes(e)) return e;
-    return '';
-}
+ANÁLISIS DETALLADO DE LA IMAGEN DE REFERENCIA:
+${analisisForense}
 
-function construirPromptEstructurado(analisis, descripcionUsuario){
-    const keepParts = [];
-    const subject = analisis?.subject || (analisis?.objects && analisis.objects.length? analisis.objects[0] : '');
-    if(subject) keepParts.push(`Sujeto principal: ${subject}`);
-    if(analisis?.objects && analisis.objects.length) keepParts.push(`Objetos: ${analisis.objects.join(', ')}`);
-    if(analisis?.text_visible && analisis.text_visible.length) keepParts.push(`Texto visible (preservar legibilidad): ${analisis.text_visible.join(' | ')}`);
-    if(analisis?.scene_type) keepParts.push(`Escena: ${analisis.scene_type}`);
-    if(analisis?.dominant_colors && analisis.dominant_colors.length) keepParts.push(`Colores dominantes: ${analisis.dominant_colors.join(', ')}`);
-    if(analisis?.faces && analisis.faces.length) keepParts.push(`Rostros: preservar identidad y rasgos: ${analisis.faces.map(f=>f.notable_features||'rasgos').join('; ')}`);
-    const KEEP = 'KEEP: ' + (keepParts.length ? keepParts.join('; ') : 'Mantener composición y objetos principales.');
+PETICIÓN DEL USUARIO:
+"${peticionUsuario}"
 
-    // Detect style keyword in user description
-    const estiloDetectado = detectarEstiloEnTexto(descripcionUsuario) || '';
-    // Remove style word from change description to avoid duplication
-    let changeText = descripcionUsuario;
-    if(estiloDetectado) changeText = changeText.replace(new RegExp(estiloDetectado, 'ig'), '').trim();
-    const CHANGE = 'CHANGE: ' + (changeText || 'Aplicar cambios mínimos solicitados por el usuario.');
+TAREA: Construye un prompt profesional en INGLÉS para generar una imagen que:
+1. Mantenga la esencia visual de la imagen analizada (composición, colores, estilo, iluminación)
+2. Incorpore los cambios solicitados por el usuario
+3. Sea técnicamente preciso para modelos de generación de imágenes
 
-    const STYLE = 'STYLE: ' + (estiloDetectado || 'según petición del usuario');
+FORMATO DEL PROMPT (todo en una línea, sin saltos):
+[Descripción del sujeto principal con detalles específicos], [estilo artístico exacto], [técnica de renderizado], [iluminación precisa], [paleta de colores específica con nombres exactos], [composición y encuadre], [calidad técnica: "professional photography, high resolution, sharp focus, 8k"], [atmósfera y mood]
 
-    const comp = analisis?.composition ? `Ángulo: ${analisis.composition.angle||'n/a'}, Encuadre: ${analisis.composition.framing||'n/a'}, Orientación: ${analisis.composition.orientation||'n/a'}` : 'Composición: conservar ángulo y encuadre original.';
-    const COMPOSITION = 'COMPOSITION: ' + comp;
+REGLAS CRÍTICAS:
+- TODO EN INGLÉS
+- Usa términos técnicos de fotografía/arte (golden hour lighting, rule of thirds, bokeh, etc)
+- Especifica colores exactos (no "azul" sino "cobalt blue" o "sky blue")
+- Incluye modificadores de calidad: "highly detailed, professional, sharp focus, 8k uhd, photorealistic"
+- Si la imagen original es ilustración/dibujo, especifica el estilo exacto: "anime style", "watercolor painting", "3D render", etc
+- Mantén coherencia visual con el análisis forense
+- Integra la petición del usuario de forma natural
 
-    const DO_NOT = 'DO NOT: crear nuevos escenarios; no añadir elementos inventados (p. ej. salas arcade); no cambiar la identidad de rostros; no alterar texto visible ni marcas.';
+DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
 
-    const extra = [];
-    extra.push('seed:' + Math.floor(Math.random()*100000));
-    if(analisis?.faces && analisis.faces.length) extra.push('preserve_identity:true');
-    extra.push('no_scene_change:true');
-    const EXTRA = 'EXTRA: ' + extra.join(', ');
+                    const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEYS.DEEPSEEK}`
+                        },
+                        body: JSON.stringify({
+                            model: "deepseek-chat",
+                            messages: [{ role: "user", content: promptMeta }],
+                            max_tokens: 500,
+                            temperature: 0.3
+                        })
+                    });
 
-    return `${KEEP}\\n\\n${CHANGE}\\n\\n${STYLE}\\n\\n${COMPOSITION}\\n\\n${DO_NOT}\\n\\n${EXTRA}`;
-}
+                    if (!res.ok) {
+                        console.warn('⚠️ DeepSeek prompt builder falló');
+                        return null;
+                    }
 
-async function manejarGeneracionDeImagen(desc, imagenAdjunta) {
-    const id = `picasso-${Date.now()}`; const el = agregarMensaje('bot', 'Refinando idea... 🧠'); el.id = id; irAlFinal();
-    let descBase = desc;
-    if (imagenAdjunta) {
-        if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse('Analizando imagen adjunta... 👁️');
-        try {
-            const imgData = await redimensionarImagen(imagenAdjunta);
-            const analysis = await analizarImagenVisual(imgData.base64, imgData.mimeType);
-            if (analysis && typeof analysis === 'object' && (analysis.confidence === undefined || analysis.confidence > 0.25)) {
-                // Build structured prompt
-                const structured = construirPromptEstructurado(analysis, desc);
-                descBase = structured;
-                console.log('✅ Análisis estructurado obtenido para Picasso', analysis);
-            } else {
+                    const data = await res.json();
+                    const promptProfesional = data.choices[0]?.message?.content.trim();
+                    
+                    if (promptProfesional && promptProfesional.length > 20) {
+                        console.log('✅ Prompt profesional generado:', promptProfesional.substring(0, 100) + '...');
+                        return promptProfesional;
+                    }
+                } catch(e) {
+                    console.warn('⚠️ Error construyendo prompt profesional:', e.message);
+                }
+                return null;
+            };
+
+            async function manejarGeneracionDeImagen(desc, imagenAdjunta) {
+                const id = `picasso-${Date.now()}`; const el = agregarMensaje('bot', 'Preparando generación... 🎨'); el.id = id; irAlFinal();
+                let promptFinal = desc;
                 
-                // Fallback automático: preservar fondo, texto y escena sin pedir confirmación
-                descBase = `KEEP: Mantener fondo, texto visible, objetos y escena original tal como están.
-
-CHANGE: ${desc}`;
-                console.warn('Visión no disponible o poco confiable, usando fallback automático de preservación.');
+                if (imagenAdjunta) {
+                    // FLUJO COMPLETO: Análisis forense → Prompt profesional
+                    try {
+                        if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse('Analizando imagen en detalle... 👁️');
+                        const imgData = await redimensionarImagen(imagenAdjunta);
+                        
+                        const analisisForense = await analizarImagenParaGeneracion(imgData.base64, imgData.mimeType);
+                        
+                        if (analisisForense) {
+                            if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse('Construyendo prompt profesional... 🧠');
+                            const promptProfesional = await construirPromptProfesional(analisisForense, desc);
+                            
+                            if (promptProfesional) {
+                                promptFinal = promptProfesional;
+                                console.log('✅ Pipeline completo: Análisis → Prompt profesional');
+                            } else {
+                                console.warn('⚠️ Prompt profesional falló, usando análisis básico');
+                                promptFinal = `Based on this image: ${analisisForense.substring(0, 500)}. User request: ${desc}`;
+                            }
+                        } else {
+                            console.warn('⚠️ Análisis forense falló, usando solo texto del usuario');
+                            promptFinal = desc;
+                        }
+                    } catch(e) {
+                        console.warn('❌ Error en pipeline de generación:', e);
+                        promptFinal = desc;
+                    }
+                } else {
+                    // Sin imagen adjunta: flujo normal con mejora de prompt
+                    const descBase = (/\b(agrega|modifica|cambia|añade)\b/i.test(desc) && ultimaDescripcionImagen) ? `${ultimaDescripcionImagen}, ${desc}` : desc;
+                    if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse('Refinando idea... 🧠');
+                    promptFinal = await mejorarPromptImagen(descBase, historialChat);
+                }
+                
+                ultimaDescripcionImagen = promptFinal;
+                const descFinal = promptFinal;
+                const prompt = await mejorarPromptImagen(descFinal, historialChat); ultimaDescripcionImagen = prompt;
+                if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse("Modo Picasso activado... 🎨");
+                try {
+                    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " --seed " + Math.floor(Math.random() * 100000))}`;
+                    const img = new Image(); img.src = url; await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+                    document.getElementById(id)?.remove(); imagenGeneradaActual = url; const msg = `[Imagen generada|${url}] ${prompt}`; agregarMensaje('bot', msg); guardarMensajeEnHistorial('assistant', msg);
+                    setTimeout(() => { const m = '¡Listo! ¿Te gusta? 😊'; agregarMensaje('bot', m); guardarMensajeEnHistorial('assistant', m); }, 500); imagenGeneradaActual = url;
+                } catch { document.getElementById(id)?.remove(); const e = "No pude generar la imagen."; agregarMensaje('bot', e); guardarMensajeEnHistorial('assistant', e); }
             }
-
-        } catch(e) { console.warn('Error analizando imagen adjunta:', e); descBase = desc; }
-    }
-    const descFinal = (/\\b(agrega|modifica|cambia|añade)\\b/i.test(descBase) && ultimaDescripcionImagen) ? `${ultimaDescripcionImagen}, ${descBase}` : descBase;
-    const prompt = await mejorarPromptImagen(descFinal, historialChat); ultimaDescripcionImagen = prompt;
-    if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse("Modo Picasso activado. 🎨");
-    try {
-        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " --seed " + Math.floor(Math.random() * 100000))}`;
-        const img = new Image(); img.src = url; await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
-        document.getElementById(id)?.remove(); imagenGeneradaActual = url; const msg = `[Imagen generada|${url}] ${prompt}`; agregarMensaje('bot', msg); guardarMensajeEnHistorial('assistant', msg);
-        setTimeout(() => { const m = '¡Listo! ¿Te gusta? 😊'; agregarMensaje('bot', m); guardarMensajeEnHistorial('assistant', m); }, 500); imagenGeneradaActual = url;
-    } catch (err) { console.error(err); document.getElementById(id)?.remove(); const e = "No pude generar la imagen."; agregarMensaje('bot', e); guardarMensajeEnHistorial('assistant', e); }
-}
-
 
             function mostrarModalImagen(url) { elementos.imagenAmpliada.src = url; alternarModal(true, elementos.modalImagen); }
             function descargarImagen() { if (imagenGeneradaActual) { const a = document.createElement('a'); a.href = imagenGeneradaActual; a.download = 'imagen-generada.jpg'; document.body.appendChild(a); a.click(); document.body.removeChild(a); } }
