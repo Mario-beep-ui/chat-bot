@@ -89,7 +89,7 @@
         html { height: 100%; }
         body { height: 100dvh; background: var(--color-fondo); color: var(--color-texto); font-size: 1.6rem; display: flex; flex-direction: column; overflow: hidden; }
         .contenedor { display: flex; flex-direction: column; width: 100%; background: var(--color-contenedor); flex: 1; min-height: 0; overflow: hidden; position: relative; }
-        .cabecera { flex-shrink: 0; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; z-index: 10; background: var(--color-contenedor); border-bottom: none; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .cabecera { flex-shrink: 0; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; z-index: 10; background: var(--color-contenedor); border-bottom: 1px solid var(--borde-superior-entrada); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .cabecera .titulo { display: flex; align-items: center; gap: 1.2rem; }
         .cabecera .titulo .fa-robot { font-size: 3rem; color: var(--color-destacado); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0px); } }
@@ -372,18 +372,18 @@
         .loader-dots span:nth-child(7) { top: 50%; left: 0; transform: translateY(-50%); animation-delay: -0.15s; }
         .loader-dots span:nth-child(8) { top: 15%; left: 15%; animation-delay: 0s; }
         @keyframes loader-anim { 0%, 100% { transform: scale(0.2); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
-        .panel-historial { position: fixed; top: 0; left: 0; width: 320px; height: 100vh; background: var(--color-contenedor); z-index: 2000; overflow-y: auto; transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 5px 0 25px rgba(0,0,0,0.3); border-right: none; }
+        .panel-historial { position: fixed; top: 0; left: 0; width: 320px; height: 100vh; background: var(--color-contenedor); z-index: 2000; overflow-y: auto; transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 5px 0 25px rgba(0,0,0,0.3); border-right: 1px solid var(--borde-superior-entrada); }
         .panel-historial.abierto { transform: translateX(0); }
-        .cabecera-panel-historial { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: none; box-shadow: 0 4px 15px rgba(0,0,0,0.08); position: sticky; top: 0; background: var(--color-contenedor); z-index: 10; }
+        .cabecera-panel-historial { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: 1px solid var(--borde-superior-entrada); position: sticky; top: 0; background: var(--color-contenedor); z-index: 10; }
         .cabecera-panel-historial h2 { margin: 0; font-size: 2rem; color: var(--color-destacado); }
         .boton-cerrar-historial { background: transparent; border: none; color: var(--color-texto); font-size: 2.2rem; cursor: pointer; transition: all 0.2s; border-radius: 50%; width: 4rem; height: 4rem; display: flex; align-items: center; justify-content: center; }
         .boton-cerrar-historial:hover { background: var(--fondo-pensamiento); color: var(--color-destacado); transform: rotate(90deg); }
-        .buscar-historial { padding: 1.5rem 2rem 0.5rem 2rem; border-bottom: none; }
+        .buscar-historial { padding: 1.5rem 2rem; border-bottom: 1px solid var(--borde-superior-entrada); }
         .input-buscar-historial { width: 100%; padding: 1.2rem 1.8rem; background: var(--fondo-campo-entrada); border: 1px solid var(--borde-adjunto); border-radius: 2.4rem; color: var(--texto-entrada); font-size: 1.5rem; }
         .input-buscar-historial::placeholder { color: var(--texto-placeholder); }
-        .lista-historial { padding: 0.5rem 0; }
-        .item-historial { padding: 1.2rem 1.5rem; margin: 0.5rem 1rem; border-radius: 1.2rem; border-bottom: none; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
-        .item-historial:hover { background: var(--fondo-pensamiento); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .lista-historial { padding: 1rem 0; }
+        .item-historial { padding: 1.5rem 2rem; border-bottom: 1px solid var(--borde-superior-entrada); cursor: pointer; transition: background 0.2s; display: flex; flex-direction: column; }
+        .item-historial:hover { background: var(--fondo-pensamiento); }
         .item-historial.seleccionado { background: var(--resaltado-pensamiento); border-left: 4px solid var(--color-destacado); }
         .titulo-conversacion { font-weight: 600; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.6rem; }
         .fecha-conversacion { font-size: 1.2rem; color: var(--color-timestamp); }
@@ -1497,7 +1497,7 @@ Redacta mínimo 800 palabras. Sé exhaustivo, preciso y profesional.`;
 
             const mejorarPromptImagen = async (p, ctx) => {
                 try {
-                    const res = await fetch('[https://api.deepseek.com/v1/chat/completions](https://api.deepseek.com/v1/chat/completions)', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: `Mejora este prompt para imagen basándote en el contexto: "${p}". Contexto: ${ctx.slice(-6).map(m => m.content).join('\n')}` }], max_tokens: 150 }) });
+                    const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: `Mejora este prompt para imagen basándote en el contexto: "${p}". Contexto: ${ctx.slice(-6).map(m => m.content).join('\n')}` }], max_tokens: 150 }) });
                     if (!res.ok) return p; const d = await res.json(); return d.choices[0]?.message?.content.trim() || p;
                 } catch { return p; }
             };
@@ -1529,7 +1529,7 @@ Redacta mínimo 800 palabras. Sé exhaustivo, preciso y profesional.`;
                 const GROQ_VISION_KEY = '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';
                 if (!GROQ_VISION_KEY || GROQ_VISION_KEY === 'TU_KEY_GROQ_AQUI') { console.warn('Groq: key no configurada'); return null; }
                 try {
-                    const r = await window._rawFetch('[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)', {
+                    const r = await window._rawFetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_VISION_KEY },
                         body: JSON.stringify({
@@ -1597,7 +1597,7 @@ Redacta mínimo 800 palabras. Sé exhaustivo, preciso y profesional.`;
 
 Sé EXHAUSTIVO. Imagina que alguien debe recrear esta imagen pixel por pixel solo leyendo tu descripción.`;
 
-                    const r = await window._rawFetch('[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)', {
+                    const r = await window._rawFetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_VISION_KEY },
                         body: JSON.stringify({
@@ -1655,7 +1655,7 @@ REGLAS CRÍTICAS:
 
 DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
 
-                    const res = await fetch('[https://api.deepseek.com/v1/chat/completions](https://api.deepseek.com/v1/chat/completions)', {
+                    const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1826,7 +1826,7 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                 } return res.join('\n\n');
             };
             
-            const peticionOcrSpace = async (f) => { const fd = new FormData(); fd.append('file', f); fd.append('language', 'spa'); fd.append('apikey', CLAVE_API_OCR); fd.append('OCREngine', '2'); const r = await fetch('[https://api.ocr.space/parse/image](https://api.ocr.space/parse/image)', { method: 'POST', body: fd }); const d = await r.json(); if (d.IsErroredOnProcessing) throw new Error(d.ErrorMessage); return d.ParsedResults?.[0]?.ParsedText || ''; };
+            const peticionOcrSpace = async (f) => { const fd = new FormData(); fd.append('file', f); fd.append('language', 'spa'); fd.append('apikey', CLAVE_API_OCR); fd.append('OCREngine', '2'); const r = await fetch('https://api.ocr.space/parse/image', { method: 'POST', body: fd }); const d = await r.json(); if (d.IsErroredOnProcessing) throw new Error(d.ErrorMessage); return d.ParsedResults?.[0]?.ParsedText || ''; };
 
             const iniciarReconocimientoVoz = () => {
                 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1869,7 +1869,7 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
 
             const realizarBusquedaEnTiempoReal = async (q) => {
                 try {
-                    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`[https://api.duckduckgo.com/?q=$](https://api.duckduckgo.com/?q=$){q}&format=json&no_html=1`)}`);
+                    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.duckduckgo.com/?q=${q}&format=json&no_html=1`)}`);
                     const d = await r.json(); const res = JSON.parse(d.contents); if (res.AbstractText) return { fuente: 'DuckDuckGo', contenido: res.AbstractText };
                 } catch {}
                 try {
@@ -1884,7 +1884,7 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
             const restaurarBotonEnviar = () => { estaGenerandoRespuesta = false; elementos.botonEnviar.innerHTML = '<i class="fas fa-paper-plane"></i>'; elementos.botonEnviar.className = 'boton-input'; elementos.botonEnviar.disabled = false; };
             const pausarGeneracion = () => { cancelarProcesoCompleto = true; if (cancelarStreaming) cancelarStreaming(); restaurarBotonEnviar(); };
 
-            const obtenerRespuestaBot = async (hist, hab) => streamContent({ model: "deepseek-chat", messages: hist, stream: true, temperature: 0.7, max_tokens: 2000 }, { url: '[https://api.deepseek.com/v1/chat/completions](https://api.deepseek.com/v1/chat/completions)', key: API_KEYS.DEEPSEEK }, hab, 'Mar-IA está escribiendo...', 'dots');
+            const obtenerRespuestaBot = async (hist, hab) => streamContent({ model: "deepseek-chat", messages: hist, stream: true, temperature: 0.7, max_tokens: 2000 }, { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK }, hab, 'Mar-IA está escribiendo...', 'dots');
             const obtenerRespuestaMini = async (hist, hab) => {
                 cambiarBotonAPausa(); mostrarIndicador('Mar-IA mini está escribiendo...', 'bolt');
                 const last = hist[hist.length - 1].content;
@@ -1900,11 +1900,11 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                     historialChat.push({ role: "assistant", content: txt }); guardarMensajeEnHistorial('assistant', txt); ocultarIndicador(); const msg = agregarMensaje('bot', txt); if (hab) leerTexto(txt, msg.querySelector('.boton-voz'));
                 } catch { await obtenerRespuestaMetaFallback(hist, hab); } finally { restaurarBotonEnviar(); }
             };
-            const obtenerRespuestaMetaFallback = async (hist, hab) => streamContent({ model: "llama3-8b-8192", messages: hist, stream: true, max_tokens: 200, temperature: 0.8 }, { url: '[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)', key: API_KEYS.META }, hab, 'Mar-IA mini (Meta)...', 'bolt');
+            const obtenerRespuestaMetaFallback = async (hist, hab) => streamContent({ model: "llama3-8b-8192", messages: hist, stream: true, max_tokens: 200, temperature: 0.8 }, { url: 'https://api.groq.com/openai/v1/chat/completions', key: API_KEYS.META }, hab, 'Mar-IA mini (Meta)...', 'bolt');
 
             const ejecutarFlujoSuperIA = async (hist, hab) => {
                 const { contenidoPensamiento, wrapper } = crearContenedorPensamiento();
-                const api = { url: '[https://api.deepseek.com/v1/chat/completions](https://api.deepseek.com/v1/chat/completions)', key: API_KEYS.DEEPSEEK };
+                const api = { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK };
                 const razonHist = [...hist]; const lastQ = razonHist.pop().content;
                 razonHist.push({ role: "user", content: `Piensa paso a paso. Solicitud: "${lastQ}"` });
                 
