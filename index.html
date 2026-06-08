@@ -193,7 +193,7 @@
         .boton-control:hover { background: var(--color-destacado); color: white; border-color: var(--color-destacado); transform: translateY(-2px); }
         .mensaje { display: flex; flex-direction: column; max-width: 85%; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(1.5rem); } to { opacity: 1; transform: translateY(0); } }
-        .mensaje-usuario { align-self: flex-end; align-items: flex-end; }
+        .mensaje-usuario { align-self: flex-end; align-items: flex-end; width: 100%; }
         .mensaje-bot { align-self: flex-start; align-items: flex-start; }
         
         /* Refinamiento de burbujas */
@@ -210,8 +210,60 @@
         .burbuja-usuario { 
             background: var(--fondo-burbuja-usuario); 
             color: var(--texto-burbuja-usuario); 
-            border-bottom-right-radius: 0.4rem; 
+            border-bottom-right-radius: 0.4rem;
+            display: inline-flex;
+            flex-direction: column;
+            align-self: flex-end;
+            width: max-content;
+            max-width: 78%;
+            min-width: 4.5rem;
+            font-size: 1.6rem;
+            line-height: 1.65;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: normal;
+            hyphens: none;
+            writing-mode: horizontal-tb;
+            unicode-bidi: plaintext;
         }
+        .burbuja-usuario > .texto-usuario {
+            margin: 0;
+            display: block;
+            width: 100%;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: normal;
+        }
+        /* Burbuja usuario colapsable (mensajes largos) */
+        .burbuja-usuario.colapsada {
+            max-height: 13.8rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .burbuja-usuario.colapsada::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 4rem;
+            background: linear-gradient(to bottom, transparent, rgba(100, 40, 180, 0.65));
+            border-radius: 0 0 1.4rem 1.4rem;
+            pointer-events: none;
+        }
+        .boton-toggle-burbuja {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(255,255,255,0.7);
+            font-size: 1.7rem;
+            padding: 0.3rem 1rem 0.2rem;
+            align-self: flex-end;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s, transform 0.2s;
+            line-height: 1;
+        }
+        .boton-toggle-burbuja:hover { color: white; transform: scale(1.15); }
         .burbuja-bot { 
             background: var(--fondo-burbuja-bot); 
             color: var(--texto-burbuja-bot); 
@@ -574,11 +626,7 @@
             margin: 1rem 0;
             opacity: 0.85;
         }
-        /* Burbuja del usuario — mismo tamaño base */
-        .burbuja-usuario {
-            font-size: 1.6rem;
-            line-height: 1.65;
-        }
+        
         
         .mensaje-bot,
         .mensaje.mensaje-bot {
@@ -608,9 +656,12 @@
           padding-right: 0.5rem;
         }
 
-        .mensaje-usuario .burbuja-mensaje,
-        .mensaje-usuario .burbuja-usuario {
+        .mensaje-usuario .burbuja-mensaje {
           max-width: 78%;
+        }
+
+        .mensaje-usuario .burbuja-usuario {
+          align-self: flex-end;
         }
 
         .mensaje-bot pre,
@@ -1829,13 +1880,53 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                 }
                 
                 if (cont.startsWith('[Imagen generada')) { const imgMatch = cont.match(/^\[Imagen generada\|?(.*?)\]\s*(.*)/s); const imgUrl = imgMatch && imgMatch[1] ? imgMatch[1] : imagenGeneradaActual; const imgAlt = imgMatch && imgMatch[2] ? imgMatch[2] : ''; if (imgUrl) imagenGeneradaActual = imgUrl; contenedorContenido.innerHTML = `<div class="contenedor-imagen-generada"><img src="${imgUrl}" alt="${imgAlt}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`; }
-                else if (cont || stream) contenedorContenido.innerHTML = cont ? marked.parse(cont) : '';
+                else if (cont || stream) {
+                    if (rol === 'usuario') {
+                        const span = document.createElement('span');
+                        span.className = 'texto-usuario';
+                        span.textContent = cont || '';
+                        contenedorContenido.appendChild(span);
+                    } else {
+                        contenedorContenido.innerHTML = cont ? marked.parse(cont) : '';
+                    }
+                }
                 
                 const ts = document.createElement('div'); ts.className = 'timestamp-container';
                 ts.innerHTML = `<div class="timestamp">${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</div>${rol === 'bot' ? '<button class="boton-accion-mensaje boton-voz" title="Leer"><i class="fas fa-volume-up"></i></button>' : ''}<button class="boton-accion-mensaje boton-copiar" title="Copiar"><i class="fas fa-copy"></i></button>`;
                 
                 div.append(contenedorContenido, ts); 
-                elementos.contenedorChat.appendChild(div); if (!stream) { formatearBloquesCodigo(div); formatearTablas(div); } irAlFinal(); return div;
+                elementos.contenedorChat.appendChild(div);
+                if (!stream) { formatearBloquesCodigo(div); formatearTablas(div); }
+
+                // Colapso automático para mensajes largos del usuario (~4 líneas)
+                if (rol === 'usuario' && !stream) {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            const UMBRAL_PX = 140; // ~4 líneas (26px × 4) + padding (32px)
+                            if (contenedorContenido.scrollHeight > UMBRAL_PX + 8) {
+                                contenedorContenido.classList.add('colapsada');
+                                const btnToggle = document.createElement('button');
+                                btnToggle.className = 'boton-toggle-burbuja';
+                                btnToggle.innerHTML = '<i class="fas fa-chevron-down"></i>';
+                                btnToggle.title = 'Ver más';
+                                let expandida = false;
+                                btnToggle.addEventListener('click', () => {
+                                    expandida = !expandida;
+                                    contenedorContenido.classList.toggle('colapsada', !expandida);
+                                    btnToggle.innerHTML = expandida
+                                        ? '<i class="fas fa-chevron-up"></i>'
+                                        : '<i class="fas fa-chevron-down"></i>';
+                                    btnToggle.title = expandida ? 'Ver menos' : 'Ver más';
+                                    setTimeout(() => irAlFinal(), 60);
+                                });
+                                div.insertBefore(btnToggle, ts);
+                                irAlFinal();
+                            }
+                        });
+                    });
+                }
+
+                irAlFinal(); return div;
             };
 
             const agregarMensajeFuente = (f) => {
