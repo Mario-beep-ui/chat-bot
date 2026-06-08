@@ -768,7 +768,7 @@
         </div>
         <div class="opcion-modo" data-modo="mini">
             <div class="opcion-modo-titulo"><i class="fas fa-bolt"></i><span>Mar-IA mini</span></div>
-            <div class="opcion-modo-desc">Respuestas ultra rápidas y breves, ideal para consultas simple.</div>
+            <div class="opcion-modo-desc">Respuestas ultra rápidas y breves, ideal para consultas simples.</div>
         </div>
     </div>
 
@@ -814,7 +814,7 @@
             </div>
             <div class="seccion-ayuda">
                 <h4><i class="fas fa-sliders-h"></i> Funciones de los controles</h4>
-                <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-paperclip"></i></div><div class="contenido-ayuda"><div class="titulo-item">Adjuntar y exportar</div><div class="descripcion-item">Permite adjuntar archivos para OCR.</div></div></div>
+                <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-paperclip"></i></div><div class="contenido-ayuda"><div class="titulo-item">Adjuntar y exportar</div><div class="descripcion-item">Permite adjuntar archivos para OCR y exportación de documentos.</div></div></div>
                 <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-search"></i></div><div class="contenido-ayuda"><div class="titulo-item">Buscar en internet</div><div class="descripcion-item">Activa el modo de búsqueda para que Mar-IA busque información en internet antes de responder.</div></div></div>
                 <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-microphone"></i></div><div class="contenido-ayuda"><div class="titulo-item">Grabar voz</div><div class="descripcion-item">Permite dictar tu mensaje mediante reconocimiento de voz.</div></div></div>
                 <div class="item-ayuda"><div class="icono-ayuda"><i class="fas fa-language"></i></div><div class="contenido-ayuda"><div class="titulo-item">Seleccionar voz</div><div class="descripcion-item">Cambia la voz que utiliza Mar-IA para leer las respuestas en voz alta.</div></div></div>
@@ -846,7 +846,7 @@
                 NEWS: '4e3d9a0bd89e4253a16fd90f8a196089',
                 OCR: 'K82439722788957'
             };
-            const SYSTEM_PROMPT = `Eres un asistente virtual en español. Tu estilo debe ser:
+            const SYSTEM_PROMPT = `Eres un asistente virtual en español llamado Mar-IA. Tu estilo debe ser:
 - Claro, legible y organizado.
 - Responde en español usando Markdown: encabezados (##), listas y bloques de código cuando corresponda.
 - Frases cortas (máx. 2–3 frases por párrafo).
@@ -855,6 +855,7 @@
 - Usa listas y pasos numerados para explicar procesos.
 - Incluye ejemplos prácticos cuando sea útil.
 - Evita relleno, prosa innecesaria o respuestas vagas.
+- Si el usuario te pide un PDF, un archivo de Word (docx) o Excel (xlsx), debes saber que TU SISTEMA TIENE LA CAPACIDAD de generarlos nativamente. Si el usuario te pide: "hazme un PDF de esto", "crea un PDF", "exporta a PDF", o cualquier frase similar, debes responder confirmando que vas a iniciar el flujo de generación del documento.
 - Si el usuario solicita código (HTML, CSS, JS, etc.), devuelve únicamente el bloque de código dentro de triple backticks.
 - Mantén siempre un tono claro, amistoso y profesional.`;
 
@@ -889,10 +890,10 @@
             
             // NUEVOS COLORES Y CONFIGURACIÓN PREMIUM PARA PDF
             const ESTILOS_DOCUMENTO = {
-                'moderno': { titulo: 'Moderno', fuente: 'Helvetica, Arial, sans-serif', colorTitulo: '#9D4EDD', colorTexto: '#333333', interlineado: 1.6, alineacion: 'left' },
-                'clasico': { titulo: 'Clásico', fuente: '"Times New Roman", Times, serif', colorTitulo: '#2B2B2B', colorTexto: '#111111', interlineado: 1.5, alineacion: 'justify' },
-                'tecnico': { titulo: 'Técnico', fuente: 'Consolas, Monaco, monospace', colorTitulo: '#0077B6', colorTexto: '#333333', interlineado: 1.4, alineacion: 'left' },
-                'creativo': { titulo: 'Creativo', fuente: 'Montserrat, sans-serif', colorTitulo: '#F72585', colorTexto: '#222222', interlineado: 1.8, alineacion: 'left' },
+                'moderno': { titulo: 'Moderno', fuente: '"Inter", "Helvetica Neue", Arial, sans-serif', colorTitulo: '#9D4EDD', colorTexto: '#2C3E50', interlineado: 1.6, alineacion: 'left' },
+                'clasico': { titulo: 'Clásico', fuente: '"Georgia", "Times New Roman", serif', colorTitulo: '#1A1A1A', colorTexto: '#222222', interlineado: 1.5, alineacion: 'justify' },
+                'tecnico': { titulo: 'Técnico', fuente: '"Fira Code", "Consolas", monospace', colorTitulo: '#0077B6', colorTexto: '#333333', interlineado: 1.4, alineacion: 'left' },
+                'creativo': { titulo: 'Creativo', fuente: '"Inter", sans-serif', colorTitulo: '#F72585', colorTexto: '#1F1A3A', interlineado: 1.8, alineacion: 'left' },
                 'apa': { titulo: 'APA', fuente: '"Times New Roman", Times, serif', colorTitulo: '#000000', colorTexto: '#000000', interlineado: 2, alineacion: 'left' }
             };
 
@@ -1027,17 +1028,7 @@
 
             const crearNuevaConversacion = () => {
                 if (panelHistorialAbierto) alternarPanelHistorial();
-                const nueva = { id: Date.now().toString(), titulo: 'Nueva conversación', fecha: new Date().toISOString(), historial: [{ role: "system", content: `Eres un asistente virtual en español. Tu estilo debe ser:
-- Claro, legible y organizado.
-- Responde en español usando Markdown: encabezados (##), listas y bloques de código cuando corresponda.
-- Frases cortas (máx. 2–3 frases por párrafo).
-- Divide el texto en párrafos pequeños y bien espaciados.
-- Comienza con un breve resumen de 1–2 líneas cuando la respuesta sea larga.
-- Usa listas y pasos numerados para explicar procesos.
-- Incluye ejemplos prácticos cuando sea útil.
-- Evita relleno, prosa innecesaria o respuestas vagas.
-- Si el usuario solicita código (HTML, CSS, JS, etc.), devuelve únicamente el bloque de código dentro de triple backticks.
-- Mantén siempre un tono claro, amistoso y profesional.` }], modoSuperIA: false, modoMiniIA: false, modoPicasso: false, modoBusqueda: false, ultimaDescripcionImagen: "" };
+                const nueva = { id: Date.now().toString(), titulo: 'Nueva conversación', fecha: new Date().toISOString(), historial: [{ role: "system", content: SYSTEM_PROMPT }], modoSuperIA: false, modoMiniIA: false, modoPicasso: false, modoBusqueda: false, ultimaDescripcionImagen: "" };
                 conversaciones.unshift(nueva); conversacionActualId = nueva.id; cargarConversacion(conversacionActualId); guardarConversaciones(); renderizarListaHistorial();
             };
 
@@ -1123,32 +1114,53 @@
             };
 
             const parsearComandoDocumento = (t) => {
-                let m = t.match(/(?:crea|genera|hazme|escribe|dame)\s*(?:un|el|un)?\s*(?:documento|archivo|informe)?\s*(?:de\s)?(pdf|word|docx|excel|xlsx)\s*(?:sobre|acerca de|de|del)\s+(.+)/i);
-                if (m) return { tipo: m[1].replace('word', 'docx').replace('excel', 'xlsx'), tema: m[2].trim() };
-                m = t.match(/(?:crea|genera|exporta|convierte|pasa|dame)\s*(?:eso|esa informaci[oó]n|lo anterior|la respuesta anterior)\s*(?:a|en|como)\s*(?:un|el|un)?\s*(pdf|word|docx|excel|xlsx)/i);
-                return m ? { tipo: m[2].replace('word', 'docx').replace('excel', 'xlsx'), tema: 'contextual' } : null;
+                // EXCLUSIVO INTERCEPTOR LOCAL: Detecta frases clave al inicio para evitar que la IA intervenga diciendo que "no puede"
+                const tMinuscula = t.toLowerCase().trim();
+                
+                // 1. Detectar si el usuario quiere exportar el chat previo con comandos simples
+                const esExportacionChatContextual = /^(pasa|exporta|convierte|pásame|pásalo|pasa eso|pasa lo anterior)\s+(?:eso|este chat|lo anterior|la respuesta anterior)?\s*(?:a|en|como)?\s*(pdf|word|docx|excel|xlsx)$/i.test(tMinuscula) ||
+                                                    /^(descarga|descargar|bájame|bajar)\s+(?:eso|este chat|lo anterior|la respuesta anterior)?\s*(?:en|como)?\s*(pdf|word|docx|excel|xlsx)$/i.test(tMinuscula) ||
+                                                    /^(hazme|crea|genera|dame)\s+(?:un|el)?\s*(pdf|word|docx|excel|xlsx)\s+(?:de esto|de lo anterior|de la respuesta anterior|del chat)$/i.test(tMinuscula);
+                
+                if (esExportacionChatContextual) {
+                    const matchTipo = tMinuscula.match(/\b(pdf|word|docx|excel|xlsx)\b/i);
+                    if (matchTipo) {
+                        return { tipo: matchTipo[1].replace('word', 'docx').replace('excel', 'xlsx'), tema: 'contextual' };
+                    }
+                }
+
+                // 2. Detectar si se pide la creación directa de un archivo sobre un tema en específico
+                let m = t.match(/(?:crea|genera|hazme|escribe|dame|necesito|quiero|haz|crear|generar|descarga|descargar)\s*(?:un|el|un)?\s*(?:documento|archivo|informe|resumen|pdf|word|docx|excel|xlsx)?\s*(?:de|en|un)?\s*(pdf|word|docx|excel|xlsx)\s*(?:sobre|acerca de|de|del)?\s*(.*)/i);
+                if (m) {
+                    const tipo = m[1].toLowerCase().replace('word', 'docx').replace('excel', 'xlsx');
+                    const tema = m[2].trim();
+                    return { tipo: tipo, tema: tema || 'contextual' };
+                }
+
+                return null;
             };
 
             const generarYDescargarDocumento = async (cmd) => {
                 if (cmd.tipo === 'xlsx') await generarExcel(cmd.tema);
-                else { estadoConversacion.esperandoFormato = true; estadoConversacion.comandoPendiente = cmd; agregarMensaje('bot', 'Claro, estoy listo para crear tu documento. ¿En qué formato lo prefieres?\n\n1. Moderno\n2. Clásico\n3. Técnico\n4. Creativo\n5. APA\n\nPor favor, responde con el nombre o el número.'); }
+                else { estadoConversacion.esperandoFormato = true; estadoConversacion.comandoPendiente = cmd; agregarMensaje('bot', 'Claro, ¡con gusto! Estoy lista para procesar y crear tu documento. ¿En qué estilo de diseño premium lo prefieres?\n\n1. 💜 **Moderno** (Elegante con colores violetas y fuentes fluidas)\n2. 🖤 **Clásico** (Serio y profesional, tipografía serif tradicional)\n3. 💙 **Técnico** (Limpio, estructurado y corporativo)\n4. 💖 **Creativo** (Llamativo, vibrante y audaz)\n5. 📄 **APA** (Estilo académico oficial con interlineado riguroso)\n\nPor favor, responde con el **nombre** o el **número** de diseño que más te guste.'); }
             };
             
             const determinarFormato = (r) => ({ '1': 'moderno', '2': 'clasico', '3': 'tecnico', '4': 'creativo', '5': 'apa', 'moderno': 'moderno', 'clásico': 'clasico', 'clasico': 'clasico', 'técnico': 'tecnico', 'tecnico': 'tecnico', 'creativo': 'creativo', 'apa': 'apa' }[r.toLowerCase()] || null);
             
             const generarDocumentoConFormato = async (cmd, fmt) => {
                 estadoConversacion.esperandoFormato = false; estadoConversacion.comandoPendiente = null;
-                agregarMensaje('bot', `Preparando tu documento ${cmd.tipo.toUpperCase()} en formato ${ESTILOS_DOCUMENTO[fmt].titulo}...`); irAlFinal(); mostrarBotonCargando();
+                agregarMensaje('bot', `Preparando tu documento ${cmd.tipo.toUpperCase()} en estilo **${ESTILOS_DOCUMENTO[fmt].titulo}**...`); irAlFinal(); mostrarBotonCargando();
                 try {
                     let contenido;
-                    if (cmd.tema === 'contextual') {
-                        const last = [...historialChat].reverse().find(m => m.role === 'assistant');
-                        if (!last) throw new Error("No hay información anterior para exportar.");
+                    if (cmd.tema === 'contextual' || !cmd.tema) {
+                        // Buscar el último mensaje del asistente que sea contenido real (y no preguntas del formato)
+                        const last = [...historialChat].reverse().find(m => m.role === 'assistant' && !m.content.includes("¿En qué estilo de diseño") && !m.content.includes("¿En qué formato"));
+                        if (!last) throw new Error("No hay información previa en este chat para exportar.");
                         contenido = last.content;
                     } else {
-                        const prompt = `Genera un texto detallado, informativo y bien estructurado sobre el siguiente tema, para ser usado en un documento formal: ${cmd.tema}`;
+                        const prompt = `Genera un texto sumamente completo, detallado, bien redactado, profesional y estructurado con títulos descriptivos sobre el siguiente tema, ideal para ser presentado en un documento formal impreso de alta calidad: ${cmd.tema}`;
                         const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 3000, temperature: 0.5 }) });
-                        if (!res.ok) throw new Error(`Error API`); const d = await res.json(); contenido = d.choices[0]?.message?.content.trim(); if (!contenido) throw new Error("IA no generó contenido.");
+                        if (!res.ok) throw new Error(`Error de API`); const d = await res.json(); contenido = d.choices[0]?.message?.content.trim(); if (!contenido) throw new Error("La IA no generó contenido.");
                     }
                     if (cmd.tipo === 'pdf') await crearPDF(contenido, fmt); else if (cmd.tipo === 'docx') crearDOCX(contenido, fmt);
                 } catch (e) { agregarMensaje('bot', `Error al generar documento: ${e.message}`); } finally { restaurarBotonEnviar(); }
@@ -1161,23 +1173,23 @@
                     if (tema === 'contextual') {
                         const last = [...historialChat].reverse().find(m => m.role === 'assistant');
                         if (!last) throw new Error("No hay información anterior.");
-                        prompt = `Convierte el siguiente texto en un array de objetos JSON para Excel: ${last.content}`;
-                    } else prompt = `Analiza el tema y genera los datos más relevantes en un array de objetos JSON (filas). Tema: ${tema}. Responde SOLO con el JSON.`;
+                        prompt = `Convierte el siguiente texto en un array de objetos JSON estructurado para hoja de cálculo Excel: ${last.content}`;
+                    } else prompt = `Analiza el tema y genera los datos más relevantes en un array de objetos JSON (filas para una tabla). Tema: ${tema}. Responde únicamente con el código JSON, sin textos explicativos adicionales.`;
                     const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 3000, temperature: 0.5 }) });
-                    if (!res.ok) throw new Error(`Error API`); const d = await res.json(); const json = d.choices[0]?.message?.content.trim(); if (!json) throw new Error("IA no generó contenido.");
-                    crearXLSX(json); agregarMensaje('bot', '¡Documento listo! ¿Algo más?');
+                    if (!res.ok) throw new Error(`Error de API`); const d = await res.json(); const json = d.choices[0]?.message?.content.trim(); if (!json) throw new Error("La IA no generó contenido.");
+                    crearXLSX(json); agregarMensaje('bot', '¡Documento Excel listo! ¿Algo más?');
                 } catch (e) { agregarMensaje('bot', `Error Excel: ${e.message}`); } finally { restaurarBotonEnviar(); }
             };
 
-            // NUEVA FUNCIÓN CREAR PDF CON HTML2PDF PARA UN DISEÑO PREMIUM
+            // NUEVA FUNCIÓN CREAR PDF CON HTML2PDF PARA UN DISEÑO PREMIUM Y HERMOSO
             const crearPDF = async (contenido, formato) => {
                 const s = ESTILOS_DOCUMENTO[formato];
                 
                 const container = document.createElement('div');
                 container.id = 'temp-pdf-container';
                 container.style.width = '800px'; 
-                container.style.padding = '40px 50px';
-                container.style.background = 'white';
+                container.style.padding = '55px 65px';
+                container.style.background = '#ffffff';
                 container.style.color = s.colorTexto;
                 container.style.fontFamily = s.fuente;
                 container.style.lineHeight = s.interlineado;
@@ -1186,34 +1198,43 @@
                 const htmlContent = marked.parse(contenido);
 
                 container.innerHTML = `
-                    <div style="border-bottom: 2px solid ${s.colorTitulo}; padding-bottom: 20px; margin-bottom: 30px; text-align: center;">
-                        <h1 style="color: ${s.colorTitulo}; margin: 0; font-size: 32px; font-weight: bold;">Documento Generado por Mar-IA</h1>
-                        <p style="color: #666; margin-top: 10px; font-size: 14px;">Estilo: ${s.titulo} | Fecha: ${new Date().toLocaleDateString('es-ES')}</p>
+                    <div style="border-bottom: 3px solid ${s.colorTitulo}; padding-bottom: 25px; margin-bottom: 40px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h1 style="color: ${s.colorTitulo}; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Documento de Consulta</h1>
+                                <p style="color: #64748B; margin-top: 6px; font-size: 13px; font-weight: 500;">Generado por Mar-IA • Inteligencia Artificial</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="background: ${s.colorTitulo}1A; color: ${s.colorTitulo}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase;">Estilo ${s.titulo}</span>
+                                <p style="color: #64748B; margin-top: 8px; font-size: 12px;">${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="pdf-body" style="font-size: 15px;">
+                    <div class="pdf-body" style="font-size: 15px; color: #1E293B;">
                         ${htmlContent}
                     </div>
-                    <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 12px;">
-                        Generado por SUPER MAR-IA - Inteligencia Artificial
+                    <div style="margin-top: 60px; padding-top: 25px; border-top: 1px solid #E2E8F0; text-align: center; color: #94A3B8; font-size: 11px; font-weight: 500;">
+                        Este documento digital fue generado de forma automatizada por SUPER MAR-IA. Todos los derechos reservados.
                     </div>
                 `;
 
                 const style = document.createElement('style');
                 style.innerHTML = `
-                    #temp-pdf-container h1, #temp-pdf-container h2, #temp-pdf-container h3 { color: ${s.colorTitulo}; margin-top: 25px; margin-bottom: 15px; font-weight: 600; }
-                    #temp-pdf-container h1 { font-size: 24px; }
-                    #temp-pdf-container h2 { font-size: 20px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-                    #temp-pdf-container p { margin-bottom: 15px; }
-                    #temp-pdf-container ul, #temp-pdf-container ol { margin-bottom: 15px; padding-left: 25px; }
-                    #temp-pdf-container li { margin-bottom: 8px; }
-                    #temp-pdf-container pre { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; overflow-x: hidden; white-space: pre-wrap; word-wrap: break-word; font-family: Consolas, monospace; font-size: 13px; page-break-inside: avoid; }
-                    #temp-pdf-container code { background: #f8f9fa; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; color: #d63384; }
+                    #temp-pdf-container h1, #temp-pdf-container h2, #temp-pdf-container h3, #temp-pdf-container h4 { color: ${s.colorTitulo}; font-weight: 700; margin-top: 30px; margin-bottom: 15px; line-height: 1.3; }
+                    #temp-pdf-container h1 { font-size: 26px; border-left: 5px solid ${s.colorTitulo}; padding-left: 12px; }
+                    #temp-pdf-container h2 { font-size: 20px; border-bottom: 1.5px solid #F1F5F9; padding-bottom: 6px; }
+                    #temp-pdf-container h3 { font-size: 17px; }
+                    #temp-pdf-container p { margin-bottom: 16px; color: #334155; text-align: justify; }
+                    #temp-pdf-container ul, #temp-pdf-container ol { margin-bottom: 18px; padding-left: 25px; }
+                    #temp-pdf-container li { margin-bottom: 8px; color: #334155; }
+                    #temp-pdf-container pre { background: #F8FAFC; padding: 18px; border-radius: 10px; border: 1px solid #E2E8F0; overflow-x: hidden; white-space: pre-wrap; word-wrap: break-word; font-family: "Fira Code", monospace; font-size: 13px; margin: 20px 0; page-break-inside: avoid; }
+                    #temp-pdf-container code { background: #F1F5F9; padding: 3px 6px; border-radius: 5px; font-family: "Fira Code", monospace; color: #E11D48; font-size: 13px; }
                     #temp-pdf-container pre code { color: inherit; background: transparent; padding: 0; }
-                    #temp-pdf-container blockquote { border-left: 4px solid ${s.colorTitulo}; padding-left: 15px; color: #555; font-style: italic; background: #fdfdfd; padding: 12px 15px; margin-left: 0; margin-right: 0; page-break-inside: avoid; }
-                    #temp-pdf-container table { width: 100%; border-collapse: collapse; margin-bottom: 20px; page-break-inside: avoid; font-size: 14px; }
-                    #temp-pdf-container th, #temp-pdf-container td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
-                    #temp-pdf-container th { background-color: #f8f9fa; color: ${s.colorTitulo}; font-weight: bold; }
-                    #temp-pdf-container tr:nth-child(even) { background-color: #fafafa; }
+                    #temp-pdf-container blockquote { border-left: 4px solid ${s.colorTitulo}; padding: 14px 20px; color: #475569; font-style: italic; background: #F8FAFC; border-radius: 0 8px 8px 0; margin: 18px 0; page-break-inside: avoid; }
+                    #temp-pdf-container table { width: 100%; border-collapse: collapse; margin: 25px 0; page-break-inside: avoid; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+                    #temp-pdf-container th, #temp-pdf-container td { border: 1px solid #E2E8F0; padding: 12px 16px; text-align: left; }
+                    #temp-pdf-container th { background-color: #F8FAFC; color: ${s.colorTitulo}; font-weight: 700; }
+                    #temp-pdf-container tr:nth-child(even) { background-color: #FCFDFE; }
                 `;
                 container.appendChild(style);
 
@@ -1231,10 +1252,10 @@
 
                 try {
                     await html2pdf().set(opt).from(container).save();
-                    agregarMensaje('bot', '¡Tu PDF está listo y se ve increíble! ✨ Ya se ha descargado a tu dispositivo. ¿Te puedo ayudar con algo más?');
+                    agregarMensaje('bot', '¡Tu PDF de diseño premium ya se ha generado e iniciado su descarga automáticamente! 💜 Se aplicó una composición visual de alta gama acorde al formato elegido. ¿Te puedo colaborar con algo más?');
                 } catch (error) {
                     console.error("Error PDF:", error);
-                    agregarMensaje('bot', 'Hubo un error al generar tu PDF premium.');
+                    agregarMensaje('bot', 'Disculpa, ocurrió un inconveniente técnico al renderizar tu PDF de alta calidad.');
                 } finally {
                     document.body.removeChild(container);
                 }
@@ -1243,7 +1264,7 @@
             const crearDOCX = (c, f) => {
                 const s = ESTILOS_DOCUMENTO[f]; const paras = [];
                 c.replace(/<[^>]*>/g, '').split('\n').forEach((l, i) => { if (!l.trim()) return; const esT = i === 0 || (l.length < 80 && !l.endsWith('.')); paras.push(new docx.Paragraph({ children: [new docx.TextRun({ text: l, size: (esT ? 20 : 12) * 2, color: esT ? s.colorTitulo.replace('#','') : s.colorTexto.replace('#','') })], alignment: s.alineacion === 'center' ? docx.AlignmentType.CENTER : docx.AlignmentType.LEFT, spacing: { after: s.interlineado * 100 } })); });
-                docx.Packer.toBlob(new docx.Document({ sections: [{ children: paras }] })).then(b => { const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `mar-ia-documento-${Date.now()}.docx`; document.body.appendChild(a); a.click(); document.body.removeChild(a); agregarMensaje('bot', '¡Documento listo! ¿Algo más?'); });
+                docx.Packer.toBlob(new docx.Document({ sections: [{ children: paras }] })).then(b => { const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `mar-ia-documento-${Date.now()}.docx`; document.body.appendChild(a); a.click(); document.body.removeChild(a); agregarMensaje('bot', '¡Tu documento de Word se ha generado exitosamente y ya se está descargando! ¿Deseas hacer alguna modificación?'); });
             };
 
             const crearXLSX = (json) => {
