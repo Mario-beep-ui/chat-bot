@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- LIBRERÍA NUEVA PARA PDF PROFESIONALES -->
@@ -85,7 +85,7 @@
             --sombra: 0 4px 24px rgba(0,0,0,0.1);
             --sombra-input: 0 -10px 30px rgba(0, 0, 0, 0.05);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'DM Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         html { height: 100%; }
         body { height: 100dvh; background: var(--color-fondo); color: var(--color-texto); font-size: 1.6rem; display: flex; flex-direction: column; overflow: hidden; }
         .contenedor { display: flex; flex-direction: column; width: 100%; background: var(--color-contenedor); flex: 1; min-height: 0; overflow: hidden; position: relative; }
@@ -387,7 +387,7 @@
         .item-historial.seleccionado { background: var(--resaltado-pensamiento); border-left: 4px solid var(--color-destacado); }
         .titulo-conversacion { font-weight: 600; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.6rem; }
         .fecha-conversacion { font-size: 1.2rem; color: var(--color-timestamp); }
-        .preview-conversacion { font-size: 1.4rem; margin-top: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-timestamp); }
+        .preview-conversacion { font-size: 1.45rem; margin-top: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-timestamp); }
         .acciones-item-historial { display: flex; justify-content: flex-end; margin-top: 1rem; gap: 1rem; }
         .boton-accion-item { background: transparent; border: none; color: var(--color-timestamp); font-size: 1.6rem; cursor: pointer; transition: all 0.2s; padding: 0.8rem; border-radius: 50%; width: 3.6rem; height: 3.6rem; }
         .boton-accion-item:hover { color: var(--color-destacado); background: rgba(127, 90, 240, 0.1); }
@@ -500,6 +500,84 @@
             border-radius: 0.6rem;
             overflow-x: auto;
             border: 1px solid var(--borde-codigo);
+        }
+
+        /* ---------------------------------------------------- */
+        /* TIPOGRAFÍA ESTILO GEMINI — tamaños uniformes         */
+        /* Diferenciación por peso/negrita, no por tamaño       */
+        /* ---------------------------------------------------- */
+        .respuesta-ia h1 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 1.4rem 0 0.6rem 0;
+            letter-spacing: -0.01em;
+        }
+        .respuesta-ia h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 1.2rem 0 0.5rem 0;
+            letter-spacing: -0.01em;
+        }
+        .respuesta-ia h3 {
+            font-size: 1.65rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin: 1rem 0 0.4rem 0;
+        }
+        .respuesta-ia h4,
+        .respuesta-ia h5,
+        .respuesta-ia h6 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin: 0.8rem 0 0.3rem 0;
+        }
+        .respuesta-ia p {
+            font-size: 1.6rem;
+            line-height: 1.75;
+            margin-bottom: 0.8rem;
+        }
+        .respuesta-ia ul,
+        .respuesta-ia ol {
+            font-size: 1.6rem;
+            line-height: 1.75;
+            padding-left: 2.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .respuesta-ia li {
+            margin-bottom: 0.35rem;
+        }
+        .respuesta-ia li::marker {
+            color: var(--color-destacado);
+        }
+        .respuesta-ia strong {
+            font-weight: 600;
+        }
+        .respuesta-ia em {
+            font-style: italic;
+            opacity: 0.9;
+        }
+        .respuesta-ia code:not(pre code) {
+            font-size: 1.5rem;
+            background: var(--fondo-codigo);
+            border: 1px solid var(--borde-codigo);
+            border-radius: 0.4rem;
+            padding: 0.1rem 0.5rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+        .respuesta-ia blockquote {
+            font-size: 1.6rem;
+            border-left: 3px solid var(--color-destacado);
+            padding-left: 1.4rem;
+            margin: 1rem 0;
+            opacity: 0.85;
+        }
+        /* Burbuja del usuario — mismo tamaño base */
+        .burbuja-usuario {
+            font-size: 1.6rem;
+            line-height: 1.65;
         }
         
         .mensaje-bot,
