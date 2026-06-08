@@ -96,6 +96,85 @@
         .contenedor-chat { flex-grow: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 2.5rem; scroll-behavior: smooth; transition: transform 0.3s ease-in-out; }
         .contenedor-chat.desplazado { transform: translateX(320px); }
         
+        /* --- PANTALLA DE BIENVENIDA --- */
+        .pantalla-bienvenida {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 0.5s ease-out;
+            overflow-y: auto;
+        }
+        .pantalla-bienvenida.oculto {
+            display: none !important;
+        }
+        .bienvenida-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+        .bienvenida-logo i {
+            font-size: 5.5rem;
+            background: linear-gradient(135deg, #9D4EDD, #F72585);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        .bienvenida-header h2 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--color-texto);
+            margin-bottom: 0.8rem;
+        }
+        .bienvenida-header p {
+            font-size: 1.5rem;
+            color: var(--texto-placeholder);
+        }
+        .sugerencias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.2rem;
+            width: 100%;
+            max-width: 650px;
+        }
+        .sugerencia-btn {
+            background: rgba(36, 26, 53, 0.4);
+            border: 1px solid rgba(157, 78, 221, 0.15);
+            border-radius: 1.6rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.2rem;
+            color: var(--color-texto);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+        .sugerencia-btn:hover {
+            background: rgba(157, 78, 221, 0.2);
+            border-color: #F72585;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .sugerencia-btn i {
+            font-size: 2rem;
+            color: #F72585;
+        }
+        .sugerencia-btn span {
+            font-size: 1.35rem;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+        @media (max-width: 600px) {
+            .sugerencias-grid {
+                grid-template-columns: 1fr 1fr; /* 2 columnas en móviles */
+            }
+        }
+        
         /* Refinamiento contenedor entrada */
         .contenedor-entrada-wrapper { 
             flex-shrink: 0; 
@@ -586,6 +665,35 @@
             </div>
         </header>
 
+        <!-- PANTALLA DE BIENVENIDA (Chats vacíos) -->
+        <div id="pantalla-bienvenida" class="pantalla-bienvenida">
+            <div class="bienvenida-header">
+                <div class="bienvenida-logo">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h2>¿En qué puedo ayudarte hoy?</h2>
+                <p>Explora algunas ideas para empezar</p>
+            </div>
+            <div class="sugerencias-grid">
+                <button class="sugerencia-btn" data-texto="Resume este texto en 3 puntos clave">
+                    <i class="fas fa-align-left"></i>
+                    <span>Resumir un texto largo</span>
+                </button>
+                <button class="sugerencia-btn" data-texto="Explícame qué es la computación cuántica de forma sencilla">
+                    <i class="fas fa-atom"></i>
+                    <span>Explicar un concepto</span>
+                </button>
+                <button class="sugerencia-btn" data-texto="Escribe un correo formal pidiendo vacaciones a mi jefe">
+                    <i class="fas fa-envelope"></i>
+                    <span>Redactar un correo</span>
+                </button>
+                <button class="sugerencia-btn" data-texto="Dame 5 ideas creativas para un regalo de cumpleaños">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Ideas para regalos</span>
+                </button>
+            </div>
+        </div>
+
         <main class="contenedor-chat" id="contenedor-chat"></main>
         
         <button id="boton-scroll-final" title="Ir al final">
@@ -786,7 +894,7 @@
                 'apa': { titulo: 'APA', fuente: 'Times New Roman', tamanoTitulo: 12, tamanoSubtitulo: 12, tamanoCuerpo: 12, interlineado: 2, colorTitulo: '#000000', colorTexto: '#000000', alineacion: 'left' }
             };
             const elementos = {
-                body: document.body, contenedor: document.querySelector('.contenedor'), contenedorChat: document.getElementById('contenedor-chat'), entradaUsuario: document.getElementById('entrada-usuario'), botonEnviar: document.getElementById('boton-enviar'), botonGrabar: document.getElementById('boton-grabar'), botonMas: document.getElementById('boton-mas'), botonBuscar: document.getElementById('boton-buscar'), botonGenerarImagen: document.getElementById('boton-generar-imagen'), inputImagen: document.getElementById('input-imagen'), inputCamara: document.getElementById('input-camara'), inputArchivo: document.getElementById('input-archivo'), modalOcr: document.getElementById('modal-ocr'), modalModo: document.getElementById('modal-modo'), overlay: document.getElementById('overlay'), btnTomarFoto: document.getElementById('tomar-foto'), btnGaleria: document.getElementById('elegir-galeria'), btnArchivo: document.getElementById('elegir-archivo'), alternadorTema: document.getElementById('menu-tema'), confirmacionCopia: document.getElementById('confirmacionCopia'), selectorVoz: document.getElementById('selector-voz'), contenedorAdjuntos: document.getElementById('contenedor-adjuntos'), btnActivarBusquedaModal: document.getElementById('activar-busqueda-modal'), tituloModo: document.getElementById('titulo-modo'), modalSuperIA: document.getElementById('modal-super-ia'), cerrarModalSuperIA: document.getElementById('cerrar-modal-super-ia'), botonEntendido: document.getElementById('boton-entendido'), botonAyuda: document.getElementById('menu-ayuda'), modalAyuda: document.getElementById('modal-ayuda'), cerrarModalAyuda: document.getElementById('cerrar-modal-ayuda'), cerrarModalAyudaBtn: document.getElementById('cerrar-modal-ayuda-btn'), entradaWrapper: document.getElementById('contenedor-entrada-wrapper'), modalImagen: document.getElementById('modal-imagen'), imagenAmpliada: document.getElementById('imagen-ampliada'), cerrarModalImagen: document.getElementById('cerrar-modal-imagen'), descargarImagenBtn: document.getElementById('descargar-imagen'), modalMiniAviso: document.getElementById('modal-mini-aviso'), botonScrollFinal: document.getElementById('boton-scroll-final'), botonMenuPrincipal: document.getElementById('boton-menu-principal'), modalMenuPrincipal: document.getElementById('modal-menu-principal'), startLiveBtn: document.getElementById('start-live-btn'), liveScreen: document.getElementById('live-conversation-screen'), robotSvg: document.getElementById('robot-svg'), liveStatus: document.getElementById('live-status'), pauseLiveBtn: document.getElementById('pause-live-btn'), closeLiveBtn: document.getElementById('close-live-btn')
+                body: document.body, contenedor: document.querySelector('.contenedor'), contenedorChat: document.getElementById('contenedor-chat'), entradaUsuario: document.getElementById('entrada-usuario'), botonEnviar: document.getElementById('boton-enviar'), botonGrabar: document.getElementById('boton-grabar'), botonMas: document.getElementById('boton-mas'), botonBuscar: document.getElementById('boton-buscar'), botonGenerarImagen: document.getElementById('boton-generar-imagen'), inputImagen: document.getElementById('input-imagen'), inputCamara: document.getElementById('input-camara'), inputArchivo: document.getElementById('input-archivo'), modalOcr: document.getElementById('modal-ocr'), modalModo: document.getElementById('modal-modo'), overlay: document.getElementById('overlay'), btnTomarFoto: document.getElementById('tomar-foto'), btnGaleria: document.getElementById('elegir-galeria'), btnArchivo: document.getElementById('elegir-archivo'), alternadorTema: document.getElementById('menu-tema'), confirmacionCopia: document.getElementById('confirmacionCopia'), selectorVoz: document.getElementById('selector-voz'), contenedorAdjuntos: document.getElementById('contenedor-adjuntos'), btnActivarBusquedaModal: document.getElementById('activar-busqueda-modal'), tituloModo: document.getElementById('titulo-modo'), modalSuperIA: document.getElementById('modal-super-ia'), cerrarModalSuperIA: document.getElementById('cerrar-modal-super-ia'), botonEntendido: document.getElementById('boton-entendido'), botonAyuda: document.getElementById('menu-ayuda'), modalAyuda: document.getElementById('modal-ayuda'), cerrarModalAyuda: document.getElementById('cerrar-modal-ayuda'), cerrarModalAyudaBtn: document.getElementById('cerrar-modal-ayuda-btn'), entradaWrapper: document.getElementById('contenedor-entrada-wrapper'), modalImagen: document.getElementById('modal-imagen'), imagenAmpliada: document.getElementById('imagen-ampliada'), cerrarModalImagen: document.getElementById('cerrar-modal-imagen'), descargarImagenBtn: document.getElementById('descargar-imagen'), modalMiniAviso: document.getElementById('modal-mini-aviso'), botonScrollFinal: document.getElementById('boton-scroll-final'), botonMenuPrincipal: document.getElementById('boton-menu-principal'), modalMenuPrincipal: document.getElementById('modal-menu-principal'), startLiveBtn: document.getElementById('start-live-btn'), liveScreen: document.getElementById('live-conversation-screen'), robotSvg: document.getElementById('robot-svg'), liveStatus: document.getElementById('live-status'), pauseLiveBtn: document.getElementById('pause-live-btn'), closeLiveBtn: document.getElementById('close-live-btn'), pantallaBienvenida: document.getElementById('pantalla-bienvenida'), sugerenciaBtns: document.querySelectorAll('.sugerencia-btn')
             };
             const elementosHistorial = {
                 panelHistorial: document.getElementById('panel-historial'), botonHistorial: document.getElementById('menu-historial'), botonCerrarHistorial: document.getElementById('boton-cerrar-historial'), listaHistorial: document.getElementById('lista-historial'), inputBuscarHistorial: document.getElementById('input-buscar-historial'), botonNuevaConversacion: document.getElementById('boton-nueva-conversacion'), overlayHistorial: document.getElementById('overlay-historial'), contadorHistorial: document.getElementById('contador-historial-menu'), contenedorChat: document.getElementById('contenedor-chat')
@@ -842,11 +950,31 @@
                 elementos.startLiveBtn.addEventListener('click', iniciarLiveConversation);
                 elementos.closeLiveBtn.addEventListener('click', cerrarLiveConversation);
                 elementos.pauseLiveBtn.addEventListener('click', toggleLiveListening);
+                
+                // Sugerencias en la pantalla de bienvenida
+                elementos.sugerenciaBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        elementos.entradaUsuario.value = btn.dataset.texto;
+                        gestionarEnvioMensaje();
+                    });
+                });
             };
 
             const setRobotState = (state) => {
                 elementos.robotSvg.classList.remove('listening', 'talking');
                 if (state === 'listening' || state === 'talking') elementos.robotSvg.classList.add(state);
+            };
+            
+            // Función para mostrar u ocultar la pantalla de bienvenida
+            const actualizarVistaBienvenida = () => {
+                const tieneMensajesDelUsuario = historialChat.some(m => m.role !== 'system');
+                if (tieneMensajesDelUsuario) {
+                    elementos.pantallaBienvenida.classList.add('oculto');
+                    elementos.contenedorChat.style.display = 'flex';
+                } else {
+                    elementos.pantallaBienvenida.classList.remove('oculto');
+                    elementos.contenedorChat.style.display = 'none';
+                }
             };
 
             const iniciarLiveConversation = () => {
@@ -920,6 +1048,10 @@
                 elementos.botonBuscar.classList.toggle('modo-activo', modoBusqueda); elementos.botonGenerarImagen.classList.toggle('modo-activo', modoPicasso);
                 elementos.entradaUsuario.placeholder = modoPicasso ? "Describe la imagen que deseas generar..." : "Pregúntale a Mar-IA...";
                 elementos.contenedorChat.innerHTML = ''; historialChat = [...conv.historial];
+                
+                // Actualizamos qué vista se debe mostrar primero (bienvenida o chat)
+                actualizarVistaBienvenida();
+                
                 for (const m of historialChat) { if (m.role === 'user') agregarMensaje('usuario', m.content); else if (m.role === 'assistant' && !m.content.startsWith("Información obtenida de")) agregarMensaje('bot', m.content); }
                 irAlFinal(true); renderizarListaHistorial();
             };
@@ -953,6 +1085,11 @@
                 if (estaGenerandoRespuesta) return pausarGeneracion();
                 const texto = elementos.entradaUsuario.value.trim();
                 if (!texto && archivosAdjuntos.length === 0) return;
+                
+                // Ocultamos la bienvenida justo al momento de enviar
+                elementos.pantallaBienvenida.classList.add('oculto');
+                elementos.contenedorChat.style.display = 'flex';
+
                 agregarMensaje('usuario', texto); guardarMensajeEnHistorial('user', texto);
                 
                 if (modoBusqueda) {
@@ -1365,20 +1502,13 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                 });
             };
             
-            // Función nueva para formatear tablas estilo Gemini
             const formatearTablas = (contenedor) => {
                 const tablas = contenedor.querySelectorAll('table');
                 tablas.forEach(tabla => {
                     if (tabla.parentElement.classList.contains('chat-table-wrapper')) return;
-                    
-                    // Crear wrapper
                     const wrapper = document.createElement('div');
                     wrapper.className = 'chat-table-wrapper';
-                    
-                    // Clases a la tabla
                     tabla.classList.add('chat-table');
-                    
-                    // Insertar wrapper antes de la tabla y mover tabla dentro
                     tabla.parentNode.insertBefore(wrapper, tabla);
                     wrapper.appendChild(tabla);
                 });
@@ -1508,7 +1638,11 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                 ocultarIndicador();
                 try {
                     const r = await fetch(cfg.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${cfg.key}` }, body: JSON.stringify(payload) });
-                    if (!r.ok) throw new Error();
+                    if (!r.ok) {
+                        const errorDetails = await r.text();
+                        console.error(`Error de API (${r.status}):`, errorDetails);
+                        throw new Error(`HTTP ${r.status}`);
+                    }
                     const reader = r.body.getReader(); const dec = new TextDecoder();
                     cancelarStreaming = () => reader.cancel();
                     while (true) {
@@ -1527,7 +1661,13 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                     if (!isThink) { if (full.includes('[Imagen generada')) { const sm = full.match(/^\[Imagen generada\|?(.*?)\]\s*(.*)/s); const sUrl = sm && sm[1] ? sm[1] : imagenGeneradaActual; const sAlt = sm && sm[2] ? sm[2] : ''; if (sUrl) imagenGeneradaActual = sUrl; el.innerHTML = `<div class="contenedor-imagen-generada"><img src="${sUrl}" alt="${sAlt}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`; } historialChat.push({ role: "assistant", content: full }); guardarMensajeEnHistorial('assistant', full); }
                     if (hab) leerTexto(el.innerText, el.closest('.mensaje')?.querySelector('.boton-voz'));
                     return full;
-                } catch { if(!isThink) el.innerHTML = "Error de conexión."; return null; } finally { if (!isThink) restaurarBotonEnviar(); }
+                } catch (error) { 
+                    console.error("Fallo general en streamContent:", error);
+                    if(!isThink) el.innerHTML = `Error de conexión. Presiona F12 y revisa la consola para ver el motivo exacto.`; 
+                    return null; 
+                } finally { 
+                    if (!isThink) restaurarBotonEnviar(); 
+                }
             };
 
             iniciar();
@@ -1602,47 +1742,6 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
   if(btnDescargar) btnDescargar.addEventListener('click', function(){ const img = document.getElementById('imagen-ampliada'); if(img && img.src) descargarImagenDesdeSrc(img.src); });
   document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape') cerrarModalImagen(); });
   if(modal){ modal.addEventListener('click', function(ev){ if(ev.target === modal) cerrarModalImagen(); }); }
-  window.insertGeneratedImage = function(url, alt){
-    try{
-      const selectors = ['#contenedor-chat','.contenedor-chat','#chat','.chat'];
-      let container = null;
-      for(const s of selectors){
-        const c = document.querySelector(s);
-        if(c){ container = c; break; }
-      }
-      if(!container){ container = document.body; }
-      const wrapper = document.createElement('div');
-      wrapper.className = 'mensaje mensaje-bot';
-      wrapper.style.display = 'flex';
-      wrapper.style.marginBottom = '1rem';
-      wrapper.style.width = '100%';
-      const bubble = document.createElement('div');
-      bubble.className = 'burbuja-mensaje burbuja-bot';
-      bubble.style.padding = '0.6rem';
-      bubble.style.background = 'transparent';
-      bubble.style.border = 'none';
-      bubble.style.width = '100%';
-      const img = document.createElement('img');
-      img.src = url;
-      img.alt = alt || 'Imagen generada';
-      img.className = 'generated-image';
-      img.style.maxWidth = '100%';
-      img.style.borderRadius = '12px';
-      img.style.cursor = 'zoom-in';
-      img.dataset.generated = 'true';
-      bubble.appendChild(img);
-      wrapper.appendChild(bubble);
-      container.appendChild(wrapper);
-      if(container.scrollIntoView) wrapper.scrollIntoView({behavior:'smooth', block:'end'});
-      return wrapper;
-    }catch(err){
-      console.error('insertGeneratedImage error', err);
-      return null;
-    }
-  };
-  window.addEventListener('load', function(){
-    try{ document.querySelectorAll('img.generated-image, img[data-generated=\"true\"]').forEach(img=>{ img.style.cursor = 'zoom-in'; }); }catch(e){}
-  });
 })();
 </script>
 </body>
