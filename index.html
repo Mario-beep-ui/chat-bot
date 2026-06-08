@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -10,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- LIBRERÍA NUEVA PARA PDF PROFESIONALES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -171,7 +172,7 @@
         }
         @media (max-width: 600px) {
             .sugerencias-grid {
-                grid-template-columns: 1fr 1fr; /* 2 columnas en móviles */
+                grid-template-columns: 1fr 1fr;
             }
         }
         
@@ -445,7 +446,7 @@
             margin: 1.5rem 0;
             border: 1px solid var(--borde-codigo);
             border-radius: 1.2rem;
-            background: transparent; /* Fondo transparente como código */
+            background: transparent;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
@@ -454,17 +455,17 @@
             border-collapse: collapse;
             font-size: 1.4rem;
             color: var(--color-texto);
-            min-width: 400px; /* Forzar scroll en pantallas pequeñas */
+            min-width: 400px;
         }
 
         .chat-table th {
-            background-color: var(--fondo-boton-accion); /* Header ligeramente más claro/distinto */
-            color: var(--color-destacado); /* Acento de color en encabezados */
+            background-color: var(--fondo-boton-accion);
+            color: var(--color-destacado);
             font-weight: 600;
             text-align: left;
             padding: 1.2rem 1.5rem;
             border-bottom: 2px solid var(--borde-codigo);
-            white-space: nowrap; /* Evitar saltos de línea feos en cabecera */
+            white-space: nowrap;
         }
 
         .chat-table td {
@@ -475,14 +476,13 @@
         }
 
         .chat-table tr:last-child td {
-            border-bottom: none; /* Eliminar borde final */
+            border-bottom: none;
         }
 
         .chat-table tr:hover td {
-            background-color: rgba(157, 78, 221, 0.05); /* Hover sutil morado */
+            background-color: rgba(157, 78, 221, 0.05);
         }
 
-        /* Estilo sutil de scrollbar para las tablas */
         .chat-table-wrapper::-webkit-scrollbar {
             height: 8px;
         }
@@ -768,7 +768,7 @@
         </div>
         <div class="opcion-modo" data-modo="mini">
             <div class="opcion-modo-titulo"><i class="fas fa-bolt"></i><span>Mar-IA mini</span></div>
-            <div class="opcion-modo-desc">Respuestas ultra rápidas y breves, ideal para consultas simples.</div>
+            <div class="opcion-modo-desc">Respuestas ultra rápidas y breves, ideal para consultas simple.</div>
         </div>
     </div>
 
@@ -886,13 +886,16 @@
             const CLAVE_API_NEWS = API_KEYS.NEWS; 
             const CLAVE_API_DEEPSEEK = API_KEYS.DEEPSEEK; 
             const CLAVE_API_OCR = API_KEYS.OCR;
+            
+            // NUEVOS COLORES Y CONFIGURACIÓN PREMIUM PARA PDF
             const ESTILOS_DOCUMENTO = {
-                'moderno': { titulo: 'Moderno', fuente: 'Helvetica', tamanoTitulo: 20, tamanoSubtitulo: 16, tamanoCuerpo: 11, interlineado: 1.5, colorTitulo: '#2C2C2C', colorTexto: '#333333', alineacion: 'left' },
-                'clasico': { titulo: 'Clásico', fuente: 'Times New Roman', tamanoTitulo: 18, tamanoSubtitulo: 14, tamanoCuerpo: 12, interlineado: 1.15, colorTitulo: '#000000', colorTexto: '#000000', alineacion: 'center' },
-                'tecnico': { titulo: 'Técnico', fuente: 'Arial', tamanoTitulo: 16, tamanoSubtitulo: 14, tamanoCuerpo: 11, interlineado: 1.2, colorTitulo: '#1E1E1E', colorTexto: '#1E1E1E', alineacion: 'left' },
-                'creativo': { titulo: 'Creativo', fuente: 'Montserrat', tamanoTitulo: 22, tamanoSubtitulo: 16, tamanoCuerpo: 12, interlineado: 1.6, colorTitulo: '#8A2BE2', colorTexto: '#333333', alineacion: 'left' },
-                'apa': { titulo: 'APA', fuente: 'Times New Roman', tamanoTitulo: 12, tamanoSubtitulo: 12, tamanoCuerpo: 12, interlineado: 2, colorTitulo: '#000000', colorTexto: '#000000', alineacion: 'left' }
+                'moderno': { titulo: 'Moderno', fuente: 'Helvetica, Arial, sans-serif', colorTitulo: '#9D4EDD', colorTexto: '#333333', interlineado: 1.6, alineacion: 'left' },
+                'clasico': { titulo: 'Clásico', fuente: '"Times New Roman", Times, serif', colorTitulo: '#2B2B2B', colorTexto: '#111111', interlineado: 1.5, alineacion: 'justify' },
+                'tecnico': { titulo: 'Técnico', fuente: 'Consolas, Monaco, monospace', colorTitulo: '#0077B6', colorTexto: '#333333', interlineado: 1.4, alineacion: 'left' },
+                'creativo': { titulo: 'Creativo', fuente: 'Montserrat, sans-serif', colorTitulo: '#F72585', colorTexto: '#222222', interlineado: 1.8, alineacion: 'left' },
+                'apa': { titulo: 'APA', fuente: '"Times New Roman", Times, serif', colorTitulo: '#000000', colorTexto: '#000000', interlineado: 2, alineacion: 'left' }
             };
+
             const elementos = {
                 body: document.body, contenedor: document.querySelector('.contenedor'), contenedorChat: document.getElementById('contenedor-chat'), entradaUsuario: document.getElementById('entrada-usuario'), botonEnviar: document.getElementById('boton-enviar'), botonGrabar: document.getElementById('boton-grabar'), botonMas: document.getElementById('boton-mas'), botonBuscar: document.getElementById('boton-buscar'), botonGenerarImagen: document.getElementById('boton-generar-imagen'), inputImagen: document.getElementById('input-imagen'), inputCamara: document.getElementById('input-camara'), inputArchivo: document.getElementById('input-archivo'), modalOcr: document.getElementById('modal-ocr'), modalModo: document.getElementById('modal-modo'), overlay: document.getElementById('overlay'), btnTomarFoto: document.getElementById('tomar-foto'), btnGaleria: document.getElementById('elegir-galeria'), btnArchivo: document.getElementById('elegir-archivo'), alternadorTema: document.getElementById('menu-tema'), confirmacionCopia: document.getElementById('confirmacionCopia'), selectorVoz: document.getElementById('selector-voz'), contenedorAdjuntos: document.getElementById('contenedor-adjuntos'), btnActivarBusquedaModal: document.getElementById('activar-busqueda-modal'), tituloModo: document.getElementById('titulo-modo'), modalSuperIA: document.getElementById('modal-super-ia'), cerrarModalSuperIA: document.getElementById('cerrar-modal-super-ia'), botonEntendido: document.getElementById('boton-entendido'), botonAyuda: document.getElementById('menu-ayuda'), modalAyuda: document.getElementById('modal-ayuda'), cerrarModalAyuda: document.getElementById('cerrar-modal-ayuda'), cerrarModalAyudaBtn: document.getElementById('cerrar-modal-ayuda-btn'), entradaWrapper: document.getElementById('contenedor-entrada-wrapper'), modalImagen: document.getElementById('modal-imagen'), imagenAmpliada: document.getElementById('imagen-ampliada'), cerrarModalImagen: document.getElementById('cerrar-modal-imagen'), descargarImagenBtn: document.getElementById('descargar-imagen'), modalMiniAviso: document.getElementById('modal-mini-aviso'), botonScrollFinal: document.getElementById('boton-scroll-final'), botonMenuPrincipal: document.getElementById('boton-menu-principal'), modalMenuPrincipal: document.getElementById('modal-menu-principal'), startLiveBtn: document.getElementById('start-live-btn'), liveScreen: document.getElementById('live-conversation-screen'), robotSvg: document.getElementById('robot-svg'), liveStatus: document.getElementById('live-status'), pauseLiveBtn: document.getElementById('pause-live-btn'), closeLiveBtn: document.getElementById('close-live-btn'), pantallaBienvenida: document.getElementById('pantalla-bienvenida'), sugerenciaBtns: document.querySelectorAll('.sugerencia-btn')
             };
@@ -951,7 +954,6 @@
                 elementos.closeLiveBtn.addEventListener('click', cerrarLiveConversation);
                 elementos.pauseLiveBtn.addEventListener('click', toggleLiveListening);
                 
-                // Sugerencias en la pantalla de bienvenida
                 elementos.sugerenciaBtns.forEach(btn => {
                     btn.addEventListener('click', () => {
                         elementos.entradaUsuario.value = btn.dataset.texto;
@@ -965,7 +967,6 @@
                 if (state === 'listening' || state === 'talking') elementos.robotSvg.classList.add(state);
             };
             
-            // Función para mostrar u ocultar la pantalla de bienvenida
             const actualizarVistaBienvenida = () => {
                 const tieneMensajesDelUsuario = historialChat.some(m => m.role !== 'system');
                 if (tieneMensajesDelUsuario) {
@@ -1049,7 +1050,6 @@
                 elementos.entradaUsuario.placeholder = modoPicasso ? "Describe la imagen que deseas generar..." : "Pregúntale a Mar-IA...";
                 elementos.contenedorChat.innerHTML = ''; historialChat = [...conv.historial];
                 
-                // Actualizamos qué vista se debe mostrar primero (bienvenida o chat)
                 actualizarVistaBienvenida();
                 
                 for (const m of historialChat) { if (m.role === 'user') agregarMensaje('usuario', m.content); else if (m.role === 'assistant' && !m.content.startsWith("Información obtenida de")) agregarMensaje('bot', m.content); }
@@ -1086,7 +1086,6 @@
                 const texto = elementos.entradaUsuario.value.trim();
                 if (!texto && archivosAdjuntos.length === 0) return;
                 
-                // Ocultamos la bienvenida justo al momento de enviar
                 elementos.pantallaBienvenida.classList.add('oculto');
                 elementos.contenedorChat.style.display = 'flex';
 
@@ -1151,7 +1150,7 @@
                         const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 3000, temperature: 0.5 }) });
                         if (!res.ok) throw new Error(`Error API`); const d = await res.json(); contenido = d.choices[0]?.message?.content.trim(); if (!contenido) throw new Error("IA no generó contenido.");
                     }
-                    if (cmd.tipo === 'pdf') crearPDF(contenido, fmt); else if (cmd.tipo === 'docx') crearDOCX(contenido, fmt);
+                    if (cmd.tipo === 'pdf') await crearPDF(contenido, fmt); else if (cmd.tipo === 'docx') crearDOCX(contenido, fmt);
                 } catch (e) { agregarMensaje('bot', `Error al generar documento: ${e.message}`); } finally { restaurarBotonEnviar(); }
             };
             
@@ -1170,19 +1169,80 @@
                 } catch (e) { agregarMensaje('bot', `Error Excel: ${e.message}`); } finally { restaurarBotonEnviar(); }
             };
 
-            const crearPDF = (c, f) => {
-                const { jsPDF } = window.jspdf; const s = ESTILOS_DOCUMENTO[f]; const doc = new jsPDF();
-                doc.setFont(s.fuente); doc.setFontSize(s.tamanoTitulo); doc.setTextColor(s.colorTitulo); doc.text('Documento Generado', 105, 15, null, null, 'center');
-                doc.setFontSize(s.tamanoSubtitulo); doc.text(`Formato: ${s.titulo}`, 105, 25, null, null, 'center');
-                doc.setFontSize(s.tamanoCuerpo); doc.setTextColor(s.colorTexto);
-                const lines = doc.splitTextToSize(c.replace(/<[^>]*>/g, ''), 180); let y = 40;
-                lines.forEach(l => { if (y > doc.internal.pageSize.height - 10) { doc.addPage(); y = 10; } doc.text(l, 15, y, { align: s.alineacion }); y += s.interlineado * 5; });
-                doc.save(`mar-ia-documento-${Date.now()}.pdf`); agregarMensaje('bot', '¡Documento listo! ¿Algo más?');
+            // NUEVA FUNCIÓN CREAR PDF CON HTML2PDF PARA UN DISEÑO PREMIUM
+            const crearPDF = async (contenido, formato) => {
+                const s = ESTILOS_DOCUMENTO[formato];
+                
+                const container = document.createElement('div');
+                container.id = 'temp-pdf-container';
+                container.style.width = '800px'; 
+                container.style.padding = '40px 50px';
+                container.style.background = 'white';
+                container.style.color = s.colorTexto;
+                container.style.fontFamily = s.fuente;
+                container.style.lineHeight = s.interlineado;
+                container.style.textAlign = s.alineacion;
+
+                const htmlContent = marked.parse(contenido);
+
+                container.innerHTML = `
+                    <div style="border-bottom: 2px solid ${s.colorTitulo}; padding-bottom: 20px; margin-bottom: 30px; text-align: center;">
+                        <h1 style="color: ${s.colorTitulo}; margin: 0; font-size: 32px; font-weight: bold;">Documento Generado por Mar-IA</h1>
+                        <p style="color: #666; margin-top: 10px; font-size: 14px;">Estilo: ${s.titulo} | Fecha: ${new Date().toLocaleDateString('es-ES')}</p>
+                    </div>
+                    <div class="pdf-body" style="font-size: 15px;">
+                        ${htmlContent}
+                    </div>
+                    <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 12px;">
+                        Generado por SUPER MAR-IA - Inteligencia Artificial
+                    </div>
+                `;
+
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    #temp-pdf-container h1, #temp-pdf-container h2, #temp-pdf-container h3 { color: ${s.colorTitulo}; margin-top: 25px; margin-bottom: 15px; font-weight: 600; }
+                    #temp-pdf-container h1 { font-size: 24px; }
+                    #temp-pdf-container h2 { font-size: 20px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+                    #temp-pdf-container p { margin-bottom: 15px; }
+                    #temp-pdf-container ul, #temp-pdf-container ol { margin-bottom: 15px; padding-left: 25px; }
+                    #temp-pdf-container li { margin-bottom: 8px; }
+                    #temp-pdf-container pre { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; overflow-x: hidden; white-space: pre-wrap; word-wrap: break-word; font-family: Consolas, monospace; font-size: 13px; page-break-inside: avoid; }
+                    #temp-pdf-container code { background: #f8f9fa; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; color: #d63384; }
+                    #temp-pdf-container pre code { color: inherit; background: transparent; padding: 0; }
+                    #temp-pdf-container blockquote { border-left: 4px solid ${s.colorTitulo}; padding-left: 15px; color: #555; font-style: italic; background: #fdfdfd; padding: 12px 15px; margin-left: 0; margin-right: 0; page-break-inside: avoid; }
+                    #temp-pdf-container table { width: 100%; border-collapse: collapse; margin-bottom: 20px; page-break-inside: avoid; font-size: 14px; }
+                    #temp-pdf-container th, #temp-pdf-container td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
+                    #temp-pdf-container th { background-color: #f8f9fa; color: ${s.colorTitulo}; font-weight: bold; }
+                    #temp-pdf-container tr:nth-child(even) { background-color: #fafafa; }
+                `;
+                container.appendChild(style);
+
+                container.style.position = 'absolute';
+                container.style.left = '-9999px';
+                document.body.appendChild(container);
+
+                const opt = {
+                    margin:       15, 
+                    filename:     `Mar-IA-Documento-${Date.now()}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                try {
+                    await html2pdf().set(opt).from(container).save();
+                    agregarMensaje('bot', '¡Tu PDF está listo y se ve increíble! ✨ Ya se ha descargado a tu dispositivo. ¿Te puedo ayudar con algo más?');
+                } catch (error) {
+                    console.error("Error PDF:", error);
+                    agregarMensaje('bot', 'Hubo un error al generar tu PDF premium.');
+                } finally {
+                    document.body.removeChild(container);
+                }
             };
 
             const crearDOCX = (c, f) => {
                 const s = ESTILOS_DOCUMENTO[f]; const paras = [];
-                c.replace(/<[^>]*>/g, '').split('\n').forEach((l, i) => { if (!l.trim()) return; const esT = i === 0 || (l.length < 80 && !l.endsWith('.')); paras.push(new docx.Paragraph({ children: [new docx.TextRun({ text: l, size: (esT ? s.tamanoTitulo : s.tamanoCuerpo) * 2, color: esT ? s.colorTitulo : s.colorTexto })], alignment: s.alineacion === 'center' ? docx.AlignmentType.CENTER : docx.AlignmentType.LEFT, spacing: { after: s.interlineado * 100 } })); });
+                c.replace(/<[^>]*>/g, '').split('\n').forEach((l, i) => { if (!l.trim()) return; const esT = i === 0 || (l.length < 80 && !l.endsWith('.')); paras.push(new docx.Paragraph({ children: [new docx.TextRun({ text: l, size: (esT ? 20 : 12) * 2, color: esT ? s.colorTitulo.replace('#','') : s.colorTexto.replace('#','') })], alignment: s.alineacion === 'center' ? docx.AlignmentType.CENTER : docx.AlignmentType.LEFT, spacing: { after: s.interlineado * 100 } })); });
                 docx.Packer.toBlob(new docx.Document({ sections: [{ children: paras }] })).then(b => { const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `mar-ia-documento-${Date.now()}.docx`; document.body.appendChild(a); a.click(); document.body.removeChild(a); agregarMensaje('bot', '¡Documento listo! ¿Algo más?'); });
             };
 
@@ -1246,7 +1306,6 @@
                 return null;
             };
 
-            // Análisis FORENSE ultra-detallado para generación de imágenes
             const analizarImagenParaGeneracion = async (imageBase64, mimeType) => {
                 const dataUrl = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + imageBase64;
                 const GROQ_VISION_KEY = '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';
@@ -1326,7 +1385,6 @@ Sé EXHAUSTIVO. Imagina que alguien debe recrear esta imagen pixel por pixel sol
                 return null;
             };
 
-            // Construir prompt profesional para Pollinations usando análisis forense
             const construirPromptProfesional = async (analisisForense, peticionUsuario) => {
                 try {
                     const promptMeta = `Eres un experto en prompts para generación de imágenes con IA (Stable Diffusion, DALL-E, Midjourney).
@@ -1393,7 +1451,6 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                 let promptFinal = desc;
                 
                 if (imagenAdjunta) {
-                    // FLUJO COMPLETO: Análisis forense → Prompt profesional
                     try {
                         if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse('Analizando imagen en detalle... 👁️');
                         const imgData = await redimensionarImagen(imagenAdjunta);
@@ -1420,7 +1477,6 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                         promptFinal = desc;
                     }
                 } else {
-                    // Sin imagen adjunta: flujo normal con mejora de prompt
                     const descBase = (/\b(agrega|modifica|cambia|añade)\b/i.test(desc) && ultimaDescripcionImagen) ? `${ultimaDescripcionImagen}, ${desc}` : desc;
                     if(document.getElementById(id)) document.getElementById(id).innerHTML = marked.parse('Refinando idea... 🧠');
                     promptFinal = await mejorarPromptImagen(descBase, historialChat);
@@ -1594,7 +1650,12 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
                 try {
                     const c = new AbortController(); setTimeout(() => c.abort(), 2000);
                     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "Eres Mar-IA mini. Responde breve (max 2 oraciones).\n\nConsulta: " + last }] }] }), signal: c.signal });
-                    if (!r.ok) throw new Error(); const d = await r.json(); const txt = d.candidates?.[0]?.content?.parts?.[0]?.text; if (!txt) throw new Error();
+                    if (!r.ok) {
+                        const errorDetails = await r.text();
+                        console.error(`Error de API (${r.status}):`, errorDetails);
+                        throw new Error(`HTTP ${r.status}`);
+                    }
+                    const d = await r.json(); const txt = d.candidates?.[0]?.content?.parts?.[0]?.text; if (!txt) throw new Error();
                     historialChat.push({ role: "assistant", content: txt }); guardarMensajeEnHistorial('assistant', txt); ocultarIndicador(); const msg = agregarMensaje('bot', txt); if (hab) leerTexto(txt, msg.querySelector('.boton-voz'));
                 } catch { await obtenerRespuestaMetaFallback(hist, hab); } finally { restaurarBotonEnviar(); }
             };
