@@ -681,7 +681,7 @@
                 </button>
                 <button class="sugerencia-btn" data-texto="Explícame qué es la computación cuántica de forma sencilla">
                     <i class="fas fa-atom"></i>
-                    <span>Explicar un concepto</span>
+                    <span>Explicar un concept</span>
                 </button>
                 <button class="sugerencia-btn" data-texto="Escribe un correo formal pidiendo vacaciones a mi jefe">
                     <i class="fas fa-envelope"></i>
@@ -768,7 +768,7 @@
         </div>
         <div class="opcion-modo" data-modo="mini">
             <div class="opcion-modo-titulo"><i class="fas fa-bolt"></i><span>Mar-IA mini</span></div>
-            <div class="opcion-modo-desc">Respuestas ultra rápidas y breves, ideal para consultas simples.</div>
+            <div class="opcion-modo-desc">Respuestas ultra rápidas y breves, ideal para consultas simple.</div>
         </div>
     </div>
 
@@ -1091,12 +1091,6 @@
 
                 if (/qu[eé]\s+d[ií]a\s+es\s+hoy|fecha\s+de\s+hoy/i.test(texto)) { const r = `Hoy es ${new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`; agregarMensaje('bot', r); guardarMensajeEnHistorial('assistant', r); return reiniciarEntrada(); }
                 if (/qu[eé]\s+hora\s+es/i.test(texto)) { const r = `Son las ${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`; agregarMensaje('bot', r); guardarMensajeEnHistorial('assistant', r); return reiniciarEntrada(); }
-                
-                if (estadoConversacion.esperandoFormato) {
-                    const fmt = determinarFormato(texto);
-                    fmt ? await generarDocumentoConFormato(estadoConversacion.comandoPendiente, fmt) : agregarMensaje('bot', 'Formato no reconocido. Por favor elige un número (1-5) o nombre de estilo válido.');
-                    return reiniciarEntrada();
-                }
 
                 const cmd = parsearComandoDocumento(texto);
                 if (cmd) { await generarYDescargarDocumento(cmd); return reiniciarEntrada(); }
@@ -1114,55 +1108,53 @@
             };
 
             const parsearComandoDocumento = (t) => {
-                // EXCLUSIVO INTERCEPTOR LOCAL: Detecta frases clave al inicio para evitar que la IA intervenga diciendo que "no puede"
-                const tMinuscula = t.toLowerCase().trim();
-                
-                // 1. Detectar si el usuario quiere exportar el chat previo con comandos simples
-                const esExportacionChatContextual = /^(pasa|exporta|convierte|pásame|pásalo|pasa eso|pasa lo anterior)\s+(?:eso|este chat|lo anterior|la respuesta anterior)?\s*(?:a|en|como)?\s*(pdf|word|docx|excel|xlsx)$/i.test(tMinuscula) ||
-                                                    /^(descarga|descargar|bájame|bajar)\s+(?:eso|este chat|lo anterior|la respuesta anterior)?\s*(?:en|como)?\s*(pdf|word|docx|excel|xlsx)$/i.test(tMinuscula) ||
-                                                    /^(hazme|crea|genera|dame)\s+(?:un|el)?\s*(pdf|word|docx|excel|xlsx)\s+(?:de esto|de lo anterior|de la respuesta anterior|del chat)$/i.test(tMinuscula);
-                
-                if (esExportacionChatContextual) {
-                    const matchTipo = tMinuscula.match(/\b(pdf|word|docx|excel|xlsx)\b/i);
-                    if (matchTipo) {
-                        return { tipo: matchTipo[1].replace('word', 'docx').replace('excel', 'xlsx'), tema: 'contextual' };
-                    }
-                }
-
-                // 2. Detectar si se pide la creación directa de un archivo sobre un tema en específico
-                let m = t.match(/(?:crea|genera|hazme|escribe|dame|necesito|quiero|haz|crear|generar|descarga|descargar)\s*(?:un|el|un)?\s*(?:documento|archivo|informe|resumen|pdf|word|docx|excel|xlsx)?\s*(?:de|en|un)?\s*(pdf|word|docx|excel|xlsx)\s*(?:sobre|acerca de|de|del)?\s*(.*)/i);
+                // Modificado para detectar cualquier variante de solicitud de PDF, Word o Excel de manera altamente receptiva
+                let m = t.match(/(?:crea|genera|hazme|escribe|dame|necesito|quiero)\s*(?:un|el|un)?\s*(?:documento|archivo|informe|resumen)?\s*(?:de|en|un)?\s*(pdf|word|docx|excel|xlsx)\s*(?:sobre|acerca de|de|del)?\s*(.*)/i);
                 if (m) {
                     const tipo = m[1].toLowerCase().replace('word', 'docx').replace('excel', 'xlsx');
                     const tema = m[2].trim();
                     return { tipo: tipo, tema: tema || 'contextual' };
                 }
-
-                return null;
+                m = t.match(/(?:crea|genera|exporta|convierte|pasa|dame)\s*(?:eso|esa informaci[oó]n|lo anterior|la respuesta anterior|este chat|esto)\s*(?:a|en|como)\s*(?:un|el|un)?\s*(pdf|word|docx|excel|xlsx)/i);
+                return m ? { tipo: m[1].toLowerCase().replace('word', 'docx').replace('excel', 'xlsx'), tema: 'contextual' } : null;
             };
 
             const generarYDescargarDocumento = async (cmd) => {
                 if (cmd.tipo === 'xlsx') await generarExcel(cmd.tema);
-                else { estadoConversacion.esperandoFormato = true; estadoConversacion.comandoPendiente = cmd; agregarMensaje('bot', 'Claro, ¡con gusto! Estoy lista para procesar y crear tu documento. ¿En qué estilo de diseño premium lo prefieres?\n\n1. 💜 **Moderno** (Elegante con colores violetas y fuentes fluidas)\n2. 🖤 **Clásico** (Serio y profesional, tipografía serif tradicional)\n3. 💙 **Técnico** (Limpio, estructurado y corporativo)\n4. 💖 **Creativo** (Llamativo, vibrante y audaz)\n5. 📄 **APA** (Estilo académico oficial con interlineado riguroso)\n\nPor favor, responde con el **nombre** o el **número** de diseño que más te guste.'); }
+                else await generarDocumentoConFormato(cmd);
             };
             
             const determinarFormato = (r) => ({ '1': 'moderno', '2': 'clasico', '3': 'tecnico', '4': 'creativo', '5': 'apa', 'moderno': 'moderno', 'clásico': 'clasico', 'clasico': 'clasico', 'técnico': 'tecnico', 'tecnico': 'tecnico', 'creativo': 'creativo', 'apa': 'apa' }[r.toLowerCase()] || null);
             
-            const generarDocumentoConFormato = async (cmd, fmt) => {
+            const generarDocumentoConFormato = async (cmd) => {
                 estadoConversacion.esperandoFormato = false; estadoConversacion.comandoPendiente = null;
-                agregarMensaje('bot', `Preparando tu documento ${cmd.tipo.toUpperCase()} en estilo **${ESTILOS_DOCUMENTO[fmt].titulo}**...`); irAlFinal(); mostrarBotonCargando();
+                const temaDisplay = (cmd.tema && cmd.tema !== 'contextual') ? cmd.tema : 'la información del chat';
+                agregarMensaje('bot', `Generando tu documento sobre **${temaDisplay}**, un momento...`); irAlFinal(); mostrarBotonCargando();
                 try {
-                    let contenido;
+                    let contenido, tituloDoc;
                     if (cmd.tema === 'contextual' || !cmd.tema) {
-                        // Buscar el último mensaje del asistente que sea contenido real (y no preguntas del formato)
-                        const last = [...historialChat].reverse().find(m => m.role === 'assistant' && !m.content.includes("¿En qué estilo de diseño") && !m.content.includes("¿En qué formato"));
-                        if (!last) throw new Error("No hay información previa en este chat para exportar.");
+                        const last = [...historialChat].reverse().find(m => m.role === 'assistant' && !m.content.startsWith("Generando tu documento"));
+                        if (!last) throw new Error("No hay información anterior en este chat para exportar.");
                         contenido = last.content;
+                        tituloDoc = 'Documento';
                     } else {
-                        const prompt = `Genera un texto sumamente completo, detallado, bien redactado, profesional y estructurado con títulos descriptivos sobre el siguiente tema, ideal para ser presentado en un documento formal impreso de alta calidad: ${cmd.tema}`;
-                        const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 3000, temperature: 0.5 }) });
-                        if (!res.ok) throw new Error(`Error de API`); const d = await res.json(); contenido = d.choices[0]?.message?.content.trim(); if (!contenido) throw new Error("La IA no generó contenido.");
+                        tituloDoc = cmd.tema.trim();
+                        const prompt = `Eres un experto redactor de documentos profesionales. Genera un documento completo, profundo y bien estructurado en español sobre: "${cmd.tema}".
+
+El documento DEBE contener obligatoriamente:
+1. Una introducción general clara
+2. Secciones temáticas con encabezados (##) bien diferenciados
+3. Si es un tema de cine/libro/arte: incluye una ficha técnica en tabla markdown (| Campo | Valor |)
+4. Párrafos densos con información relevante y bien redactada
+5. Citas textuales importantes entre comillas o en blockquote si aplica
+6. Una sección de análisis o conclusión al final
+
+Usa Markdown: ## para secciones, ### para subsecciones, **negrita** para términos clave, *cursiva* para títulos de obras, tablas cuando aplique, blockquote para citas.
+Redacta mínimo 800 palabras. Sé exhaustivo, preciso y profesional.`;
+                        const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 4000, temperature: 0.4 }) });
+                        if (!res.ok) throw new Error(`Error API`); const d = await res.json(); contenido = d.choices[0]?.message?.content.trim(); if (!contenido) throw new Error("IA no generó contenido.");
                     }
-                    if (cmd.tipo === 'pdf') await crearPDF(contenido, fmt); else if (cmd.tipo === 'docx') crearDOCX(contenido, fmt);
+                    if (cmd.tipo === 'pdf') await crearPDF(contenido, tituloDoc); else if (cmd.tipo === 'docx') crearDOCX(contenido, 'moderno');
                 } catch (e) { agregarMensaje('bot', `Error al generar documento: ${e.message}`); } finally { restaurarBotonEnviar(); }
             };
             
@@ -1176,89 +1168,317 @@
                         prompt = `Convierte el siguiente texto en un array de objetos JSON estructurado para hoja de cálculo Excel: ${last.content}`;
                     } else prompt = `Analiza el tema y genera los datos más relevantes en un array de objetos JSON (filas para una tabla). Tema: ${tema}. Responde únicamente con el código JSON, sin textos explicativos adicionales.`;
                     const res = await fetch('https://api.deepseek.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEYS.DEEPSEEK}` }, body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 3000, temperature: 0.5 }) });
-                    if (!res.ok) throw new Error(`Error de API`); const d = await res.json(); const json = d.choices[0]?.message?.content.trim(); if (!json) throw new Error("La IA no generó contenido.");
+                    if (!res.ok) throw new Error(`Error API`); const d = await res.json(); const json = d.choices[0]?.message?.content.trim(); if (!json) throw new Error("IA no generó contenido.");
                     crearXLSX(json); agregarMensaje('bot', '¡Documento Excel listo! ¿Algo más?');
                 } catch (e) { agregarMensaje('bot', `Error Excel: ${e.message}`); } finally { restaurarBotonEnviar(); }
             };
 
-            // NUEVA FUNCIÓN CREAR PDF CON HTML2PDF PARA UN DISEÑO PREMIUM Y HERMOSO
-            const crearPDF = async (contenido, formato) => {
-                const s = ESTILOS_DOCUMENTO[formato];
-                
-                const container = document.createElement('div');
-                container.id = 'temp-pdf-container';
-                container.style.width = '800px'; 
-                container.style.padding = '55px 65px';
-                container.style.background = '#ffffff';
-                container.style.color = s.colorTexto;
-                container.style.fontFamily = s.fuente;
-                container.style.lineHeight = s.interlineado;
-                container.style.textAlign = s.alineacion;
+            // FUNCIÓN CREAR PDF — diseño profesional estilo Gemini
+            const crearPDF = async (contenido, tituloDoc) => {
+                const { jsPDF } = window.jspdf;
+                const fecha = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
 
-                const htmlContent = marked.parse(contenido);
+                const nombreArchivo = tituloDoc
+                    .toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9\s]/g, '')
+                    .trim()
+                    .replace(/\s+/g, '_')
+                    .substring(0, 40) + '.pdf';
 
-                container.innerHTML = `
-                    <div style="border-bottom: 3px solid ${s.colorTitulo}; padding-bottom: 25px; margin-bottom: 40px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <h1 style="color: ${s.colorTitulo}; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Documento de Consulta</h1>
-                                <p style="color: #64748B; margin-top: 6px; font-size: 13px; font-weight: 500;">Generado por Mar-IA • Inteligencia Artificial</p>
-                            </div>
-                            <div style="text-align: right;">
-                                <span style="background: ${s.colorTitulo}1A; color: ${s.colorTitulo}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase;">Estilo ${s.titulo}</span>
-                                <p style="color: #64748B; margin-top: 8px; font-size: 12px;">${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pdf-body" style="font-size: 15px; color: #1E293B;">
-                        ${htmlContent}
-                    </div>
-                    <div style="margin-top: 60px; padding-top: 25px; border-top: 1px solid #E2E8F0; text-align: center; color: #94A3B8; font-size: 11px; font-weight: 500;">
-                        Este documento digital fue generado de forma automatizada por SUPER MAR-IA. Todos los derechos reservados.
-                    </div>
-                `;
+                const tituloCapital = tituloDoc.charAt(0).toUpperCase() + tituloDoc.slice(1);
 
-                const style = document.createElement('style');
-                style.innerHTML = `
-                    #temp-pdf-container h1, #temp-pdf-container h2, #temp-pdf-container h3, #temp-pdf-container h4 { color: ${s.colorTitulo}; font-weight: 700; margin-top: 30px; margin-bottom: 15px; line-height: 1.3; }
-                    #temp-pdf-container h1 { font-size: 26px; border-left: 5px solid ${s.colorTitulo}; padding-left: 12px; }
-                    #temp-pdf-container h2 { font-size: 20px; border-bottom: 1.5px solid #F1F5F9; padding-bottom: 6px; }
-                    #temp-pdf-container h3 { font-size: 17px; }
-                    #temp-pdf-container p { margin-bottom: 16px; color: #334155; text-align: justify; }
-                    #temp-pdf-container ul, #temp-pdf-container ol { margin-bottom: 18px; padding-left: 25px; }
-                    #temp-pdf-container li { margin-bottom: 8px; color: #334155; }
-                    #temp-pdf-container pre { background: #F8FAFC; padding: 18px; border-radius: 10px; border: 1px solid #E2E8F0; overflow-x: hidden; white-space: pre-wrap; word-wrap: break-word; font-family: "Fira Code", monospace; font-size: 13px; margin: 20px 0; page-break-inside: avoid; }
-                    #temp-pdf-container code { background: #F1F5F9; padding: 3px 6px; border-radius: 5px; font-family: "Fira Code", monospace; color: #E11D48; font-size: 13px; }
-                    #temp-pdf-container pre code { color: inherit; background: transparent; padding: 0; }
-                    #temp-pdf-container blockquote { border-left: 4px solid ${s.colorTitulo}; padding: 14px 20px; color: #475569; font-style: italic; background: #F8FAFC; border-radius: 0 8px 8px 0; margin: 18px 0; page-break-inside: avoid; }
-                    #temp-pdf-container table { width: 100%; border-collapse: collapse; margin: 25px 0; page-break-inside: avoid; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-                    #temp-pdf-container th, #temp-pdf-container td { border: 1px solid #E2E8F0; padding: 12px 16px; text-align: left; }
-                    #temp-pdf-container th { background-color: #F8FAFC; color: ${s.colorTitulo}; font-weight: 700; }
-                    #temp-pdf-container tr:nth-child(even) { background-color: #FCFDFE; }
-                `;
-                container.appendChild(style);
+                // ── Configuración del documento ──
+                const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+                const PW = 210, PH = 297;
+                const ML = 18, MR = 18, MT = 20, MB = 22;
+                const CW = PW - ML - MR; // ancho útil
+                let y = 0;
 
-                container.style.position = 'absolute';
-                container.style.left = '-9999px';
-                document.body.appendChild(container);
+                // Colores
+                const C_DARK  = [26, 31, 46];
+                const C_WHITE = [255, 255, 255];
+                const C_BLUE  = [59, 111, 224];
+                const C_TEXT  = [51, 65, 85];
+                const C_GRAY  = [148, 163, 184];
+                const C_LIGHT = [241, 245, 249];
+                const C_BORDER= [226, 232, 240];
 
-                const opt = {
-                    margin:       15, 
-                    filename:     `Mar-IA-Documento-${Date.now()}.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                // ── PORTADA ──
+                pdf.setFillColor(...C_DARK);
+                pdf.rect(0, 0, PW, PH, 'F');
+
+                // Título en portada (puede hacer wrap)
+                pdf.setTextColor(...C_WHITE);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(28);
+                const tituloLines = pdf.splitTextToSize(tituloCapital.toUpperCase(), CW);
+                let ty = 90;
+                tituloLines.forEach(line => {
+                    pdf.text(line, ML, ty);
+                    ty += 12;
+                });
+
+                // Subtítulo portada
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(10);
+                pdf.setTextColor(...C_GRAY);
+                pdf.text(`Documento generado por Mar-IA  ·  Inteligencia Artificial  ·  ${fecha}`, ML, ty + 6);
+
+                // ── NUEVA PÁGINA para el contenido ──
+                pdf.addPage();
+                y = MT;
+
+                // Función: salto de página si no hay espacio
+                const checkPage = (neededH = 10) => {
+                    if (y + neededH > PH - MB) {
+                        // Pie de página
+                        pdf.setFont('helvetica', 'italic');
+                        pdf.setFontSize(8);
+                        pdf.setTextColor(...C_GRAY);
+                        const pg = pdf.internal.getCurrentPageInfo().pageNumber;
+                        pdf.text(`${tituloCapital} — Dossier generado por Mar-IA`, ML, PH - 10);
+                        pdf.text(`Página ${pg - 1}`, PW - MR, PH - 10, { align: 'right' });
+                        pdf.addPage();
+                        y = MT;
+                    }
                 };
 
-                try {
-                    await html2pdf().set(opt).from(container).save();
-                    agregarMensaje('bot', '¡Tu PDF de diseño premium ya se ha generado e iniciado su descarga automáticamente! 💜 Se aplicó una composición visual de alta gama acorde al formato elegido. ¿Te puedo colaborar con algo más?');
-                } catch (error) {
-                    console.error("Error PDF:", error);
-                    agregarMensaje('bot', 'Disculpa, ocurrió un inconveniente técnico al renderizar tu PDF de alta calidad.');
-                } finally {
-                    document.body.removeChild(container);
+                // Función: escribir texto con wrap automático
+                const writeText = (text, fontSize, fontStyle, color, indent = 0, extraSpacing = 0) => {
+                    if (!text.trim()) return;
+                    pdf.setFont('helvetica', fontStyle);
+                    pdf.setFontSize(fontSize);
+                    pdf.setTextColor(...color);
+                    const lines = pdf.splitTextToSize(text, CW - indent);
+                    const lineH = fontSize * 0.4527 * 1.4;
+                    checkPage(lines.length * lineH + extraSpacing);
+                    lines.forEach(line => {
+                        pdf.text(line, ML + indent, y);
+                        y += lineH;
+                    });
+                    y += extraSpacing;
+                };
+
+                // Parsear markdown línea por línea
+                const rawLines = contenido.split('\n');
+                let inTable = false, tableRows = [], tableHeaders = [];
+                let inCode = false, codeLines = [];
+                let inBlockquote = false, bqLines = [];
+
+                const flushTable = () => {
+                    if (!tableHeaders.length && !tableRows.length) return;
+                    checkPage(20);
+                    const colCount = tableHeaders.length || (tableRows[0]?.length ?? 1);
+                    const colW = CW / colCount;
+
+                    // Cabecera tabla
+                    pdf.setFillColor(...C_LIGHT);
+                    pdf.rect(ML, y, CW, 7, 'F');
+                    pdf.setDrawColor(...C_BORDER);
+                    pdf.rect(ML, y, CW, 7, 'S');
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(8.5);
+                    pdf.setTextColor(...C_TEXT);
+                    tableHeaders.forEach((h, i) => {
+                        pdf.text(String(h).trim(), ML + colW * i + 2, y + 5);
+                    });
+                    y += 7;
+
+                    // Filas tabla
+                    tableRows.forEach(row => {
+                        checkPage(7);
+                        pdf.setDrawColor(...C_BORDER);
+                        pdf.rect(ML, y, CW, 7, 'S');
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(8.5);
+                        pdf.setTextColor(...C_TEXT);
+                        row.forEach((cell, i) => {
+                            const cellTxt = pdf.splitTextToSize(String(cell).trim(), colW - 4);
+                            pdf.text(cellTxt[0] || '', ML + colW * i + 2, y + 5);
+                        });
+                        y += 7;
+                    });
+
+                    y += 4;
+                    tableHeaders = [];
+                    tableRows = [];
+                    inTable = false;
+                };
+
+                const flushCode = () => {
+                    if (!codeLines.length) return;
+                    const blockH = codeLines.length * 4.5 + 6;
+                    checkPage(blockH);
+                    pdf.setFillColor(...C_LIGHT);
+                    pdf.setDrawColor(...C_BORDER);
+                    pdf.rect(ML, y, CW, blockH, 'FD');
+                    pdf.setFont('courier', 'normal');
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(30, 41, 59);
+                    codeLines.forEach(cl => {
+                        pdf.text(cl, ML + 3, y + 5);
+                        y += 4.5;
+                    });
+                    y += 6;
+                    codeLines = [];
+                    inCode = false;
+                };
+
+                const flushBlockquote = () => {
+                    if (!bqLines.length) return;
+                    const blockH = bqLines.length * 5.5 + 5;
+                    checkPage(blockH);
+                    pdf.setFillColor(...C_LIGHT);
+                    pdf.rect(ML, y, CW, blockH, 'F');
+                    pdf.setFillColor(...C_BLUE);
+                    pdf.rect(ML, y, 2.5, blockH, 'F');
+                    pdf.setFont('helvetica', 'italic');
+                    pdf.setFontSize(9.5);
+                    pdf.setTextColor(71, 85, 105);
+                    bqLines.forEach(bl => {
+                        const lns = pdf.splitTextToSize(bl, CW - 10);
+                        lns.forEach(l => { pdf.text(l, ML + 8, y + 5); y += 5.5; });
+                    });
+                    y += 4;
+                    bqLines = [];
+                    inBlockquote = false;
+                };
+
+                for (const raw of rawLines) {
+                    const line = raw;
+
+                    // Bloque código
+                    if (line.trim().startsWith('```')) {
+                        if (inCode) flushCode();
+                        else { flushBlockquote(); inCode = true; }
+                        continue;
+                    }
+                    if (inCode) { codeLines.push(line); continue; }
+
+                    // Tabla markdown
+                    if (line.trim().startsWith('|')) {
+                        const cells = line.trim().split('|').filter(c => c.trim() !== '');
+                        if (cells.every(c => /^[-: ]+$/.test(c))) { inTable = true; continue; }
+                        if (!inTable && !tableHeaders.length) { tableHeaders = cells; inTable = true; }
+                        else if (inTable) tableRows.push(cells);
+                        else tableHeaders = cells;
+                        continue;
+                    } else if (inTable) { flushTable(); }
+
+                    // Blockquote
+                    if (line.trim().startsWith('>')) {
+                        if (!inBlockquote) { inBlockquote = true; bqLines = []; }
+                        bqLines.push(line.replace(/^>\s?/, '').trim());
+                        continue;
+                    } else if (inBlockquote) { flushBlockquote(); }
+
+                    // Encabezados
+                    if (/^######\s/.test(line)) { writeText(line.replace(/^######\s/, ''), 9, 'bold', C_TEXT, 0, 2); continue; }
+                    if (/^#####\s/.test(line))  { writeText(line.replace(/^#####\s/, ''), 9.5, 'bold', C_TEXT, 0, 2); continue; }
+                    if (/^####\s/.test(line))   { writeText(line.replace(/^####\s/, ''), 10, 'bold', C_TEXT, 0, 3); continue; }
+
+                    if (/^###\s/.test(line)) {
+                        y += 3;
+                        writeText(line.replace(/^###\s/, ''), 11, 'bold', C_TEXT, 0, 3);
+                        continue;
+                    }
+                    if (/^##\s/.test(line)) {
+                        y += 4;
+                        const t = line.replace(/^##\s/, '');
+                        checkPage(10);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setFontSize(12);
+                        pdf.setTextColor(...C_BLUE);
+                        const ls = pdf.splitTextToSize(t, CW);
+                        ls.forEach(l => { pdf.text(l, ML, y); y += 6; });
+                        y += 2;
+                        continue;
+                    }
+                    if (/^#\s/.test(line)) {
+                        y += 5;
+                        const t = line.replace(/^#\s/, '');
+                        checkPage(14);
+                        // Barra lateral azul
+                        pdf.setFillColor(...C_BLUE);
+                        pdf.rect(ML, y - 4, 3, 9, 'F');
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setFontSize(13);
+                        pdf.setTextColor(...C_TEXT);
+                        const ls = pdf.splitTextToSize(t.toUpperCase(), CW - 6);
+                        ls.forEach(l => { pdf.text(l, ML + 6, y); y += 7; });
+                        y += 3;
+                        continue;
+                    }
+
+                    // Listas
+                    if (/^(\s*[-*+]\s)/.test(line)) {
+                        const indent = (line.match(/^(\s*)/)[1].length / 2) * 4;
+                        const txt = line.replace(/^\s*[-*+]\s/, '');
+                        checkPage(6);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(...C_TEXT);
+                        pdf.circle(ML + indent + 1.5, y - 1.5, 0.8, 'F');
+                        const ls = pdf.splitTextToSize(txt.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1'), CW - indent - 6);
+                        ls.forEach(l => { pdf.text(l, ML + indent + 5, y); y += 5; });
+                        y += 1;
+                        continue;
+                    }
+                    if (/^(\s*\d+\.\s)/.test(line)) {
+                        const num = line.match(/^\s*(\d+)\./)?.[1] || '1';
+                        const txt = line.replace(/^\s*\d+\.\s/, '');
+                        checkPage(6);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(...C_BLUE);
+                        pdf.text(`${num}.`, ML + 1, y);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(...C_TEXT);
+                        const ls = pdf.splitTextToSize(txt.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1'), CW - 8);
+                        ls.forEach(l => { pdf.text(l, ML + 7, y); y += 5; });
+                        y += 1;
+                        continue;
+                    }
+
+                    // HR
+                    if (/^---+$/.test(line.trim())) {
+                        checkPage(6);
+                        pdf.setDrawColor(...C_BORDER);
+                        pdf.line(ML, y, ML + CW, y);
+                        y += 5;
+                        continue;
+                    }
+
+                    // Línea vacía
+                    if (!line.trim()) { y += 3; continue; }
+
+                    // Párrafo normal (limpia markdown inline)
+                    const clean = line
+                        .replace(/\*\*(.*?)\*\*/g, '$1')
+                        .replace(/\*(.*?)\*/g, '$1')
+                        .replace(/`(.*?)`/g, '$1')
+                        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+                    writeText(clean, 10.5, 'normal', C_TEXT, 0, 2);
                 }
+
+                // Flush pendientes
+                if (inCode) flushCode();
+                if (inTable) flushTable();
+                if (inBlockquote) flushBlockquote();
+
+                // Pie de última página
+                pdf.setFont('helvetica', 'italic');
+                pdf.setFontSize(8);
+                pdf.setTextColor(...C_GRAY);
+                const lastPg = pdf.internal.getCurrentPageInfo().pageNumber;
+                pdf.text(`${tituloCapital} — Dossier generado por Mar-IA`, ML, PH - 10);
+                pdf.text(`Página ${lastPg - 1}`, PW - MR, PH - 10, { align: 'right' });
+
+                // ── Descargar automáticamente ──
+                pdf.save(nombreArchivo);
+
+                agregarMensaje('bot', `Su archivo PDF sobre **${tituloCapital}** está listo y se está descargando ahora.\n\n📄 \`${nombreArchivo}\`\n\nEl documento incluye:\n- Portada profesional\n- Secciones con encabezados y estructura completa\n- Tablas, citas y bloques de código con diseño\n- Paginación automática\n\n¿Necesitas otro documento?`);
             };
 
             const crearDOCX = (c, f) => {
