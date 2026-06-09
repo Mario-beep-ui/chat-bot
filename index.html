@@ -1162,6 +1162,21 @@
             const actualizarContador = () => { contadorHistorial = conversaciones.length; elementosHistorial.contadorHistorial.textContent = contadorHistorial > 0 ? contadorHistorial : ''; elementosHistorial.contadorHistorial.style.display = contadorHistorial > 0 ? 'flex' : 'none'; };
 
             const crearNuevaConversacion = () => {
+                // Verificar si ya existe una conversación vacía activa para evitar crear múltiples chats vacíos
+                const convActual = conversaciones.find(c => c.id === conversacionActualId);
+                const chatActualEstaVacio = convActual && !convActual.historial.some(m => m.role === 'user' || m.role === 'assistant');
+                if (chatActualEstaVacio) {
+                    // Ya hay un chat vacío activo: solo cerrar panel si estaba abierto y no hacer nada más
+                    if (panelHistorialAbierto) alternarPanelHistorial();
+                    return;
+                }
+                // También buscar si existe alguna conversación vacía en el historial (por si la activa no es la vacía)
+                const chatVacioExistente = conversaciones.find(c => !c.historial.some(m => m.role === 'user' || m.role === 'assistant'));
+                if (chatVacioExistente) {
+                    if (panelHistorialAbierto) alternarPanelHistorial();
+                    cargarConversacion(chatVacioExistente.id);
+                    return;
+                }
                 if (panelHistorialAbierto) alternarPanelHistorial();
                 const nueva = { id: Date.now().toString(), titulo: 'Nueva conversación', fecha: new Date().toISOString(), historial: [{ role: "system", content: SYSTEM_PROMPT }], modoSuperIA: false, modoMiniIA: false, modoPicasso: false, modoBusqueda: false, ultimaDescripcionImagen: "" };
                 conversaciones.unshift(nueva); conversacionActualId = nueva.id; cargarConversacion(conversacionActualId); guardarConversaciones(); renderizarListaHistorial();
