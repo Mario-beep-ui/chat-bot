@@ -1209,7 +1209,30 @@
                 elementos.pantallaBienvenida.classList.add('oculto');
                 elementos.contenedorChat.style.display = 'flex';
 
-                agregarMensaje('usuario', texto); guardarMensajeEnHistorial('user', texto);
+                agregarMensaje('usuario', texto);
+                // ── Mostrar miniaturas de imágenes adjuntas en la burbuja ──
+                if (archivosAdjuntos.some(a => a.file.type.startsWith('image/'))) {
+                    const lastMsg = elementos.contenedorChat.lastElementChild;
+                    const burbuja = lastMsg?.querySelector('.burbuja-usuario');
+                    if (burbuja) {
+                        const imgRow = document.createElement('div');
+                        imgRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;';
+                        for (const a of archivosAdjuntos.filter(x => x.file.type.startsWith('image/'))) {
+                            const reader = new FileReader();
+                            reader.onloadend = (ev) => {
+                                const thumb = document.createElement('img');
+                                thumb.src = ev.target.result;
+                                thumb.style.cssText = 'max-height:110px;max-width:100%;border-radius:8px;object-fit:cover;cursor:zoom-in;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+                                thumb.title = a.file.name;
+                                thumb.onclick = () => mostrarModalImagen(thumb.src);
+                                imgRow.appendChild(thumb);
+                            };
+                            reader.readAsDataURL(a.file);
+                        }
+                        burbuja.appendChild(imgRow);
+                    }
+                }
+                guardarMensajeEnHistorial('user', texto);
                 
                 if (modoBusqueda) {
                     const ind = mostrarIndicadorBusqueda(); const res = await realizarBusquedaEnTiempoReal(texto); ocultarIndicadorBusqueda(ind);
@@ -1227,7 +1250,16 @@
                 if (modoPicasso && texto) { const imgPicasso = archivosAdjuntos.find(a => a.file.type.startsWith('image/'))?.file || null; await manejarGeneracionDeImagen(texto, imgPicasso); modoPicasso = false; elementos.botonGenerarImagen.classList.remove('modo-activo'); elementos.entradaUsuario.placeholder = "Pregúntale a Mar-IA..."; return reiniciarEntrada(); }
                 
                 cancelarProcesoCompleto = false; let content = texto; mostrarBotonCargando();
-                if (archivosAdjuntos.length > 0) { mostrarIndicador('Procesando archivos...'); content += `\n\n--- Archivos Adjuntos ---\n${await procesarArchivosAdjuntos()}`; ocultarIndicador(); }
+                if (archivosAdjuntos.length > 0) {
+                    const tieneImagenes = archivosAdjuntos.some(a => a.file.type.startsWith('image/'));
+                    mostrarIndicador(tieneImagenes ? 'Procesando imagen con visión IA... 👁️' : 'Procesando archivos... 📄', tieneImagenes ? 'brain' : 'dots');
+                    const contextoArchivos = await procesarArchivosAdjuntos();
+                    ocultarIndicador();
+                    content += `\n\n--- Archivos Adjuntos ---\n${contextoArchivos}`;
+                    if (tieneImagenes) {
+                        content += `\n\n[INSTRUCCIÓN: El usuario te ha compartido una imagen. La descripción detallada del análisis visual está arriba. Úsala para responder a su pregunta/solicitud como si pudieras ver la imagen directamente.]`;
+                    }
+                }
 
                 historialChat.push({ role: "user", content: content }); reiniciarEntrada();
                 if (modoMiniIA) await obtenerRespuestaMini([...historialChat], ultimoMensajeFuePorVoz);
@@ -1637,13 +1669,13 @@ Redacta mínimo 800 palabras. Sé exhaustivo, preciso y profesional.`;
                     const img = new Image();
                     img.onload = () => {
                         let w = img.width, h = img.height;
-                        const max = 512;
+                        const max = 1024; // aumentado para mejor calidad en visión IA
                         if (w <= max && h <= max) { resolve({ base64: reader.result.split(',')[1], mimeType: file.type }); return; }
                         if (w > h) { h = Math.round(h * max / w); w = max; } else { w = Math.round(w * max / h); h = max; }
                         const canvas = document.createElement('canvas');
                         canvas.width = w; canvas.height = h;
                         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
                         resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
                     };
                     img.onerror = reject;
@@ -1675,6 +1707,37 @@ Redacta mínimo 800 palabras. Sé exhaustivo, preciso y profesional.`;
                 } catch(e) { console.warn('⚠️ Groq error:', e.message); }
                 return null;
             };
+
+            // ── MODO DE VISIÓN REAL ──────────────────────────────────────────────
+            // IA "ve" la imagen como Gemini / ChatGPT / Grok (100% gratis)
+            const analizarImagenConVisionReal = async (file) => {
+                try {
+                    const imgData = await redimensionarImagen(file);
+                    const promptVision = `Analiza esta imagen de forma EXHAUSTIVA en español. Describe TODO lo que ves:\n\n🖼️ CONTENIDO VISUAL: personas, objetos, animales, escenario, acciones, expresiones\n📝 TEXTO VISIBLE: copia EXACTAMENTE todo el texto que aparezca en la imagen\n🎨 COLORES Y ESTILO: paleta, iluminación, composición, tipo de imagen (foto, ilustración, captura de pantalla, etc.)\n🔍 CONTEXTO: propósito o situación que representa\n\nActúa como si tuvieras que describir la imagen a alguien que no puede verla. Sé muy detallado y exhaustivo.`;
+
+                    // Estrategia 1: Gemini 1.5 Flash Vision (gratis, confiable)
+                    try {
+                        const r = await window._rawFetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ inlineData: { mimeType: imgData.mimeType, data: imgData.base64 } }, { text: promptVision }] }], generationConfig: { maxOutputTokens: 2000, temperature: 0.1 } })
+                        });
+                        if (r.ok) { const d = await r.json(); const t = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim(); if (t && t.length > 30) { console.log('✅ Gemini Visión Real OK'); return t; } }
+                        else { const errTxt = await r.text(); console.warn('⚠️ Gemini Visión HTTP', r.status, errTxt.slice(0,150)); }
+                    } catch(e) { console.warn('⚠️ Gemini Visión error:', e.message); }
+
+                    // Estrategia 2: Groq + LLaMA 4 Scout Vision (gratis)
+                    const groqDesc = await analizarImagenVisual(imgData.base64, imgData.mimeType);
+                    if (groqDesc) { console.log('✅ Groq Visión Real OK'); return groqDesc; }
+
+                    // Estrategia 3: OCR como último recurso (solo extrae texto)
+                    console.warn('⚠️ Sin visión IA disponible, intentando OCR de texto...');
+                    const ocrTxt = await peticionOcrSpace(file).catch(() => '');
+                    if (ocrTxt?.trim()) return `[Solo se pudo extraer texto de la imagen por OCR]:\n${ocrTxt}`;
+
+                    return '[No se pudo analizar la imagen. Verifica tu conexión o los límites de las APIs gratuitas.]';
+                } catch(e) { console.error('Error en visión real:', e); return `[Error al analizar imagen: ${e.message}]`; }
+            };
+            // ─────────────────────────────────────────────────────────────────────
 
             const analizarImagenParaGeneracion = async (imageBase64, mimeType) => {
                 const dataUrl = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + imageBase64;
@@ -1990,12 +2053,55 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
             };
             
             const procesarArchivosAdjuntos = async () => {
-                const res = []; for (const a of archivosAdjuntos) {
-                    try { if (a.file.type.startsWith('image/')) res.push(`--- OCR: ${a.file.name} ---\n${await peticionOcrSpace(a.file)}`); else if (a.file.type.startsWith('text/')) res.push(`--- Archivo: ${a.file.name} ---\n${await a.file.text()}`); } catch { res.push(`[Error: ${a.file.name}]`); }
-                } return res.join('\n\n');
+                const res = [];
+                for (const a of archivosAdjuntos) {
+                    try {
+                        if (a.file.type.startsWith('image/')) {
+                            // ── MODO VISIÓN REAL: IA "ve" la imagen completa ──
+                            mostrarIndicador('Analizando imagen con visión IA... 👁️', 'brain');
+                            const descripcion = await analizarImagenConVisionReal(a.file);
+                            res.push(`--- [ANÁLISIS VISUAL IA] Imagen: "${a.file.name}" ---\n${descripcion}`);
+                        } else if (
+                            a.file.type.startsWith('text/') ||
+                            ['application/json','text/csv','text/plain','text/markdown'].includes(a.file.type) ||
+                            a.file.name.match(/\.(txt|csv|json|md|xml|html|css|js|ts|py|java|cpp|c)$/i)
+                        ) {
+                            // ── MODO TEXTO PURO: leer directamente (rápido y exacto) ──
+                            res.push(`--- [ARCHIVO DE TEXTO] "${a.file.name}" ---\n${await a.file.text()}`);
+                        } else {
+                            // ── MODO OCR: extraer texto de PDF u otros documentos ──
+                            mostrarIndicador('Extrayendo texto del documento... 📄', 'dots');
+                            const ocrResult = await peticionOcrSpace(a.file);
+                            res.push(`--- [OCR] "${a.file.name}" ---\n${ocrResult || '[Sin texto extraíble en este archivo]'}`);
+                        }
+                    } catch(e) { res.push(`[Error procesando "${a.file.name}": ${e.message}]`); }
+                }
+                ocultarIndicador();
+                return res.join('\n\n');
             };
             
-            const peticionOcrSpace = async (f) => { const fd = new FormData(); fd.append('file', f); fd.append('language', 'spa'); fd.append('apikey', CLAVE_API_OCR); fd.append('OCREngine', '2'); const r = await fetch('https://api.ocr.space/parse/image', { method: 'POST', body: fd }); const d = await r.json(); if (d.IsErroredOnProcessing) throw new Error(d.ErrorMessage); return d.ParsedResults?.[0]?.ParsedText || ''; };
+            const peticionOcrSpace = async (f) => {
+                // Opción 1: OCR.space (extrae texto de imágenes/PDFs)
+                try {
+                    const fd = new FormData();
+                    fd.append('file', f); fd.append('language', 'spa');
+                    fd.append('apikey', CLAVE_API_OCR); fd.append('OCREngine', '2');
+                    const r = await window._rawFetch('https://api.ocr.space/parse/image', { method: 'POST', body: fd });
+                    const d = await r.json();
+                    const txt = d.ParsedResults?.[0]?.ParsedText?.trim();
+                    if (!d.IsErroredOnProcessing && txt) { console.log('✅ OCR.space OK'); return txt; }
+                    console.warn('⚠️ OCR.space sin resultado:', d.ErrorMessage || 'vacío');
+                } catch(e) { console.warn('⚠️ OCR.space error:', e.message); }
+                // Opción 2: Gemini como OCR gratuito (fallback)
+                try {
+                    if (f.type.startsWith('image/')) {
+                        const imgData = await redimensionarImagen(f);
+                        const r = await window._rawFetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ inlineData: { mimeType: imgData.mimeType, data: imgData.base64 } }, { text: 'Extrae y transcribe EXACTAMENTE todo el texto visible en esta imagen. Mantén el formato original. Devuelve solo el texto extraído, sin explicaciones.' }] }] }) });
+                        if (r.ok) { const d = await r.json(); const t = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim(); if (t) { console.log('✅ Gemini OCR fallback OK'); return t; } }
+                    }
+                } catch(e) { console.warn('⚠️ Gemini OCR fallback error:', e.message); }
+                return '';
+            };
 
             const iniciarReconocimientoVoz = () => {
                 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
