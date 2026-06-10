@@ -51,6 +51,8 @@
             --fondo-generando-imagen: #9D4EDD;
             --sombra: 0 4px 24px rgba(0,0,0,0.25);
             --sombra-input: 0 -10px 40px rgba(18, 10, 31, 0.8);
+            --altura-cabecera: 6.8rem;
+            --fondo-cabecera: rgba(26, 17, 40, 0.02);
         }
         body.tema-claro {
             --color-fondo: #f4f7f9;
@@ -84,17 +86,19 @@
             --fondo-generando-imagen: #5e17eb;
             --sombra: 0 4px 24px rgba(0,0,0,0.1);
             --sombra-input: 0 -10px 30px rgba(0, 0, 0, 0.05);
+            --fondo-cabecera: rgba(255, 255, 255, 0.02);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'DM Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         html { height: 100%; }
         body { height: 100dvh; background: var(--color-fondo); color: var(--color-texto); font-size: 1.6rem; display: flex; flex-direction: column; overflow: hidden; }
         .contenedor { display: flex; flex-direction: column; width: 100%; background: var(--color-contenedor); flex: 1; min-height: 0; overflow: hidden; position: relative; }
-        .cabecera { flex-shrink: 0; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; z-index: 10; background: var(--color-contenedor); border-bottom: none; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .cabecera { position: fixed; top: 0; left: 0; right: 0; width: 100%; min-height: var(--altura-cabecera); padding: 1rem 1.6rem; display: flex; align-items: center; justify-content: space-between; z-index: 1200; background: var(--fondo-cabecera); border-bottom: 1px solid rgba(255,255,255,0.06); box-shadow: 0 6px 24px rgba(0,0,0,0.12); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); }
+        body.tema-claro .cabecera { border-bottom-color: rgba(0,0,0,0.05); }
         .cabecera .titulo { display: flex; align-items: center; gap: 1.2rem; }
         .cabecera .titulo .fa-robot { font-size: 3rem; color: var(--color-destacado); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0px); } }
         .cabecera .titulo h1 { font-size: 2.2rem; font-weight: 700; margin: 0; cursor: pointer; transition: all 0.3s; position: relative; color: var(--color-destacado); }
-        .contenedor-chat { flex-grow: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 2.5rem; scroll-behavior: smooth; transition: transform 0.3s ease-in-out; }
+        .contenedor-chat { flex-grow: 1; overflow-y: auto; padding: calc(var(--altura-cabecera) + 1rem) 2rem 2rem; display: flex; flex-direction: column; gap: 2.5rem; scroll-behavior: smooth; transition: transform 0.3s ease-in-out; position: relative; z-index: 1; }
         .contenedor-chat.desplazado { transform: translateX(320px); }
         
         /* --- PANTALLA DE BIENVENIDA --- */
@@ -741,7 +745,175 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
-    </style>
+
+        :root {
+            --entrada-transicion: 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+            --entrada-restaurar-opacidad: 0.6;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        .contenedor {
+            overflow-x: hidden;
+        }
+
+        .contenedor-chat {
+            transition: padding-bottom var(--entrada-transicion), transform var(--entrada-transicion);
+            will-change: padding-bottom, transform;
+            padding-top: calc(var(--altura-cabecera) + 1rem);
+        }
+
+        .contenedor-entrada-wrapper {
+            flex-shrink: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, var(--color-fondo) 70%, transparent);
+            z-index: 10;
+            overflow: hidden;
+            max-height: 48rem;
+            transition: max-height var(--entrada-transicion), padding var(--entrada-transicion), opacity var(--entrada-transicion);
+        }
+
+        .contenedor-entrada {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            background-color: rgba(36, 26, 53, 0.72);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(157, 78, 221, 0.24);
+            border-radius: 2.4rem;
+            padding: 1.5rem 2rem;
+            transition: transform var(--entrada-transicion), opacity var(--entrada-transicion), box-shadow 0.2s, border-color 0.2s, background-color 0.2s;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+            will-change: transform, opacity;
+            transform: translate3d(0, 0, 0);
+            touch-action: pan-y;
+        }
+
+        .contenedor-entrada:focus-within {
+            border-color: #F72585;
+            box-shadow: 0 0 0 3px rgba(247, 37, 133, 0.2), 0 12px 28px rgba(0,0,0,0.18);
+        }
+
+        .boton-restaurar-entrada {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            z-index: 1300;
+            width: 4.8rem;
+            height: 4.8rem;
+            border-radius: 1.4rem;
+            border: 1px solid rgba(157, 78, 221, 0.35);
+            background: rgba(45, 35, 62, 0.6);
+            color: var(--color-texto);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateX(1rem) scale(0.96);
+            transition: opacity var(--entrada-transicion), transform var(--entrada-transicion), background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .boton-restaurar-entrada:hover {
+            background: var(--color-destacado);
+            color: #fff;
+            border-color: var(--color-destacado);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+        }
+
+        .boton-restaurar-entrada i {
+            font-size: 1.7rem;
+        }
+
+        body.modo-lectura-activo .contenedor-chat {
+            padding-bottom: 0;
+        }
+
+        body.modo-lectura-activo .contenedor-entrada-wrapper {
+            max-height: 0;
+            padding: 0;
+            opacity: 0;
+        }
+
+        body.modo-lectura-activo .contenedor-entrada {
+            transform: translate3d(calc(100vw + 8rem), 0, 0);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        body.modo-lectura-activo .boton-restaurar-entrada {
+            opacity: 0.6;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(0) scale(1);
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --altura-cabecera: 6.2rem;
+            }
+
+            .cabecera {
+                padding: 0.9rem 1.2rem;
+            }
+
+            .cabecera .titulo {
+                gap: 0.9rem;
+            }
+
+            .cabecera .titulo .fa-robot {
+                font-size: 2.5rem;
+            }
+
+            .cabecera .titulo h1 {
+                font-size: 1.95rem;
+            }
+
+            .cabecera .subtitle {
+                font-size: 1.15rem;
+            }
+
+            .controles-cabecera {
+                gap: 0.8rem;
+            }
+
+            .boton-control {
+                width: 3.8rem;
+                height: 3.8rem;
+                font-size: 1.6rem;
+            }
+
+            .contenedor-chat {
+                padding: calc(var(--altura-cabecera) + 0.9rem) 1.2rem 2rem;
+            }
+
+            .contenedor-entrada-wrapper {
+                padding: 1.4rem;
+                max-height: 46rem;
+            }
+
+            .contenedor-entrada {
+                padding: 1.3rem 1.5rem;
+                border-radius: 2.2rem;
+            }
+
+            .boton-restaurar-entrada {
+                width: 4.4rem;
+                height: 4.4rem;
+                right: 1.4rem;
+                bottom: 1.4rem;
+            }
+        }
+
+        /* --- ANIMACIÓN DE ENTRADA --- */    </style>
 </head>
 <body>
     <div class="intro-animacion" id="intro-animacion">
@@ -834,7 +1006,7 @@
         </button>
 
         <div class="contenedor-entrada-wrapper" id="contenedor-entrada-wrapper">
-            <div class="contenedor-entrada">
+            <div class="contenedor-entrada" id="contenedor-entrada">
                 <div class="contenedor-adjuntos" id="contenedor-adjuntos"></div>
                 <textarea id="entrada-usuario" placeholder="Pregúntale a Mar-IA..." rows="1"></textarea>
                 <div class="input-area-botones">
@@ -846,6 +1018,9 @@
                 </div>
             </div>
         </div>
+        <button class="boton-restaurar-entrada" id="boton-restaurar-entrada" type="button" aria-label="Restaurar entrada" title="Restaurar entrada">
+            <i class="fas fa-chevron-left"></i>
+        </button>
     </div>
 
     <div id="live-conversation-screen">
@@ -1032,7 +1207,7 @@
             };
 
             const elementos = {
-                body: document.body, contenedor: document.querySelector('.contenedor'), contenedorChat: document.getElementById('contenedor-chat'), entradaUsuario: document.getElementById('entrada-usuario'), botonEnviar: document.getElementById('boton-enviar'), botonGrabar: document.getElementById('boton-grabar'), botonMas: document.getElementById('boton-mas'), botonBuscar: document.getElementById('boton-buscar'), botonGenerarImagen: document.getElementById('boton-generar-imagen'), inputImagen: document.getElementById('input-imagen'), inputCamara: document.getElementById('input-camara'), inputArchivo: document.getElementById('input-archivo'), modalOcr: document.getElementById('modal-ocr'), modalModo: document.getElementById('modal-modo'), overlay: document.getElementById('overlay'), btnTomarFoto: document.getElementById('tomar-foto'), btnGaleria: document.getElementById('elegir-galeria'), btnArchivo: document.getElementById('elegir-archivo'), alternadorTema: document.getElementById('menu-tema'), confirmacionCopia: document.getElementById('confirmacionCopia'), selectorVoz: document.getElementById('selector-voz'), contenedorAdjuntos: document.getElementById('contenedor-adjuntos'), btnActivarBusquedaModal: document.getElementById('activar-busqueda-modal'), tituloModo: document.getElementById('titulo-modo'), modalSuperIA: document.getElementById('modal-super-ia'), cerrarModalSuperIA: document.getElementById('cerrar-modal-super-ia'), botonEntendido: document.getElementById('boton-entendido'), botonAyuda: document.getElementById('menu-ayuda'), modalAyuda: document.getElementById('modal-ayuda'), cerrarModalAyuda: document.getElementById('cerrar-modal-ayuda'), cerrarModalAyudaBtn: document.getElementById('cerrar-modal-ayuda-btn'), entradaWrapper: document.getElementById('contenedor-entrada-wrapper'), modalImagen: document.getElementById('modal-imagen'), imagenAmpliada: document.getElementById('imagen-ampliada'), cerrarModalImagen: document.getElementById('cerrar-modal-imagen'), descargarImagenBtn: document.getElementById('descargar-imagen'), modalMiniAviso: document.getElementById('modal-mini-aviso'), botonScrollFinal: document.getElementById('boton-scroll-final'), botonMenuPrincipal: document.getElementById('boton-menu-principal'), modalMenuPrincipal: document.getElementById('modal-menu-principal'), startLiveBtn: document.getElementById('start-live-btn'), liveScreen: document.getElementById('live-conversation-screen'), robotSvg: document.getElementById('robot-svg'), liveStatus: document.getElementById('live-status'), pauseLiveBtn: document.getElementById('pause-live-btn'), closeLiveBtn: document.getElementById('close-live-btn'), pantallaBienvenida: document.getElementById('pantalla-bienvenida'), sugerenciaBtns: document.querySelectorAll('.sugerencia-btn'), botonNuevoChat: document.getElementById('boton-nuevo-chat')
+                body: document.body, contenedor: document.querySelector('.contenedor'), contenedorChat: document.getElementById('contenedor-chat'), entradaUsuario: document.getElementById('entrada-usuario'), botonEnviar: document.getElementById('boton-enviar'), botonGrabar: document.getElementById('boton-grabar'), botonMas: document.getElementById('boton-mas'), botonBuscar: document.getElementById('boton-buscar'), botonGenerarImagen: document.getElementById('boton-generar-imagen'), inputImagen: document.getElementById('input-imagen'), inputCamara: document.getElementById('input-camara'), inputArchivo: document.getElementById('input-archivo'), modalOcr: document.getElementById('modal-ocr'), modalModo: document.getElementById('modal-modo'), overlay: document.getElementById('overlay'), btnTomarFoto: document.getElementById('tomar-foto'), btnGaleria: document.getElementById('elegir-galeria'), btnArchivo: document.getElementById('elegir-archivo'), alternadorTema: document.getElementById('menu-tema'), confirmacionCopia: document.getElementById('confirmacionCopia'), selectorVoz: document.getElementById('selector-voz'), contenedorAdjuntos: document.getElementById('contenedor-adjuntos'), btnActivarBusquedaModal: document.getElementById('activar-busqueda-modal'), tituloModo: document.getElementById('titulo-modo'), modalSuperIA: document.getElementById('modal-super-ia'), cerrarModalSuperIA: document.getElementById('cerrar-modal-super-ia'), botonEntendido: document.getElementById('boton-entendido'), botonAyuda: document.getElementById('menu-ayuda'), modalAyuda: document.getElementById('modal-ayuda'), cerrarModalAyuda: document.getElementById('cerrar-modal-ayuda'), cerrarModalAyudaBtn: document.getElementById('cerrar-modal-ayuda-btn'), entradaWrapper: document.getElementById('contenedor-entrada-wrapper'), contenedorEntrada: document.getElementById('contenedor-entrada'), botonRestaurarEntrada: document.getElementById('boton-restaurar-entrada'), modalImagen: document.getElementById('modal-imagen'), imagenAmpliada: document.getElementById('imagen-ampliada'), cerrarModalImagen: document.getElementById('cerrar-modal-imagen'), descargarImagenBtn: document.getElementById('descargar-imagen'), modalMiniAviso: document.getElementById('modal-mini-aviso'), botonScrollFinal: document.getElementById('boton-scroll-final'), botonMenuPrincipal: document.getElementById('boton-menu-principal'), modalMenuPrincipal: document.getElementById('modal-menu-principal'), startLiveBtn: document.getElementById('start-live-btn'), liveScreen: document.getElementById('live-conversation-screen'), robotSvg: document.getElementById('robot-svg'), liveStatus: document.getElementById('live-status'), pauseLiveBtn: document.getElementById('pause-live-btn'), closeLiveBtn: document.getElementById('close-live-btn'), pantallaBienvenida: document.getElementById('pantalla-bienvenida'), sugerenciaBtns: document.querySelectorAll('.sugerencia-btn'), botonNuevoChat: document.getElementById('boton-nuevo-chat')
             };
             const elementosHistorial = {
                 panelHistorial: document.getElementById('panel-historial'), botonHistorial: document.getElementById('menu-historial'), botonCerrarHistorial: document.getElementById('boton-cerrar-historial'), listaHistorial: document.getElementById('lista-historial'), inputBuscarHistorial: document.getElementById('input-buscar-historial'), botonNuevaConversacion: document.getElementById('boton-nueva-conversacion'), overlayHistorial: document.getElementById('overlay-historial'), contadorHistorial: document.getElementById('contador-historial-menu'), contenedorChat: document.getElementById('contenedor-chat')
@@ -1044,6 +1219,7 @@
 
             const iniciar = () => {
                 cargarEstado(); configurarEventListeners(); iniciarReconocimientoVoz(); iniciarSintesisVoz(); cargarConversaciones();
+                sincronizarModoLectura();
                 conversaciones.length === 0 ? crearNuevaConversacion() : cargarConversacion(conversaciones[0].id);
                 autoAjustarTextarea();
             };
@@ -1060,6 +1236,13 @@
                 elementos.botonMas.addEventListener('click', () => alternarModal(elementos.modalOcr.style.display !== 'flex', elementos.modalOcr));
                 elementos.botonBuscar.addEventListener('click', () => alternarModoBusqueda());
                 elementos.botonMenuPrincipal.addEventListener('click', () => alternarModal(elementos.modalMenuPrincipal.style.display !== 'flex', elementos.modalMenuPrincipal));
+                if (elementos.botonRestaurarEntrada) elementos.botonRestaurarEntrada.addEventListener('click', mostrarEntrada);
+                if (elementos.contenedorEntrada) {
+                    elementos.contenedorEntrada.addEventListener('touchstart', iniciarGestoEntrada, { passive: true });
+                    elementos.contenedorEntrada.addEventListener('touchmove', moverGestoEntrada, { passive: false });
+                    elementos.contenedorEntrada.addEventListener('touchend', finalizarGestoEntrada, { passive: true });
+                    elementos.contenedorEntrada.addEventListener('touchcancel', cancelarGestoEntrada, { passive: true });
+                }
                 elementos.overlay.addEventListener('click', () => { alternarModal(false, elementos.modalOcr); alternarModal(false, elementos.modalModo); alternarModal(false, elementos.modalSuperIA); alternarModal(false, elementos.modalAyuda); alternarModal(false, elementos.modalImagen); alternarModal(false, elementos.modalMenuPrincipal); });
                 elementos.btnTomarFoto.addEventListener('click', () => { alternarModal(false, elementos.modalOcr); elementos.inputCamara.click(); });
                 elementos.btnGaleria.addEventListener('click', () => { alternarModal(false, elementos.modalOcr); elementos.inputImagen.click(); });
@@ -1160,6 +1343,125 @@
             const cargarConversaciones = () => { const guardadas = localStorage.getItem('conversaciones'); if (guardadas) { conversaciones = JSON.parse(guardadas); actualizarContador(); renderizarListaHistorial(); } };
             const guardarConversaciones = () => { localStorage.setItem('conversaciones', JSON.stringify(conversaciones)); actualizarContador(); };
             const actualizarContador = () => { contadorHistorial = conversaciones.length; elementosHistorial.contadorHistorial.textContent = contadorHistorial > 0 ? contadorHistorial : ''; elementosHistorial.contadorHistorial.style.display = contadorHistorial > 0 ? 'flex' : 'none'; };
+
+            const sincronizarModoLectura = () => {
+                const activo = document.body.classList.contains('modo-lectura-activo');
+                if (!elementos.botonRestaurarEntrada) return;
+                elementos.botonRestaurarEntrada.classList.toggle('visible', activo);
+                elementos.botonRestaurarEntrada.setAttribute('aria-hidden', activo ? 'false' : 'true');
+                elementos.botonRestaurarEntrada.setAttribute('title', activo ? 'Restaurar entrada' : 'Entrada oculta');
+            };
+
+            const mostrarEntrada = () => {
+                document.body.classList.remove('modo-lectura-activo');
+                if (elementos.contenedorEntrada) {
+                    elementos.contenedorEntrada.style.transition = '';
+                    elementos.contenedorEntrada.style.transform = '';
+                    elementos.contenedorEntrada.style.opacity = '';
+                    elementos.contenedorEntrada.style.visibility = '';
+                    elementos.contenedorEntrada.style.pointerEvents = '';
+                    elementos.contenedorEntrada.style.willChange = '';
+                }
+                sincronizarModoLectura();
+            };
+
+            const ocultarEntrada = () => {
+                document.body.classList.add('modo-lectura-activo');
+                if (elementos.entradaUsuario) elementos.entradaUsuario.blur();
+                sincronizarModoLectura();
+            };
+
+            const alternarModoLectura = () => {
+                document.body.classList.contains('modo-lectura-activo') ? mostrarEntrada() : ocultarEntrada();
+            };
+
+            const gestoEntrada = { activo: false, arrastrando: false, inicioX: 0, inicioY: 0, ultimoX: 0 };
+
+            const iniciarGestoEntrada = (e) => {
+                if (document.body.classList.contains('modo-lectura-activo')) return;
+                const toque = e.touches && e.touches[0];
+                if (!toque) return;
+                gestoEntrada.activo = true;
+                gestoEntrada.arrastrando = false;
+                gestoEntrada.inicioX = toque.clientX;
+                gestoEntrada.inicioY = toque.clientY;
+                gestoEntrada.ultimoX = toque.clientX;
+                if (elementos.contenedorEntrada) {
+                    elementos.contenedorEntrada.style.willChange = 'transform, opacity';
+                }
+            };
+
+            const moverGestoEntrada = (e) => {
+                if (!gestoEntrada.activo || document.body.classList.contains('modo-lectura-activo')) return;
+                const toque = e.touches && e.touches[0];
+                if (!toque) return;
+
+                const dx = toque.clientX - gestoEntrada.inicioX;
+                const dy = toque.clientY - gestoEntrada.inicioY;
+                gestoEntrada.ultimoX = toque.clientX;
+
+                if (!gestoEntrada.arrastrando) {
+                    if (Math.abs(dx) < 10 || Math.abs(dx) <= Math.abs(dy)) return;
+                    gestoEntrada.arrastrando = true;
+                }
+
+                if (!gestoEntrada.arrastrando) return;
+
+                e.preventDefault();
+
+                const desplazamiento = Math.max(0, dx);
+                const limite = Math.min(window.innerWidth + 120, 1200);
+                const x = Math.min(desplazamiento, limite);
+                const opacidad = Math.max(0.12, 1 - (x / 260));
+
+                if (elementos.contenedorEntrada) {
+                    elementos.contenedorEntrada.style.transition = 'none';
+                    elementos.contenedorEntrada.style.transform = `translate3d(${x}px, 0, 0)`;
+                    elementos.contenedorEntrada.style.opacity = String(opacidad);
+                }
+            };
+
+            const restaurarEstadoTemporalEntrada = () => {
+                if (!elementos.contenedorEntrada) return;
+                elementos.contenedorEntrada.style.transition = '';
+                elementos.contenedorEntrada.style.transform = '';
+                elementos.contenedorEntrada.style.opacity = '';
+                elementos.contenedorEntrada.style.visibility = '';
+                elementos.contenedorEntrada.style.pointerEvents = '';
+            };
+
+            const finalizarGestoEntrada = () => {
+                if (!gestoEntrada.activo) return;
+                const desplazamientoFinal = gestoEntrada.ultimoX - gestoEntrada.inicioX;
+                const debeOcultar = gestoEntrada.arrastrando && desplazamientoFinal > Math.max(90, window.innerWidth * 0.18);
+
+                if (debeOcultar) {
+                    ocultarEntrada();
+                } else {
+                    restaurarEstadoTemporalEntrada();
+                }
+
+                gestoEntrada.activo = false;
+                gestoEntrada.arrastrando = false;
+                gestoEntrada.inicioX = 0;
+                gestoEntrada.inicioY = 0;
+                gestoEntrada.ultimoX = 0;
+                if (elementos.contenedorEntrada) {
+                    elementos.contenedorEntrada.style.willChange = '';
+                }
+            };
+
+            const cancelarGestoEntrada = () => {
+                restaurarEstadoTemporalEntrada();
+                gestoEntrada.activo = false;
+                gestoEntrada.arrastrando = false;
+                gestoEntrada.inicioX = 0;
+                gestoEntrada.inicioY = 0;
+                gestoEntrada.ultimoX = 0;
+                if (elementos.contenedorEntrada) {
+                    elementos.contenedorEntrada.style.willChange = '';
+                }
+            };
 
             const crearNuevaConversacion = () => {
                 // Verificar si ya existe una conversación vacía activa para evitar crear múltiples chats vacíos
@@ -2180,93 +2482,251 @@ DEVUELVE SOLO EL PROMPT FINAL, SIN EXPLICACIONES.`;
             const restaurarBotonEnviar = () => { estaGenerandoRespuesta = false; elementos.botonEnviar.innerHTML = '<i class="fas fa-paper-plane"></i>'; elementos.botonEnviar.className = 'boton-input'; elementos.botonEnviar.disabled = false; };
             const pausarGeneracion = () => { cancelarProcesoCompleto = true; if (cancelarStreaming) cancelarStreaming(); restaurarBotonEnviar(); };
 
-            const obtenerRespuestaBot = async (hist, hab) => streamContent({ model: "deepseek-chat", messages: hist, stream: true, temperature: 0.7, max_tokens: 2000 }, { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK }, hab, 'Mar-IA está escribiendo...', 'dots');
-            const obtenerRespuestaMini = async (hist, hab) => {
-                cambiarBotonAPausa(); mostrarIndicador('Mar-IA mini está escribiendo...', 'bolt');
-                const last = hist[hist.length - 1].content;
-                try {
-                    const c = new AbortController(); setTimeout(() => c.abort(), 2000);
-                    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS.GEMINI}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "Eres Mar-IA mini. Responde breve (max 2 oraciones).\n\nConsulta: " + last }] }] }), signal: c.signal });
-                    if (!r.ok) {
-                        const errorDetails = await r.text();
-                        console.error(`Error de API (${r.status}):`, errorDetails);
-                        throw new Error(`HTTP ${r.status}`);
-                    }
-                    const d = await r.json(); const txt = d.candidates?.[0]?.content?.parts?.[0]?.text; if (!txt) throw new Error();
-                    historialChat.push({ role: "assistant", content: txt }); guardarMensajeEnHistorial('assistant', txt); ocultarIndicador(); const msg = agregarMensaje('bot', txt); if (hab) leerTexto(txt, msg.querySelector('.boton-voz'));
-                } catch { await obtenerRespuestaMetaFallback(hist, hab); } finally { restaurarBotonEnviar(); }
+
+            const MODELOS_DEEPSEEK = {
+                mini: 'deepseek-chat',
+                normal: 'deepseek-chat',
+                super: 'deepseek-reasoner'
             };
-            const obtenerRespuestaMetaFallback = async (hist, hab) => streamContent({ model: "llama3-8b-8192", messages: hist, stream: true, max_tokens: 200, temperature: 0.8 }, { url: 'https://api.groq.com/openai/v1/chat/completions', key: API_KEYS.META }, hab, 'Mar-IA mini (Meta)...', 'bolt');
 
-            const ejecutarFlujoSuperIA = async (hist, hab) => {
-                const { contenidoPensamiento, wrapper } = crearContenedorPensamiento();
-                const api = { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK };
-                const razonHist = [...hist]; const lastQ = razonHist.pop().content;
-                razonHist.push({ role: "user", content: `Piensa paso a paso. Solicitud: "${lastQ}"` });
-                
-                await streamContent({ model: "deepseek-chat", messages: [{role: "user", content: "Di que estás razonando. Max 5 palabras."}], stream: true, max_tokens: 50 }, api, false, 'SUPER MAR-IA está razonando...', 'brain');
-                const raz = await streamContent({ model: "deepseek-chat", messages: razonHist, stream: true, temperature: 0.3, max_tokens: 7000 }, api, false, '', '', {target: contenidoPensamiento, wrapper: wrapper}, true);
-                
-                if (cancelarProcesoCompleto || !raz) return restaurarBotonEnviar();
+            const MENSAJES_SISTEMA_DEEPSEEK = {
+                mini: 'Eres Mar-IA Mini. Responde en español con máxima rapidez. Sé breve, casual, directa y clara. Usa como máximo 2 frases salvo que el usuario pida más detalle.',
+                normal: 'Eres Mar-IA. Responde en español de forma clara, útil, organizada y equilibrada. Mantén buena velocidad, conserva el contexto y usa Markdown solo cuando aporte valor.',
+                super: 'Eres SÚPER MAR-IA. Resuelve problemas complejos con precisión máxima. Usa razonamiento profundo, análisis detallado, programación avanzada y matemáticas cuando sea necesario. Entrega una respuesta final clara, rigurosa y útil.'
+            };
 
-                const finalHist = [...hist, { role: "assistant", content: `Pensamiento: ${raz}` }, { role: "user", content: "Genera respuesta final detallada." }];
-                const respFinal = await streamContent({ model: "deepseek-chat", messages: finalHist, stream: true, max_tokens: 7000, temperature: 0.7 }, api, hab, 'Finalizando respuesta...', 'brain');
+            const getFetchSeguro = () => window._rawFetch || window.fetch.bind(window);
 
-                if (respFinal && !cancelarProcesoCompleto) {
-                    const bots = document.querySelectorAll('.mensaje-bot');
-                    if (bots.length >= 2) {
-                        const finalMsg = bots[bots.length - 1]; const penMsg = bots[bots.length - 2];
-                        const burbuja = finalMsg.querySelector('.respuesta-ia');
-                        if (penMsg.querySelector('.pensamiento-container') && burbuja) {
-                            burbuja.classList.add('respuesta-adjunta'); penMsg.appendChild(burbuja);
-                            const ctrls = finalMsg.querySelector('.timestamp-container'); if (ctrls) penMsg.appendChild(ctrls);
-                            finalMsg.remove();
-                        }
-                    }
+            const formatearTiempoPensamiento = (ms) => {
+                if (!Number.isFinite(ms) || ms < 0) return '';
+                if (ms < 1000) return `${Math.round(ms)} ms`;
+                if (ms < 60000) return `${(ms / 1000).toFixed(ms < 10000 ? 1 : 0)} s`;
+                const min = Math.floor(ms / 60000);
+                const seg = Math.round((ms % 60000) / 1000);
+                return `${min} min ${seg} s`;
+            };
+
+            const limpiarHistorialParaModo = (hist, modo) => {
+                const base = Array.isArray(hist) ? hist.filter(m => m && m.role !== 'system') : [];
+                if (modo === 'mini') return base.slice(-4);
+                return base;
+            };
+
+            const construirPayloadDeepSeek = (hist, modo) => {
+                const messages = [
+                    { role: 'system', content: MENSAJES_SISTEMA_DEEPSEEK[modo] || MENSAJES_SISTEMA_DEEPSEEK.normal },
+                    ...limpiarHistorialParaModo(hist, modo)
+                ];
+                const payload = {
+                    model: MODELOS_DEEPSEEK[modo] || MODELOS_DEEPSEEK.normal,
+                    messages,
+                    stream: true
+                };
+
+                if (modo === 'mini') {
+                    payload.temperature = 0.35;
+                    payload.max_tokens = 220;
+                } else if (modo === 'normal') {
+                    payload.temperature = 0.7;
+                    payload.max_tokens = 2000;
+                } else {
+                    payload.temperature = 0.3;
+                    payload.max_tokens = 7000;
                 }
+
+                return payload;
             };
 
             const streamContent = async (payload, cfg, hab, txtInd, icoInd, tgt = null, isThink = false) => {
-                cambiarBotonAPausa(); if (txtInd) mostrarIndicador(txtInd, icoInd);
-                let full = ""; let el, wrap;
-                if (isThink && tgt) { el = tgt.target; wrap = tgt.wrapper; }
-                else if (tgt) el = tgt;
-                else { const m = agregarMensaje('bot', '', true); el = m.querySelector('.respuesta-ia'); }
-                
+                cambiarBotonAPausa();
+                if (txtInd) mostrarIndicador(txtInd, icoInd);
+
+                let full = '';
+                let reasoningFull = '';
+                let el = null;
+                let wrap = null;
+                let reasoningEl = null;
+
+                if (isThink && tgt) {
+                    el = tgt.target;
+                    wrap = tgt.wrapper || null;
+                    reasoningEl = tgt.reasoningEl || null;
+                } else if (tgt) {
+                    el = tgt;
+                } else {
+                    const m = agregarMensaje('bot', '', true);
+                    el = m.querySelector('.respuesta-ia');
+                }
+
                 ocultarIndicador();
+
                 try {
-                    const r = await fetch(cfg.url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${cfg.key}` }, body: JSON.stringify(payload) });
+                    const fetchSeguro = getFetchSeguro();
+                    const r = await fetchSeguro(cfg.url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${cfg.key}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
                     if (!r.ok) {
                         const errorDetails = await r.text();
                         console.error(`Error de API (${r.status}):`, errorDetails);
                         throw new Error(`HTTP ${r.status}`);
                     }
-                    const reader = r.body.getReader(); const dec = new TextDecoder();
+
+                    const reader = r.body.getReader();
+                    const dec = new TextDecoder();
                     cancelarStreaming = () => reader.cancel();
+
+                    let buffer = '';
+
                     while (true) {
-                        const { value, done } = await reader.read(); if (done) break;
-                        const chunk = dec.decode(value, { stream: true });
-                        chunk.split('\n').forEach(l => {
-                            if (l.startsWith('data: ') && l !== 'data: [DONE]') {
-                                try {
-                                    const t = JSON.parse(l.slice(6)).choices[0]?.delta?.content || '';
-                                    if (t) { full += t; el.innerHTML = marked.parse(full); if (isThink && wrap) wrap.style.maxHeight = wrap.scrollHeight + 'px'; irAlFinal(); }
-                                } catch {}
-                            }
-                        });
+                        const { value, done } = await reader.read();
+                        if (done) break;
+
+                        buffer += dec.decode(value, { stream: true });
+                        const lines = buffer.split(/\r?\n/);
+                        buffer = lines.pop() || '';
+
+                        for (const line of lines) {
+                            const clean = line.trim();
+                            if (!clean.startsWith('data:')) continue;
+
+                            const data = clean.replace(/^data:\s*/, '');
+                            if (!data || data === '[DONE]') continue;
+
+                            try {
+                                const json = JSON.parse(data);
+                                const delta = json?.choices?.[0]?.delta || {};
+                                const tokenPensamiento = delta.reasoning_content || '';
+                                const tokenContenido = delta.content || '';
+
+                                if (tokenPensamiento && isThink && reasoningEl) {
+                                    reasoningFull += tokenPensamiento;
+                                    reasoningEl.innerHTML = marked.parse(reasoningFull);
+                                    if (wrap) wrap.style.maxHeight = wrap.scrollHeight + 'px';
+                                    irAlFinal();
+                                }
+
+                                if (tokenContenido) {
+                                    full += tokenContenido;
+                                    if (el) {
+                                        el.innerHTML = marked.parse(full);
+                                        irAlFinal();
+                                    }
+                                }
+                            } catch {}
+                        }
                     }
-                    if (!isThink) { formatearBloquesCodigo(el.parentElement); formatearTablas(el.parentElement); }
-                    if (!isThink) { if (full.includes('[Imagen generada')) { const sm = full.match(/^\[Imagen generada\|?(.*?)\]\s*(.*)/s); const sUrl = sm && sm[1] ? sm[1] : imagenGeneradaActual; const sAlt = sm && sm[2] ? sm[2] : ''; if (sUrl) imagenGeneradaActual = sUrl; el.innerHTML = `<div class="contenedor-imagen-generada"><img src="${sUrl}" alt="${sAlt}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;"></div>`; } historialChat.push({ role: "assistant", content: full }); guardarMensajeEnHistorial('assistant', full); }
-                    if (hab) leerTexto(el.innerText, el.closest('.mensaje')?.querySelector('.boton-voz'));
-                    return full;
-                } catch (error) { 
-                    console.error("Fallo general en streamContent:", error);
-                    if(!isThink) el.innerHTML = `Error de conexión. Presiona F12 y revisa la consola para ver el motivo exacto.`; 
-                    return null; 
-                } finally { 
-                    if (!isThink) restaurarBotonEnviar(); 
+
+                    if (isThink && reasoningEl) {
+                        reasoningEl.innerHTML = marked.parse(reasoningFull || 'Sin razonamiento visible.');
+                        if (wrap) wrap.style.maxHeight = wrap.scrollHeight + 'px';
+                    }
+
+                    if (el) {
+                        formatearBloquesCodigo(el.parentElement);
+                        formatearTablas(el.parentElement);
+                    }
+
+                    if (!isThink && el) {
+                        if (full.includes('[Imagen generada')) {
+                            const sm = full.match(/^\[Imagen generada\|?(.*?)\]\s*(.*)/s);
+                            const sUrl = sm && sm[1] ? sm[1] : imagenGeneradaActual;
+                            const sAlt = sm && sm[2] ? sm[2] : '';
+                            if (sUrl) imagenGeneradaActual = sUrl;
+                            el.innerHTML = `<div class="contenedor-imagen-generada"><img src="${sUrl}" alt="${sAlt}" style="max-width: 100%; border-radius: 1.5rem; cursor: zoom-in;" data-generated="true" class="generated-image"></div>`;
+                        }
+                        historialChat.push({ role: 'assistant', content: full });
+                        guardarMensajeEnHistorial('assistant', full);
+                    } else if (isThink && el) {
+                        historialChat.push({ role: 'assistant', content: full });
+                        guardarMensajeEnHistorial('assistant', full);
+                    }
+
+                    if (hab && el) {
+                        leerTexto(el.innerText, el.closest('.mensaje')?.querySelector('.boton-voz'));
+                    }
+
+                    return { content: full, reasoning: reasoningFull };
+                } catch (error) {
+                    console.error('Fallo general en streamContent:', error);
+                    if (!isThink && el) {
+                        el.innerHTML = `Error de conexión. Presiona F12 y revisa la consola para ver el motivo exacto.`;
+                    }
+                    return null;
+                } finally {
+                    if (!isThink) restaurarBotonEnviar();
                 }
             };
+
+            const obtenerRespuestaBot = async (hist, hab) => {
+                const payload = construirPayloadDeepSeek(hist, 'normal');
+                return await streamContent(
+                    payload,
+                    { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK },
+                    hab,
+                    'Mar-IA está escribiendo...',
+                    'dots'
+                );
+            };
+
+            const obtenerRespuestaMini = async (hist, hab) => {
+                const payload = construirPayloadDeepSeek(hist, 'mini');
+                try {
+                    return await streamContent(
+                        payload,
+                        { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK },
+                        hab,
+                        'Mar-IA mini está escribiendo...',
+                        'bolt'
+                    );
+                } catch (error) {
+                    console.error('Mini falló, usando modo estándar como respaldo.', error);
+                    return await obtenerRespuestaBot(hist, hab);
+                }
+            };
+
+            const obtenerRespuestaMetaFallback = async (hist, hab) => obtenerRespuestaBot(hist, hab);
+
+            const obtenerRespuestaSuperIA = async (hist, hab) => {
+                const inicio = performance.now();
+                const pensamiento = crearContenedorPensamiento();
+                const mensajeRespuesta = agregarMensaje('bot', '', true);
+                const burbujaRespuesta = mensajeRespuesta.querySelector('.respuesta-ia');
+                if (burbujaRespuesta) burbujaRespuesta.classList.add('respuesta-adjunta');
+
+                const payload = construirPayloadDeepSeek(hist, 'super');
+                const resultado = await streamContent(
+                    payload,
+                    { url: 'https://api.deepseek.com/v1/chat/completions', key: API_KEYS.DEEPSEEK },
+                    hab,
+                    'SÚPER MAR-IA está pensando...',
+                    'brain',
+                    {
+                        target: burbujaRespuesta,
+                        wrapper: pensamiento.wrapper,
+                        reasoningEl: pensamiento.contenidoPensamiento
+                    },
+                    true
+                );
+
+                const duracion = performance.now() - inicio;
+                const tiempoEl = pensamiento.contenedorPensamiento?.querySelector('.tiempo-pensamiento');
+                if (tiempoEl) tiempoEl.textContent = formatearTiempoPensamiento(duracion);
+
+                if (resultado && pensamiento.contenidoPensamiento && !pensamiento.contenidoPensamiento.innerText.trim()) {
+                    pensamiento.contenidoPensamiento.textContent = 'Sin razonamiento visible.';
+                }
+
+                return resultado;
+            };
+
+            const ejecutarFlujoSuperIA = obtenerRespuestaSuperIA;
+
 
             iniciar();
         });
